@@ -41,7 +41,6 @@ The `seed.sql` file is structured in two parts:
 ### Accessing Local Supabase
 
 - **Supabase Studio**: http://localhost:54323
-
     - Login with email: `supabase@example.com`
     - Password: `password`
 
@@ -66,7 +65,6 @@ You can sign in to the application using these credentials (no password required
 The application uses two storage buckets:
 
 1. `avatars`: For user profile pictures
-
     - Publicly accessible (anyone can view avatars)
     - Only authenticated users can upload/update/delete their own avatars
 

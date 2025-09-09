@@ -8,7 +8,7 @@ export default async function Home() {
             const imageData = getShotImageData(shot);
             return imageData && { ...shot, ...imageData };
         })
-        .filter(shot => shot != null);
+        .filter((shot) => shot != null);
 
     return (
         <main className="p-6">
@@ -19,7 +19,11 @@ export default async function Home() {
                     {imageDataByShot.map((shot) => (
                         <li key={shot.id} className="rounded-lg border bg-white p-4">
                             <div className="mb-2 text-lg font-medium">{shot.title}</div>
-                            <ShotThumbnail shotUploadId={shot.uploadId} fileExt={shot.fileExt} alt={shot.title} />
+                            <ShotThumbnail
+                                shotUploadId={shot.uploadId}
+                                fileExt={shot.fileExt}
+                                alt={shot.title}
+                            />
                         </li>
                     ))}
                 </ul>

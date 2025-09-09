@@ -1,7 +1,7 @@
-import {getSupabase} from '@/lib/supabase';
-import {logger} from '@/lib/consoleUtils';
-import {ShotBlock, ShotCard} from '@/lib/ui.types';
-import {unstable_cache} from "next/cache";
+import { getSupabase } from '@/lib/supabase';
+import { logger } from '@/lib/consoleUtils';
+import { ShotBlock, ShotCard } from '@/lib/ui.types';
+import { unstable_cache } from 'next/cache';
 
 /**
  * Gets a resized version of a shot image URL with enhanced options using Supabase's image transformations
@@ -89,7 +89,8 @@ export const getShotImageData = (shot: ShotCard): { uploadId: string; fileExt: s
 async function fetchShotCards(userId?: string): Promise<ShotCard[]> {
     let query = getSupabase()
         .from('shots')
-        .select(`
+        .select(
+            `
       id,
       title,
       user_id,
@@ -130,7 +131,8 @@ async function fetchShotCards(userId?: string): Promise<ShotCard[]> {
           )
         )
       )
-    `)
+    `
+        )
         .order('created_at', { ascending: false });
 
     if (userId) query = query.eq('user_id', userId);
@@ -152,29 +154,29 @@ async function fetchShotCards(userId?: string): Promise<ShotCard[]> {
                 subtitle: block.subtitle ?? undefined,
                 upload: block.shot_uploads
                     ? {
-                        id: block.shot_uploads.id,
-                        file_type: block.shot_uploads.file_type,
-                        width: block.shot_uploads.width,
-                        height: block.shot_uploads.height,
-                        file_ext: block.shot_uploads.file_ext,
-                        file_size: block.shot_uploads.file_size,
-                    }
+                          id: block.shot_uploads.id,
+                          file_type: block.shot_uploads.file_type,
+                          width: block.shot_uploads.width,
+                          height: block.shot_uploads.height,
+                          file_ext: block.shot_uploads.file_ext,
+                          file_size: block.shot_uploads.file_size,
+                      }
                     : undefined,
                 carousel_uploads: block.shot_carousel_uploads
                     ? block.shot_carousel_uploads
-                        .map((cu: any) => ({
-                            position: cu.position,
-                            upload_id: cu.upload_id,
-                            upload: {
-                                id: cu.shot_uploads.id,
-                                file_type: cu.shot_uploads.file_type,
-                                width: cu.shot_uploads.width,
-                                height: cu.shot_uploads.height,
-                                file_ext: cu.shot_uploads.file_ext,
-                                file_size: cu.shot_uploads.file_size,
-                            },
-                        }))
-                        .sort((a: any, b: any) => a.position - b.position)
+                          .map((cu: any) => ({
+                              position: cu.position,
+                              upload_id: cu.upload_id,
+                              upload: {
+                                  id: cu.shot_uploads.id,
+                                  file_type: cu.shot_uploads.file_type,
+                                  width: cu.shot_uploads.width,
+                                  height: cu.shot_uploads.height,
+                                  file_ext: cu.shot_uploads.file_ext,
+                                  file_size: cu.shot_uploads.file_size,
+                              },
+                          }))
+                          .sort((a: any, b: any) => a.position - b.position)
                     : undefined,
             }));
 
