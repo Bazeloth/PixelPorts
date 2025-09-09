@@ -1,7 +1,29 @@
-export default function Home() {
+import { ShotThumbnail } from '@/app/components/ShotThumbnail';
+import { getShotImageData, getShotCards } from '@/lib/shotUtils';
+
+export default async function Home() {
+    const shots = await getShotCards();
+    const imageDataByShot = shots
+        .map((shot) => {
+            const imageData = getShotImageData(shot);
+            return imageData && { ...shot, ...imageData };
+        })
+        .filter(shot => shot != null);
+
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            test
-        </div>
+        <main className="p-6">
+            {imageDataByShot.length === 0 ? (
+                <div className="text-gray-500">No shots yet.</div>
+            ) : (
+                <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {imageDataByShot.map((shot) => (
+                        <li key={shot.id} className="rounded-lg border bg-white p-4">
+                            <div className="mb-2 text-lg font-medium">{shot.title}</div>
+                            <ShotThumbnail shotUploadId={shot.uploadId} fileExt={shot.fileExt} alt={shot.title} />
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </main>
     );
 }
