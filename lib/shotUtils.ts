@@ -1,4 +1,13 @@
-import { getSupabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from '@/lib/database.types';
+
+function getPublicSupabase() {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+        auth: { persistSession: false },
+    });
+}
 import { logger } from '@/lib/consoleUtils';
 import { ShotBlock, ShotCard } from '@/lib/ui.types';
 import { unstable_cache } from 'next/cache';
@@ -21,7 +30,7 @@ export const getResizedShotUrl = (
 ): string | undefined => {
     try {
         const filePath = `${shotUploadId}.${fileExt}`;
-        const { data } = getSupabase()
+        const { data } = getPublicSupabase()
             .storage.from('shots')
             .getPublicUrl(filePath, {
                 transform: {
@@ -87,7 +96,7 @@ export const getShotImageData = (shot: ShotCard): { uploadId: string; fileExt: s
 };
 
 async function fetchShotCards(userId?: string): Promise<ShotCard[]> {
-    let query = getSupabase()
+    let query = getPublicSupabase()
         .from('shots')
         .select(
             `
@@ -142,7 +151,8 @@ async function fetchShotCards(userId?: string): Promise<ShotCard[]> {
         return [];
     }
 
-    return data.map((shot) => {
+    const rows = (data as unknown as any[]) ?? [];
+    return rows.map((shot: any) => {
         const shotBlocks: ShotBlock[] = (shot.shot_blocks ?? [])
             .sort((a: any, b: any) => a.position - b.position)
             .map((block: any) => ({

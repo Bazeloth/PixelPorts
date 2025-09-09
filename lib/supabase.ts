@@ -1,24 +1,30 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
+import { createServerClient } from '@supabase/ssr';
 import type { Database } from './database.types';
 
-/**
- * Returns a Supabase client
- */
-export function getSupabase(): SupabaseClient<Database> {
+export async function getSupabase() {
+    const cookieStore = (await cookies()) as unknown as {
+        get: (name: string) => { value: string } | undefined;
+        set: (args: any) => void;
+    };
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const isProduction = process.env.NODE_ENV === 'production';
 
     if (!supabaseUrl || !supabaseKey) {
         throw new Error('Missing Supabase environment variables');
     }
 
-    return createClient<Database>(supabaseUrl, supabaseKey, {
-        auth: { persistSession: true },
-        global: {
-            headers: isProduction
-                ? { 'x-supabase-custom-domain': 'api.pixelports.com' }
-                : undefined,
+    return createServerClient<Database>(supabaseUrl, supabaseKey, {
+        cookies: {
+            get(name) {
+                return cookieStore.get(name)?.value;
+            },
+            set(name, value, options) {
+                cookieStore.set({ name, value, ...options });
+            },
+            remove(name, options) {
+                cookieStore.set({ name, value: '', ...options });
+            },
         },
     });
 }
