@@ -1,52 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from '@/lib/database.types';
-
-function getPublicSupabase() {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-    return createClient<Database>(supabaseUrl, supabaseAnonKey, {
-        auth: { persistSession: false },
-    });
-}
-import { logger } from '@/lib/consoleUtils';
 import { ShotBlock, ShotCard } from '@/lib/ui.types';
 import { unstable_cache } from 'next/cache';
-
-/**
- * Gets a resized version of a shot image URL with enhanced options using Supabase's image transformations
- * @param shotUploadId The shot upload ID associated with the image
- * @param fileExt The file extension of the image
- * @param options The transformation options (width, height, quality)
- * @returns The URL with transformation parameters or undefined in case of error
- */
-export const getResizedShotUrl = (
-    shotUploadId: string,
-    fileExt: string,
-    options: {
-        width?: number;
-        height?: number;
-        quality?: number;
-    }
-): string | undefined => {
-    try {
-        const filePath = `${shotUploadId}.${fileExt}`;
-        const { data } = getPublicSupabase()
-            .storage.from('shots')
-            .getPublicUrl(filePath, {
-                transform: {
-                    width: options.width,
-                    height: options.height,
-                    quality: options.quality || 80,
-                    resize: 'cover',
-                },
-            });
-
-        return data.publicUrl;
-    } catch (error) {
-        logger.Error('Error transforming shot image URL:', error);
-        return undefined;
-    }
-};
+import { getSupabase } from '@/lib/supabase';
 
 export const getShotImageData = (shot: ShotCard): { uploadId: string; fileExt: string } | null => {
     // If blocks exist, look for image or carousel blocks
@@ -96,7 +50,8 @@ export const getShotImageData = (shot: ShotCard): { uploadId: string; fileExt: s
 };
 
 async function fetchShotCards(userId?: string): Promise<ShotCard[]> {
-    let query = getPublicSupabase()
+    const supabase = await getSupabase();
+    let query = supabase
         .from('shots')
         .select(
             `
