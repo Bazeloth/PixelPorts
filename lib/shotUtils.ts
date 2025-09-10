@@ -1,20 +1,36 @@
 import { ShotBlock, ShotCard } from '@/lib/ui.types';
 import { unstable_cache } from 'next/cache';
 import { getSupabase } from '@/lib/supabase';
+import { SupabaseClient } from '@supabase/supabase-js';
 
-export const getShotImageData = (shot: ShotCard): { uploadId: string; fileExt: string } | null => {
+type SupabaseClientWithStorage = Pick<SupabaseClient<any, any, any, any, any>, 'storage'>;
+
+function getSourceFromShotsStorage(
+    supabase: SupabaseClientWithStorage,
+    uploadId: string,
+    fileExt: string
+): string {
+    const filePath = `${uploadId}.${fileExt}`;
+    return supabase.storage.from('shots').getPublicUrl(filePath, {}).data.publicUrl;
+}
+
+export const findFirstImageSource = (
+    supabase: SupabaseClientWithStorage,
+    shotBlocks: ShotBlock[]
+): string | null => {
     // If blocks exist, look for image or carousel blocks
-    if (shot.blocks && shot.blocks.length > 0) {
+    if (shotBlocks.length > 0) {
         // First, try to find an image block
-        const firstImageBlock = shot.blocks.find((block) => block.type === 'image');
+        const firstImageBlock = shotBlocks.find((block) => block.type === 'image');
         if (firstImageBlock && firstImageBlock.upload) {
-            return {
-                uploadId: firstImageBlock.upload.id,
-                fileExt: firstImageBlock.upload.file_ext,
-            };
+            return getSourceFromShotsStorage(
+                supabase,
+                firstImageBlock.upload.id,
+                firstImageBlock.upload.file_ext
+            );
         }
 
-        const firstCarouselBlock = shot.blocks.find((block) => {
+        const firstCarouselBlock = shotBlocks.find((block) => {
             return block.type === 'carousel';
         });
 
@@ -36,10 +52,11 @@ export const getShotImageData = (shot: ShotCard): { uploadId: string; fileExt: s
                     sortedUpload.upload.id &&
                     sortedUpload.upload.file_ext
                 ) {
-                    return {
-                        uploadId: sortedUpload.upload.id,
-                        fileExt: sortedUpload.upload.file_ext,
-                    };
+                    return getSourceFromShotsStorage(
+                        supabase,
+                        sortedUpload.upload.id,
+                        sortedUpload.upload.file_ext
+                    );
                 }
             }
         }
@@ -164,7 +181,7 @@ async function fetchShotCards(userId?: string): Promise<ShotCard[]> {
 }
 
 // Cache the function for 5 minutes and tag it for invalidation.
-export const getShotCards = unstable_cache(
+export const getShotCardsCached = unstable_cache(
     async (userId?: string) => fetchShotCards(userId),
     // cache key parts (vary by userId when provided)
     ['shots'],

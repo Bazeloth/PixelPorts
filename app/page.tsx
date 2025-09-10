@@ -1,14 +1,18 @@
 import { ShotThumbnail } from '@/app/components/ShotThumbnail';
-import { getShotImageData, getShotCards } from '@/lib/shotUtils';
+import { findFirstImageSource, getShotCardsCached } from '@/lib/shotUtils';
+import { getSupabase } from '@/lib/supabase';
+import { ShotCard } from '@/lib/ui.types';
 
 export default async function Home() {
-    const shots = await getShotCards();
+    const supabase = await getSupabase();
+    const shots = await getShotCardsCached();
+
     const imageDataByShot = shots
         .map((shot) => {
-            const imageData = getShotImageData(shot);
-            return imageData && { ...shot, ...imageData };
+            const src = findFirstImageSource(supabase, shot.blocks);
+            return src ? { ...shot, src } : null;
         })
-        .filter((shot) => shot != null);
+        .filter((shot): shot is ShotCard & { src: string } => shot != null);
 
     return (
         <main className="p-6">
@@ -19,11 +23,7 @@ export default async function Home() {
                     {imageDataByShot.map((shot) => (
                         <li key={shot.id} className="rounded-lg border bg-white p-4">
                             <div className="mb-2 text-lg font-medium">{shot.title}</div>
-                            <ShotThumbnail
-                                shotUploadId={shot.uploadId}
-                                fileExt={shot.fileExt}
-                                alt={shot.title}
-                            />
+                            <ShotThumbnail src={shot.src} alt={shot.title} />
                         </li>
                     ))}
                 </ul>
