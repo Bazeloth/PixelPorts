@@ -1,11 +1,11 @@
 import { ShotThumbnail } from '@/app/components/ShotThumbnail';
-import { findFirstImageSource, getShotCardsCached } from '@/lib/shotUtils';
-import { getSupabase } from '@/lib/supabase';
+import { findFirstImageSource, fetchShotCards } from '@/lib/shotUtils';
+import { createSupabaseClient } from '@/lib/supabase/server';
 import { ShotCard } from '@/lib/ui.types';
 
 export default async function Home() {
-    const supabase = await getSupabase();
-    const shots = await getShotCardsCached();
+    const supabase = await createSupabaseClient();
+    const shots = await fetchShotCards();
 
     const imageDataByShot = shots
         .map((shot) => {

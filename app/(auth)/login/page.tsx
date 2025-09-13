@@ -1,10 +1,10 @@
 import { signInWithPassword, signOut } from '@/app/(auth)/actions';
-import { getSupabase } from '@/lib/supabase';
+import { createSupabaseClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
 export default async function LoginPage() {
-    const supabase = await getSupabase();
+    const supabase = await createSupabaseClient();
     const {
         data: { user },
     } = await supabase.auth.getUser();

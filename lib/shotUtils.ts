@@ -1,6 +1,5 @@
 import { ShotBlock, ShotCard } from '@/lib/ui.types';
-import { unstable_cache } from 'next/cache';
-import { getSupabase } from '@/lib/supabase';
+import { createSupabaseClient } from '@/lib/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 type SupabaseClientWithStorage = Pick<SupabaseClient<any, any, any, any, any>, 'storage'>;
@@ -66,8 +65,8 @@ export const findFirstImageSource = (
     return null;
 };
 
-async function fetchShotCards(userId?: string): Promise<ShotCard[]> {
-    const supabase = await getSupabase();
+export async function fetchShotCards(userId?: string): Promise<ShotCard[]> {
+    const supabase = await createSupabaseClient();
     let query = supabase
         .from('shots')
         .select(
@@ -179,14 +178,3 @@ async function fetchShotCards(userId?: string): Promise<ShotCard[]> {
         };
     });
 }
-
-// Cache the function for 5 minutes and tag it for invalidation.
-export const getShotCardsCached = unstable_cache(
-    async (userId?: string) => fetchShotCards(userId),
-    // cache key parts (vary by userId when provided)
-    ['shots'],
-    {
-        revalidate: 300, // seconds (5 minutes)
-        tags: ['shots'], // you can add per-user tags dynamically at callsite if needed
-    }
-);

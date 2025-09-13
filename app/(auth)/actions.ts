@@ -1,6 +1,7 @@
 'use server';
+
 import { redirect } from 'next/navigation';
-import { getSupabase } from '@/lib/supabase';
+import { createSupabaseClient } from '@/lib/supabase/server';
 
 export async function signInWithPassword(formData: FormData) {
     const emailOrUsername = String(formData.get('identifier') ?? '').trim();
@@ -10,7 +11,7 @@ export async function signInWithPassword(formData: FormData) {
         throw new Error('Missing credentials');
     }
 
-    const supabase = await getSupabase();
+    const supabase = await createSupabaseClient();
 
     // If your auth is configured for email login only, treat identifier as email.
     // If you support username login, you need to resolve username -> email first.
@@ -40,7 +41,7 @@ export async function signInWithPassword(formData: FormData) {
 }
 
 export async function signOut() {
-    const supabase = await getSupabase();
+    const supabase = await createSupabaseClient();
     await supabase.auth.signOut();
     redirect('/');
 }
