@@ -1,24 +1,23 @@
 'use server';
 
-import { redirect } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase/server';
 
-export async function signInWithPassword(formData: FormData) {
+export type SignInResult = { success: true } | { success: false; error: string };
+
+export async function signInWithPassword(formData: FormData): Promise<SignInResult> {
     const emailOrUsername = String(formData.get('identifier') ?? '').trim();
     const password = String(formData.get('password') ?? '');
 
     if (!emailOrUsername || !password) {
-        throw new Error('Missing credentials');
+        return { success: false, error: 'Invalid username/email or password' };
     }
 
     const supabase = await createSupabaseClient();
 
-    // If your auth is configured for email login only, treat identifier as email.
-    // If you support username login, you need to resolve username -> email first.
-    // Here we try email first; if it doesn't look like an email, try resolving username to email.
     let email = emailOrUsername;
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailOrUsername)) {
-        // Resolve username to email from your userprofiles table if available
+    const looksLikeEmail = !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailOrUsername);
+    if (looksLikeEmail) {
+        // Resolve username to email from the userprofiles table if available
         const { data: rawProfile } = await supabase
             .from('userprofiles')
             .select('email')
@@ -26,22 +25,15 @@ export async function signInWithPassword(formData: FormData) {
             .maybeSingle();
         const profile = rawProfile as unknown as { email?: string } | null;
         if (!profile?.email) {
-            throw new Error('Invalid username or password');
+            return { success: false, error: 'Invalid username or password' };
         }
         email = profile.email;
     }
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-        throw new Error(error.message);
+        return { success: false, error: 'Invalid username/email or password' };
     }
 
-    // Cookies are set by @supabase/ssr; redirect to home
-    redirect('/');
-}
-
-export async function signOut() {
-    const supabase = await createSupabaseClient();
-    await supabase.auth.signOut();
-    redirect('/');
+    return { success: true };
 }
