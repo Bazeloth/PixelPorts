@@ -150,3 +150,24 @@ function normalizeSupabaseSignUpError(msg: string) {
     if (/password/i.test(msg)) return 'Your password does not meet requirements';
     return 'Sign up failed. Please try again.';
 }
+
+
+export type OAuthProvider = 'google' | 'linkedin';
+
+export async function signInWithOAuth(provider: OAuthProvider) {
+    const supabase = await createSupabaseClient();
+    const redirectTo = process.env.NEXT_PUBLIC_SITE_URL
+        ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
+        : undefined;
+
+    // Using supabase-js on the server to start the OAuth flow.
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: provider as any,
+        options: { redirectTo },
+    });
+
+    if (error) {
+        return { success: false as const, error: error.message };
+    }
+    return { success: true as const, url: data?.url };
+}
