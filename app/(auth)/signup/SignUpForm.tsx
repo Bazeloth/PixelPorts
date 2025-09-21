@@ -72,35 +72,6 @@ export default function SignUpForm() {
             </div>
 
             <div>
-                <label className="mb-1 block text-sm font-medium" htmlFor="username">
-                    Username
-                </label>
-                <input
-                    id="username"
-                    name="username"
-                    type="text"
-                    autoComplete="username"
-                    className="w-full rounded border px-3 py-2"
-                    required
-                    aria-invalid={!!fe.username}
-                    aria-describedby={fe.username ? 'username-error' : undefined}
-                />
-                {fe.username ? (
-                    <p id="username-error" className="mt-1 text-xs text-red-600">
-                        {fe.username}
-                    </p>
-                ) : (
-                    <ul className="mt-1 list-disc pl-5 text-xs text-gray-500">
-                        <li>Use letters, numbers, underscores, or hyphens</li>
-                        <li>Cannot start or end with hyphen or underscore</li>
-                        <li>Cannot contain spaces</li>
-                        <li>Cannot be only numbers</li>
-                        <li>Must be unique across platform</li>
-                    </ul>
-                )}
-            </div>
-
-            <div>
                 <label className="mb-1 block text-sm font-medium" htmlFor="password">
                     Password
                 </label>
