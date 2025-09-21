@@ -61,8 +61,14 @@ export async function signUpWithEmail(formData: FormData): Promise<SignUpResult>
     if (!email || !emailRegex.test(email)) {
         fieldErrors.email = 'Please enter a valid email address';
     }
-    if (!username || !/^([a-z0-9_.\-]){3,20}$/i.test(username)) {
-        fieldErrors.username = 'Username must be 3–20 chars (letters, numbers, _.-)';
+    // Username rules: letters, numbers, underscores, or hyphens; cannot start or end with _ or -; no spaces. Numeric-only is rejected below.
+    const usernameRegex = /^[a-zA-Z0-9][a-zA-Z0-9_-]*[a-zA-Z0-9]$|^[a-zA-Z0-9]$/;
+    if (!username || !usernameRegex.test(username)) {
+        fieldErrors.username = 'Use letters, numbers, underscores, or hyphens; cannot start or end with _ or -';
+    } else if (/^\d+$/.test(username)) {
+        fieldErrors.username = 'Username cannot be only numbers';
+    } else if (/\s/.test(username)) {
+        fieldErrors.username = 'Username cannot contain spaces';
     }
     // Password policy: 8+ chars incl. a number
     if (!password || password.length < 8 || !/\d/.test(password)) {

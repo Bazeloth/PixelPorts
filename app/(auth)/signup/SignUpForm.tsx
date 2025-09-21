@@ -90,9 +90,13 @@ export default function SignUpForm() {
                         {fe.username}
                     </p>
                 ) : (
-                    <p className="mt-1 text-xs text-gray-500">
-                        3–20 chars; letters, numbers, _ . -
-                    </p>
+                    <ul className="mt-1 list-disc pl-5 text-xs text-gray-500">
+                        <li>Use letters, numbers, underscores, or hyphens</li>
+                        <li>Cannot start or end with hyphen or underscore</li>
+                        <li>Cannot contain spaces</li>
+                        <li>Cannot be only numbers</li>
+                        <li>Must be unique across platform</li>
+                    </ul>
                 )}
             </div>
 
