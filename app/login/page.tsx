@@ -1,7 +1,7 @@
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import LoginForm from '@/app/(auth)/login/LoginForm';
-import OAuthButtons from '@/app/(auth)/OAuthButtons';
+import LoginForm from '@/app/login/LoginForm';
+import OAuthButtons from '@/app/login/OAuthButtons';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,7 +31,10 @@ export default async function LoginPage() {
             <LoginForm />
             <p className="mt-6 text-center text-sm text-gray-600">
                 Don’t have an account?{' '}
-                <a href="/signup" className="font-medium text-black underline-offset-2 hover:underline">
+                <a
+                    href="/signup"
+                    className="font-medium text-black underline-offset-2 hover:underline"
+                >
                     Create one
                 </a>
             </p>
