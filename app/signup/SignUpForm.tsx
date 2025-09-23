@@ -55,7 +55,6 @@ export default function SignUpForm() {
                     Email
                 </label>
                 <input
-                    id="email"
                     name="email"
                     type="email"
                     autoComplete="email"

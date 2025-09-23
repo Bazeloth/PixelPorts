@@ -1,6 +1,6 @@
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import SignUpForm from '@/app/(auth)/signup/SignUpForm';
+import SignUpForm from '@/app/signup/SignUpForm';
 import OAuthButtons from '@/app/(auth)/OAuthButtons';
 
 export const dynamic = 'force-dynamic';
