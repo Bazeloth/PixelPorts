@@ -120,9 +120,8 @@ export type OAuthProvider = 'google' | 'linkedin';
 
 export async function signInWithOAuth(provider: OAuthProvider) {
     const supabase = await createSupabaseClient();
-    const redirectTo = process.env.NEXT_PUBLIC_SITE_URL
-        ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
-        : undefined;
+    const next = '/auth/choose-username';
+    const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`;
 
     // Using supabase-js on the server to start the OAuth flow.
     const { data, error } = await supabase.auth.signInWithOAuth({

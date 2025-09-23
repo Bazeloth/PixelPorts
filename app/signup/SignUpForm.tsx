@@ -3,8 +3,8 @@
 import { useEffect, useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import type { SignUpResult } from '@/app/(auth)/actions';
-import { signUpWithEmail } from '@/app/(auth)/actions';
+import type { SignUpResult } from '@/app/login/actions';
+import { signUpWithEmail } from '@/app/login/actions';
 
 function SubmitButton() {
     const { pending } = useFormStatus();

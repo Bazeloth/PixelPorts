@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import SignUpForm from '@/app/signup/SignUpForm';
 import OAuthButtons from '@/app/login/OAuthButtons';
 import Link from 'next/link';
+import { logger } from '@/lib/consoleUtils';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,7 @@ export default async function SignupPage() {
     } = await supabase.auth.getUser();
 
     if (user) {
+        logger.Info('User already logged in', { user });
         redirect('/');
     }
 
