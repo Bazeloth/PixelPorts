@@ -2,7 +2,7 @@
 
 import { useEffect, useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { SignInResult, signInWithPassword } from '@/app/(auth)/actions';
+import { SignInResult, signInWithPassword } from '@/app/login/actions';
 import { useRouter } from 'next/navigation';
 
 function SubmitButton() {
