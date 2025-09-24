@@ -81,9 +81,7 @@ export async function signUpWithEmail(formData: FormData): Promise<SignUpResult>
         email,
         password,
         options: {
-            emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL
-                ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
-                : undefined,
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
         },
     });
 
