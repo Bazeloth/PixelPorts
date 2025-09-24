@@ -50,7 +50,7 @@ export async function signInWithPassword(formData: FormData): Promise<SignInResu
 export type FieldErrors = Partial<Record<'email' | 'password' | 'confirm', string>>;
 
 export type SignUpResult =
-    | { success: true; needsVerification?: boolean; email?: string; next?: string }
+    | { success: true; needsVerification?: boolean; email: string; next?: string }
     | { success: false; error: string; fieldErrors?: FieldErrors };
 
 export async function signUpWithEmail(formData: FormData): Promise<SignUpResult> {
