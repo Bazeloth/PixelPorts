@@ -94,7 +94,7 @@ export async function signUpWithEmail(formData: FormData): Promise<SignUpResult>
     }
 
     const needsVerification = !!signUpData.user && !signUpData.session;
-    const next = !needsVerification ? '/auth/choose-username' : undefined;
+    const next = !needsVerification ? '/signup/complete-profile' : undefined;
     return {
         success: true,
         needsVerification,
@@ -118,7 +118,7 @@ export type OAuthProvider = 'google' | 'linkedin';
 
 export async function signInWithOAuth(provider: OAuthProvider) {
     const supabase = await createSupabaseClient();
-    const next = '/auth/choose-username';
+    const next = '/signup/complete-profile';
     const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`;
 
     // Using supabase-js on the server to start the OAuth flow.
