@@ -1,5 +1,5 @@
 function Label({ children }: { children: React.ReactNode }) {
-    return <label className="text-sm font-medium text-gray-900 block">{children}</label>;
+    return <label className="text-sm font-bold text-gray-900 block">{children}</label>;
 }
 
 function SubLabel({ children }: { children: React.ReactNode }) {
