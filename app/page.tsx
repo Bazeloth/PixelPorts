@@ -136,7 +136,7 @@ export default async function Home() {
                         Ready to showcase your work?
                     </h2>
                     <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-                        Join thousands of emerging designers building their careers on Pixelports
+                        Join emerging designers building their careers on Pixelports
                     </p>
                     <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200">
                         Start Your Portfolio Today
