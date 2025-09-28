@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
     title: 'PixelPorts',
@@ -27,7 +28,11 @@ export default function RootLayout({
                         <div className="flex justify-between items-center h-16">
                             <div className="flex items-center">
                                 <div className="flex-shrink-0">
-                                    <h1 className="text-xl font-bold text-gray-900">Pixelports</h1>
+                                    <h1 className="text-xl font-bold text-gray-900">
+                                        <Link href="/" aria-label="PixelPorts - Go to homepage">
+                                            PixelPorts
+                                        </Link>
+                                    </h1>
                                 </div>
                             </div>
                             <div className="hidden md:block">
