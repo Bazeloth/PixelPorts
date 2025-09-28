@@ -1,11 +1,35 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Link from 'next/link';
 import { createSupabaseClient } from '@/lib/supabase/server';
+import { Inter } from 'next/font/google';
 
 export const metadata: Metadata = {
     title: 'PixelPorts',
+    description: 'Showcase your design journey on PixelPorts.',
+    openGraph: {
+        title: 'PixelPorts',
+        description: 'Showcase your design journey on PixelPorts.',
+        url: 'https://your-domain.com',
+        siteName: 'PixelPorts',
+        images: [{ url: '/og.png', width: 1200, height: 630 }],
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'PixelPorts',
+        description: 'Showcase your design journey on PixelPorts.',
+        images: ['/og.png'],
+    },
+    robots: { index: true, follow: true },
 };
+
+export const viewport: Viewport = {
+    width: 'device-width',
+    initialScale: 1,
+};
+
+const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 export default async function RootLayout({
     children,
@@ -19,16 +43,7 @@ export default async function RootLayout({
 
     return (
         <html lang="en">
-            <head>
-                <meta charSet="UTF-8" />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                <title>Pixelports - Showcase Your Design Journey</title>
-                <link
-                    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-                    rel="stylesheet"
-                />
-            </head>
-            <body className="bg-gray-50 antialiased font-sans">
+            <body className={`${inter.className} bg-gray-50 antialiased`}>
                 <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between items-center h-16">
