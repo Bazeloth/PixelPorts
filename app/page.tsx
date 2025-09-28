@@ -1,5 +1,6 @@
 import FeaturedDesigner from '@/app/FeaturedDesigner';
 import ShotCard from '@/app/ShotCard';
+import ShotFilters from '@/app/ShotFilters';
 
 export default async function Home() {
     return (
@@ -38,20 +39,7 @@ export default async function Home() {
                             <h2 className="text-3xl font-bold text-gray-900 mb-2">Recent Work</h2>
                             <p className="text-gray-600">Fresh designs from our community</p>
                         </div>
-                        <div className="flex space-x-2">
-                            <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition duration-200">
-                                All
-                            </button>
-                            <button className="text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-white transition duration-200">
-                                UI/UX
-                            </button>
-                            <button className="text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-white transition duration-200">
-                                Branding
-                            </button>
-                            <button className="text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-white transition duration-200">
-                                Web
-                            </button>
-                        </div>
+                        <ShotFilters />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
