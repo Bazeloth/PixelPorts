@@ -3,6 +3,31 @@ import { createSupabaseClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/consoleUtils';
 import UserMenu from './UserMenu';
 
+const NavLinks = () => (
+    <div className="hidden md:block">
+        <div className="ml-10 flex items-baseline space-x-4">
+            <Link
+                href="/discover"
+                className="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium"
+            >
+                Discover
+            </Link>
+            <Link
+                href="/browse"
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+            >
+                Browse
+            </Link>
+            <Link
+                href="/about"
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+            >
+                About
+            </Link>
+        </div>
+    </div>
+);
+
 export default async function Header() {
     const supabase = await createSupabaseClient();
 
@@ -42,31 +67,6 @@ export default async function Header() {
               // fallback if storage is misconfigured
               avatarFallbackUrl)
             : avatarFallbackUrl;
-
-    const NavLinks = () => (
-        <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
-                <Link
-                    href="/discover"
-                    className="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium"
-                >
-                    Discover
-                </Link>
-                <Link
-                    href="/browse"
-                    className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-                >
-                    Browse
-                </Link>
-                <Link
-                    href="/about"
-                    className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-                >
-                    About
-                </Link>
-            </div>
-        </div>
-    );
 
     return (
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
