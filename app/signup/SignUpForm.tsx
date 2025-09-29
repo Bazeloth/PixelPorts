@@ -32,7 +32,7 @@ export default function SignUpForm() {
     useEffect(() => {
         if (state.success) {
             if ('needsVerification' in state && state.needsVerification) {
-                router.replace(`/signup/verify$?email=${encodeURIComponent(state.email)}`);
+                router.replace(`/signup/verify?email=${encodeURIComponent(state.email)}`);
             } else {
                 router.replace('/');
             }
