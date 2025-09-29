@@ -34,13 +34,14 @@ export default async function Header() {
     // Build avatar URL safely; fall back if missing
     const avatarExt = profile?.avatar_file_ext ?? null;
     const displayName = profile?.name ?? 'User';
+    let avatarFallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}`;
     const avatarUrl =
         user && avatarExt
             ? (supabase.storage.from('avatars').getPublicUrl(`${user.id}.${avatarExt}`).data
                   ?.publicUrl ??
               // fallback if storage is misconfigured
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}`)
-            : `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}`;
+              avatarFallbackUrl)
+            : avatarFallbackUrl;
 
     const NavLinks = () => (
         <div className="hidden md:block">
