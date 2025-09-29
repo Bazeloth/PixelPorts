@@ -13,7 +13,7 @@ export type UserMenuProps = {
 function SignOutForm({ onSubmitted }: { onSubmitted: () => void }) {
     const { pending } = useFormStatus();
     return (
-        <form action={signOutAction} method="post" onSubmit={() => onSubmitted?.()}>
+        <form action={signOutAction} onSubmit={() => onSubmitted?.()}>
             <button
                 type="submit"
                 className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center w-full text-left"
