@@ -28,7 +28,7 @@ export default async function Header() {
             logger.Error('Error fetching user profile', { user, profileErr });
         }
 
-        profile = profileData ?? null; // could be null if there is no row yet
+        profile = profileData; // could be null if there is no row yet
     }
 
     // Build avatar URL safely; fall back if missing
