@@ -27,7 +27,7 @@ export default async function ShotCard({
 }: ShotCardProps) {
     return (
         <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition duration-200 overflow-hidden group cursor-pointer flex flex-col">
-            <div className="aspect-w-16 aspect-h-12 bg-gradient-to-br from-blue-400 to-blue-600 relative overflow-hidden">
+            <div className="bg-gradient-to-br from-blue-400 to-blue-600 relative overflow-hidden w-[400px] h-[192px]">
                 <Image
                     src={image.src}
                     alt={image.alt}
