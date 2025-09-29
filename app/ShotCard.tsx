@@ -58,7 +58,7 @@ export default async function ShotCard({
                             alt={designer.name}
                             width={24}
                             height={24}
-                            className="rounded-full mr-2"
+                            className="rounded-full mr-2 w-6 h-6 object-cover"
                         />
                         <span className="text-sm text-gray-700">{designer.name}</span>
                     </div>
