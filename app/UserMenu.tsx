@@ -2,11 +2,38 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useFormStatus } from 'react-dom';
+import { signOutAction } from '@/app/actions/auth';
 
 export type UserMenuProps = {
     avatarUrl: string;
     displayName: string;
 };
+
+function SignOutForm({ onSubmitted }: { onSubmitted: () => void }) {
+    const { pending } = useFormStatus();
+    return (
+        <form action={signOutAction} method="post" onSubmit={() => onSubmitted?.()}>
+            <button
+                type="submit"
+                className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center w-full text-left"
+                role="menuitem"
+                aria-label="Sign out"
+                disabled={pending}
+            >
+                <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    />
+                </svg>
+                {pending ? 'Signing out…' : 'Sign out'}
+            </button>
+        </form>
+    );
+}
 
 export default function UserMenu({ avatarUrl, displayName }: UserMenuProps) {
     const [open, setOpen] = useState(false);
@@ -151,26 +178,7 @@ export default function UserMenu({ avatarUrl, displayName }: UserMenuProps) {
                         Upgrade to Pro
                     </a>
                     <div className="border-t border-gray-200">
-                        <Link
-                            href="/signout"
-                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                            role="menuitem"
-                        >
-                            <svg
-                                className="w-4 h-4 mr-3"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                            Sign out
-                        </Link>
+                        <SignOutForm onSubmitted={() => setOpen(false)} />
                     </div>
                 </div>
             )}
