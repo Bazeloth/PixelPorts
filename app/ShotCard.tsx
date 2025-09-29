@@ -1,6 +1,9 @@
+import Image from 'next/image';
+
 export type ShotCardProps = {
     title: string;
     description: string;
+    tags: string[];
     designer: ShotCardDesignersProps;
     image: ShotCardImageProps;
 };
@@ -15,26 +18,47 @@ export type ShotCardDesignersProps = {
     src: string;
 };
 
-export default async function ShotCard({ title, description, designer, image }: ShotCardProps) {
+export default async function ShotCard({
+    title,
+    description,
+    tags,
+    designer,
+    image,
+}: ShotCardProps) {
     return (
-        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition duration-200 overflow-hidden group cursor-pointer">
+        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition duration-200 overflow-hidden group cursor-pointer flex flex-col">
             <div className="aspect-w-16 aspect-h-12 bg-gradient-to-br from-blue-400 to-blue-600 relative overflow-hidden">
-                <img
+                <Image
                     src={image.src}
                     alt={image.alt}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition duration-300"
+                    fill
+                    className="object-cover group-hover:scale-105 transition duration-300"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    priority={false}
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-300"></div>
             </div>
-            <div className="p-4">
+            <div className="p-4 flex-1 flex flex-col">
                 <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
-                <p className="text-sm text-gray-600 mb-3">{description}</p>
+                <p className="text-sm text-gray-600 mb-3 flex-1">{description}</p>
+                <div className="flex flex-wrap gap-1 mb-3">
+                    {tags.map((tag) => (
+                        <span
+                            key={tag}
+                            className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
+                        >
+                            {tag}
+                        </span>
+                    ))}
+                </div>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                        <img
+                        <Image
                             src={designer.src}
                             alt={designer.name}
-                            className="w-6 h-6 rounded-full mr-2"
+                            width={24}
+                            height={24}
+                            className="rounded-full mr-2"
                         />
                         <span className="text-sm text-gray-700">{designer.name}</span>
                     </div>

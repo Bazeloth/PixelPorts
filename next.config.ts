@@ -1,13 +1,27 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-	/* config options here */
-	images: {
-		remotePatterns: [
-			new URL('http://localhost:54321/storage/**'),
-			new URL('https://api.pixelports.com/storage/**')
-		],
-	},
+    /* config options here */
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '54321',
+                pathname: '/storage/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'api.pixelports.com',
+                pathname: '/storage/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'images.unsplash.com',
+                pathname: '/**',
+            },
+        ],
+    },
 };
 
 export default nextConfig;

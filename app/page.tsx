@@ -46,6 +46,7 @@ export default async function Home() {
                         <ShotCard
                             title={'Banking App Redesign'}
                             description={'Modern take on mobile banking with improved UX flow'}
+                            tags={['Mobile design', 'UI/UX']}
                             designer={{
                                 src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80',
                                 name: 'Alex Rivera',
@@ -59,6 +60,7 @@ export default async function Home() {
                         <ShotCard
                             title={'E-commerce Platform'}
                             description={'Clean, conversion-focused design for fashion retail'}
+                            tags={['Web Design', 'E-commerce']}
                             designer={{
                                 src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
                                 name: 'Maya Patel',
@@ -72,6 +74,7 @@ export default async function Home() {
                         <ShotCard
                             title={'Sustainable Brand Identity'}
                             description={'Eco-friendly startup complete brand package'}
+                            tags={['Branding', 'Identity']}
                             designer={{
                                 src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
                                 name: 'Jordan Kim',
@@ -85,6 +88,7 @@ export default async function Home() {
                         <ShotCard
                             title={'Food Delivery App'}
                             description={'Streamlined ordering experience with local focus'}
+                            tags={['Mobile design', 'Product design']}
                             designer={{
                                 src: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80',
                                 name: 'Emma Chen',
@@ -98,6 +102,7 @@ export default async function Home() {
                         <ShotCard
                             title={'SaaS Dashboard'}
                             description={'Analytics platform with intuitive data visualization'}
+                            tags={['Web Design', 'Dashboard']}
                             designer={{
                                 src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80',
                                 name: 'David Park',
@@ -111,6 +116,7 @@ export default async function Home() {
                         <ShotCard
                             title={'Medical App Interface'}
                             description={'Patient-focused healthcare management system'}
+                            tags={['Mobile design', 'Healthcare']}
                             designer={{
                                 src: 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
                                 name: 'Lisa Wong',
