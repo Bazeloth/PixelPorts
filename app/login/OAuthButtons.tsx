@@ -1,23 +1,24 @@
 'use client';
 
-import { useTransition } from 'react';
+import { JSX, useTransition } from 'react';
 import { signInWithOAuth } from '@/app/login/actions';
 
 type Provider = 'google' | 'linkedin';
 
-function providerStyles(provider: Provider) {
-    const base =
-        'flex w-full items-center justify-center gap-2 rounded px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
+type StyleDef = {
+    Icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+    label: string;
+};
+
+function providerStyles(provider: Provider): StyleDef {
     switch (provider) {
         case 'google':
             return {
-                btn: `${base} border border-gray-300 bg-white text-gray-900 hover:bg-gray-50 active:bg-gray-100 focus:ring-gray-300`,
                 Icon: GoogleIcon,
                 label: 'Continue with Google',
             };
         case 'linkedin':
             return {
-                btn: `${base} bg-[#0A66C2] text-white hover:bg-[#0959A8] active:bg-[#084C8F] focus:ring-[#0A66C2]`,
                 Icon: LinkedInIcon,
                 label: 'Continue with LinkedIn',
             };
@@ -26,22 +27,31 @@ function providerStyles(provider: Provider) {
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
-        <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" {...props}>
+        <svg aria-hidden viewBox="0 0 24 24" {...props}>
+            <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            ></path>
+            <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            ></path>
+            <path
+                fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+            ></path>
             <path
                 fill="#EA4335"
-                d="M12 10.2v3.9h6.4c-.3 1.9-2.1 5.5-6.4 5.5-3.9 0-7.1-3.2-7.1-7.1S8.1 5.4 12 5.4c2.2 0 3.6.9 4.5 1.7l3.1-3.1C17.8 2 15.1.9 12 .9 5.8.9.9 5.8.9 12S5.8 23.1 12 23.1c6.9 0 11.4-4.8 11.4-11.6 0-.8-.1-1.3-.2-1.9H12z"
-            />
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+            ></path>
         </svg>
     );
 }
 
 function LinkedInIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
-        <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" {...props}>
-            <path
-                fill="#FFFFFF"
-                d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.1C13 9.1 14.6 8 16.9 8c4.1 0 4.8 2.7 4.8 6.1V23h-4v-5.3c0-1.3 0-3-1.9-3s-2.2 1.5-2.2 2.9V23h-4V8.5z"
-            />
+        <svg aria-hidden fill="#0077B5" viewBox="0 0 24 24" {...props}>
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path>
         </svg>
     );
 }
@@ -60,8 +70,13 @@ function OAuthButton({ provider }: { provider: Provider }) {
     };
 
     return (
-        <button type="button" onClick={onClick} className={styles.btn} disabled={pending}>
-            <styles.Icon />
+        <button
+            type="button"
+            onClick={onClick}
+            className="group relative w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200"
+            disabled={pending}
+        >
+            <styles.Icon className="w-5 h-5 mr-2" />
             {pending ? 'Connecting…' : styles.label}
         </button>
     );
@@ -69,7 +84,7 @@ function OAuthButton({ provider }: { provider: Provider }) {
 
 export default function OAuthButtons() {
     return (
-        <div className="space-y-2">
+        <div className="space-y-3">
             <OAuthButton provider="google" />
             <OAuthButton provider="linkedin" />
         </div>
