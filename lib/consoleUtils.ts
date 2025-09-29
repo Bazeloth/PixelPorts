@@ -17,9 +17,9 @@ export const logger = {
      * Logs a warning message to the console in development environment
      * @param message - The warning message to log
      */
-    Warn: (message: string): void => {
+    Warn: (message: string, ...optionalParams: unknown[]): void => {
         if (process.env.NODE_ENV !== 'production') {
-            console.warn(message);
+            console.warn(message, ...optionalParams);
         }
     },
 
