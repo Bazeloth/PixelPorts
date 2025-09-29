@@ -44,7 +44,7 @@ export default function AuthSwitcher() {
 
                     <LoginForm />
 
-                    <div className="text-center">
+                    <div className="text-center mt-6">
                         <span className="text-sm text-gray-600">Don't have an account? </span>
                         <button
                             type="button"
@@ -69,7 +69,7 @@ export default function AuthSwitcher() {
 
                     {/* Social Sign Up */}
                     <div className="mt-8 space-y-3">
-                        <OAuthButtons variant="neutral" />
+                        <OAuthButtons />
                     </div>
 
                     <div className="mt-6">
@@ -90,7 +90,7 @@ export default function AuthSwitcher() {
                         <SignUpForm />
                     </div>
 
-                    <div className="text-center">
+                    <div className="text-center mt-6">
                         <span className="text-sm text-gray-600">Already have an account? </span>
                         <button
                             type="button"

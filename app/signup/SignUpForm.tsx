@@ -10,7 +10,7 @@ function SubmitButton() {
     const { pending } = useFormStatus();
     return (
         <button
-            className="rounded bg-black px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-60"
+            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 disabled:opacity-60"
             type="submit"
             disabled={pending}
         >
@@ -50,14 +50,14 @@ export default function SignUpForm() {
             ) : null}
 
             <div>
-                <label className="mb-1 block text-sm font-medium" htmlFor="email">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="email">
                     Email
                 </label>
                 <input
                     name="email"
                     type="email"
                     autoComplete="email"
-                    className="w-full rounded border px-3 py-2"
+                    className="appearance-none relative block w-full px-4 py-3 border border-gray-300 bg-white placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-200"
                     required
                     aria-invalid={!!fe.email}
                     aria-describedby={fe.email ? 'email-error' : undefined}
@@ -70,7 +70,7 @@ export default function SignUpForm() {
             </div>
 
             <div>
-                <label className="mb-1 block text-sm font-medium" htmlFor="password">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="password">
                     Password
                 </label>
                 <input
@@ -78,7 +78,7 @@ export default function SignUpForm() {
                     name="password"
                     type="password"
                     autoComplete="new-password"
-                    className="w-full rounded border px-3 py-2"
+                    className="appearance-none relative block w-full px-4 py-3 border border-gray-300 bg-white placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-200"
                     required
                     aria-invalid={!!fe.password}
                     aria-describedby={fe.password ? 'password-error' : undefined}
@@ -95,7 +95,7 @@ export default function SignUpForm() {
             </div>
 
             <div>
-                <label className="mb-1 block text-sm font-medium" htmlFor="confirm">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="confirm">
                     Confirm password
                 </label>
                 <input
@@ -103,7 +103,7 @@ export default function SignUpForm() {
                     name="confirm"
                     type="password"
                     autoComplete="new-password"
-                    className="w-full rounded border px-3 py-2"
+                    className="appearance-none relative block w-full px-4 py-3 border border-gray-300 bg-white placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-200"
                     required
                     aria-invalid={!!fe.confirm}
                     aria-describedby={fe.confirm ? 'confirm-error' : undefined}

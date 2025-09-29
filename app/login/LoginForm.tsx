@@ -48,7 +48,7 @@ export default function LoginForm() {
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Email or username</label>
                     <input
-                        className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                        className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 bg-white placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                         type="text"
                         name="identifier"
                         placeholder="Enter your email or username"
@@ -58,7 +58,7 @@ export default function LoginForm() {
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Password</label>
                     <input
-                        className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                        className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 bg-white placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                         type="password"
                         name="password"
                         placeholder="Enter your password"
