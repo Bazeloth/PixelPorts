@@ -10,7 +10,7 @@ export type UserDetails = {
 export type User = {
     id: string;
     email: string;
-    details: UserDetails;
+    details: UserDetails | null;
 };
 
 const UserContext = createContext<User | null>(null);
