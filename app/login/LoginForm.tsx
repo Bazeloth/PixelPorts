@@ -46,12 +46,14 @@ export default function LoginForm() {
 
             <div className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Email or username</label>
+                    <label className="block text-sm font-medium text-gray-700">Email</label>
                     <input
                         className="mt-1 appearance-none relative block w-full px-3 py-3 border border-gray-300 bg-white placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                        type="text"
-                        name="identifier"
-                        placeholder="Enter your email or username"
+                        type="email"
+                        name="email"
+                        autoComplete="email"
+                        inputMode="email"
+                        placeholder="you@example.com"
                         required
                     />
                 </div>

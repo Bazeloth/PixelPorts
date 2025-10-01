@@ -1,46 +1,28 @@
 'use server';
 
 import { createSupabaseClient } from '@/lib/supabase/server';
+import { isValidEmail } from '@/lib/emailUtils';
 
 export type SignInResult = { success: true } | { success: false; error: string };
 
 export async function signInWithPassword(formData: FormData): Promise<SignInResult> {
-    const emailOrUsername = String(formData.get('identifier') ?? '').trim();
+    const email = String(formData.get('email') ?? '').trim();
     const password = String(formData.get('password') ?? '');
 
-    if (!emailOrUsername || !password) {
+    if (!email || !isValidEmail(email) || !password) {
         return {
             success: false,
-            error: 'Invalid username/email or password',
+            error: 'Invalid email or password',
         };
     }
 
     const supabase = await createSupabaseClient();
-
-    let email = emailOrUsername;
-    const looksLikeEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailOrUsername);
-    if (looksLikeEmail) {
-        // Resolve username to email from the userprofiles table if available
-        const { data: rawProfile } = await supabase
-            .from('userprofiles')
-            .select('email')
-            .eq('username', emailOrUsername)
-            .maybeSingle();
-        const profile = rawProfile as unknown as { email?: string } | null;
-        if (!profile?.email) {
-            return {
-                success: false,
-                error: 'Invalid username or password',
-            };
-        }
-        email = profile.email;
-    }
-
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+
     if (error) {
         return {
             success: false,
-            error: 'Invalid username/email or password',
+            error: 'Invalid email or password',
         };
     }
 
@@ -60,8 +42,7 @@ export async function signUpWithEmail(formData: FormData): Promise<SignUpResult>
 
     const fieldErrors: FieldErrors = {};
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
+    if (!email || !isValidEmail(email)) {
         fieldErrors.email = 'Please enter a valid email address';
     }
     if (!password || password.length < 8 || !/\d/.test(password)) {
