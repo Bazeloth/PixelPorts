@@ -1,12 +1,13 @@
 import FeaturedDesigner from '@/app/FeaturedDesigner';
 import ShotCard from '@/app/ShotCard';
 import ShotFilters from '@/app/ShotFilters';
+import { Container } from '@/app/Container';
 
 export default async function Home() {
     return (
         <>
             <section className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 pt-12 pb-20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <Container>
                     <div className="text-center">
                         <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
                             Showcase Your <br />
@@ -27,13 +28,13 @@ export default async function Home() {
                             </button>
                         </div>
                     </div>
-                </div>
+                </Container>
             </section>
 
             <FeaturedDesigner />
 
             <section className="py-16 bg-gray-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <Container>
                     <div className="flex justify-between items-center mb-12">
                         <div>
                             <h2 className="text-3xl font-bold text-gray-900 mb-2">Recent Work</h2>
@@ -133,11 +134,11 @@ export default async function Home() {
                             Load More Designs
                         </button>
                     </div>
-                </div>
+                </Container>
             </section>
 
             <section className="bg-gray-900 py-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <Container className="text-center">
                     <h2 className="text-3xl font-bold text-white mb-4">
                         Ready to showcase your work?
                     </h2>
@@ -147,11 +148,11 @@ export default async function Home() {
                     <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200">
                         Start Your Portfolio Today
                     </button>
-                </div>
+                </Container>
             </section>
 
             <footer className="bg-white border-t border-gray-200 py-12">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <Container>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div>
                             <h3 className="font-bold text-gray-900 mb-4">Pixelports</h3>
@@ -223,7 +224,7 @@ export default async function Home() {
                     <div className="border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-600">
                         <p>&copy; 2025 Pixelports. All rights reserved.</p>
                     </div>
-                </div>
+                </Container>
             </footer>
         </>
     );

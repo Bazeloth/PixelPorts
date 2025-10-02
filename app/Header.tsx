@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/consoleUtils';
 import UserMenu from './UserMenu';
+import { Container } from '@/app/Container';
 
 const NavLinks = () => (
     <div className="hidden md:block">
@@ -68,7 +69,7 @@ export default async function Header() {
 
     return (
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-            <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Container as={'nav'}>
                 <div className="flex justify-between items-center h-16">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -125,7 +126,7 @@ export default async function Header() {
                         )}
                     </div>
                 </div>
-            </nav>
+            </Container>
         </header>
     );
 }
