@@ -33,15 +33,13 @@ export default async function Header() {
 
     const {
         data: { user },
-        error: userErr,
     } = await supabase.auth.getUser();
 
-    if (userErr) {
-        logger.Error('Error fetching auth user', { userErr });
-    }
-
     // Try to fetch profile only if we have a user
-    let profile: { name: string | null; avatar_file_ext: string | null } | null = null;
+    let profile: {
+        name: string | null;
+        avatar_file_ext: string | null;
+    } | null = null;
     if (user) {
         const { data: profileData, error: profileErr } = await supabase
             .from('userprofiles')
