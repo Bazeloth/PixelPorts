@@ -12,19 +12,18 @@ type ActionState =
       }
     | null;
 
-export async function checkUsernameAvailability(username: string) {
+export async function checkUsernameAvailability(
+    username: string
+): Promise<{ ok: true; available: boolean } | { ok: false; error: string }> {
     const res = validateUsername(username);
     if (!res.ok) {
-        return {
-            available: false,
-            errors: { username: [res.error] },
-        };
+        return { ok: false, error: res.error };
     }
 
     // Check database
     const exists = false; // simulate
 
-    return { available: !exists, error: null };
+    return { ok: true, available: !exists };
 }
 
 export async function createUser(
@@ -41,8 +40,14 @@ export async function createUser(
         };
     }
 
-    // Final server-side availability check
+    // Final server-side availability check using the normalized shape
     const availabilityCheck = await checkUsernameAvailability(res.value);
+    if (!('ok' in availabilityCheck) || !availabilityCheck.ok) {
+        return {
+            errors: { username: [availabilityCheck.error] },
+            message: 'Validation failed',
+        };
+    }
     if (!availabilityCheck.available) {
         return {
             errors: { username: ['Username is already taken'] },

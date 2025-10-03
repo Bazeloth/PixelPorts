@@ -10,12 +10,12 @@ export function useUsernameField(serverError?: string[]) {
     const [username, setUsername] = useState('');
     const [clientError, setClientError] = useState<string | null>(null);
     const [isChecking, setIsChecking] = useState(false);
-    const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
+    const [available, setAvailable] = useState<boolean | null>(null);
 
     const debouncedUsername = useDebounce(username, 500);
 
     useEffect(() => {
-        setIsAvailable(null);
+        setAvailable(null);
         setClientError(null);
 
         if (!debouncedUsername) {
@@ -26,7 +26,7 @@ export function useUsernameField(serverError?: string[]) {
         // Client-side validation first
         const res = validateUsername(debouncedUsername);
         if (!res.ok) {
-            setClientError((res as { ok: false; error: string }).error);
+            setClientError(res.error);
             setIsChecking(false);
             return;
         }
@@ -35,17 +35,21 @@ export function useUsernameField(serverError?: string[]) {
         setIsChecking(true);
         logger.Info('Username search triggered for:', debouncedUsername);
 
-        checkUsernameAvailability(debouncedUsername).then(({ available, error }) => {
+        checkUsernameAvailability(debouncedUsername).then((r) => {
             setIsChecking(false);
-            setIsAvailable(available);
-            if (error) setClientError(error);
-            if (!available && !error) setClientError('Username is unavailable');
+            if (!r.ok) {
+                setAvailable(false);
+                setClientError(r.error);
+                return;
+            }
+            setAvailable(r.available);
+            if (!r.available) setClientError('Username is unavailable');
         });
     }, [debouncedUsername]);
 
-    const error = clientError || serverError?.[0];
-    const usernameIsAvailable = !isChecking && isAvailable === true && !error;
-    const usernameIsUnavailable = !isChecking && (isAvailable === false || !!error);
+    const error = clientError || serverError?.[0] || null;
+    const usernameIsAvailable = !isChecking && available === true && !error;
+    const usernameIsUnavailable = !isChecking && (available === false || !!error);
 
     return {
         name: 'username' as const,
