@@ -1,9 +1,19 @@
+// app/actions/user.ts
 'use server';
 
 import { userSchema } from '@/lib/validations/user';
 
+type ActionState =
+    | {
+          errors: { username?: string[] };
+          message: string;
+      }
+    | {
+          success: boolean;
+      }
+    | null;
+
 export async function checkUsernameAvailability(username: string) {
-    // Validate format first
     const result = userSchema.pick({ username: true }).safeParse({ username });
 
     if (!result.success) {
@@ -14,13 +24,12 @@ export async function checkUsernameAvailability(username: string) {
     }
 
     // Check database
-    // const exists = await db.user.findUnique({ where: { username } })
     const exists = false; // simulate
 
     return { available: !exists, error: null };
 }
 
-export async function createUser(formData: FormData) {
+export async function createUser(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const rawData = {
         username: formData.get('username'),
         // ... other fields
