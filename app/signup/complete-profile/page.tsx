@@ -1,14 +1,8 @@
-'use client';
-
-import { createSupabaseClient } from '@/lib/supabase/client';
-import { logger } from '@/lib/consoleUtils';
+import { createSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { FieldLabel } from '@/app/signup/complete-profile/FieldLabel';
 import { Container } from '@/app/Container';
 import Box from '@/app/Box';
-import { UsernameControl } from '@/app/signup/complete-profile/UsernameControl';
-import { useActionState } from 'react';
-import { createUser } from '@/app/actions/user';
+import CompleteProfileClient from './CompleteProfileClient';
 
 export default async function CompleteProfilePage() {
     const supabase = await createSupabaseClient();
@@ -17,14 +11,11 @@ export default async function CompleteProfilePage() {
     } = await supabase.auth.getUser();
 
     if (!user) {
-        logger.Info('User not logged in', { user });
         redirect('/');
     }
 
-    const [state, formAction, isPending] = useActionState(createUser, null);
-
     return (
-        <Container className={'py-12'}>
+        <Container className="py-12">
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete your profile</h1>
                 <p className="text-lg text-gray-600">
@@ -32,28 +23,7 @@ export default async function CompleteProfilePage() {
                 </p>
             </div>
             <Box>
-                <form action={formAction}>
-                    <div className="space-y-6">
-                        <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">
-                            Basic Information
-                        </h3>
-                        <div className="grid grid-cols-2 gap-x-6 gap-y-4 items-start">
-                            <FieldLabel
-                                label="Username"
-                                sublabel="A unique name for your profile."
-                            />
-                            <UsernameControl
-                                serverError={
-                                    state && 'errors' in state ? state.errors?.username : undefined
-                                }
-                            />
-
-                            <button type="submit" disabled={isPending}>
-                                Sign Up
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                <CompleteProfileClient />
             </Box>
         </Container>
     );
