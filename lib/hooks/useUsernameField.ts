@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { userSchema } from '@/lib/validations/user';
 import { checkUsernameAvailability } from '@/app/actions/user';
 import useDebounce from '@/lib/hooks/useDebounce';
 import { logger } from '@/lib/consoleUtils';
+import { validateUsername } from '@/lib/validation/username';
 
 export function useUsernameField(serverError?: string[]) {
     const [username, setUsername] = useState('');
@@ -24,12 +24,9 @@ export function useUsernameField(serverError?: string[]) {
         }
 
         // Client-side validation first
-        const result = userSchema
-            .pick({ username: true })
-            .safeParse({ username: debouncedUsername });
-
-        if (!result.success) {
-            setClientError(result.error.flatten().fieldErrors.username?.[0] || 'Invalid username');
+        const res = validateUsername(debouncedUsername);
+        if (!res.ok) {
+            setClientError((res as { ok: false; error: string }).error);
             setIsChecking(false);
             return;
         }

@@ -1,7 +1,6 @@
-// app/actions/user.ts
 'use server';
 
-import { userSchema } from '@/lib/validations/user';
+import { validateUsername } from '@/lib/validation/username';
 
 type ActionState =
     | {
@@ -14,12 +13,11 @@ type ActionState =
     | null;
 
 export async function checkUsernameAvailability(username: string) {
-    const result = userSchema.pick({ username: true }).safeParse({ username });
-
-    if (!result.success) {
+    const res = validateUsername(username);
+    if (!res.ok) {
         return {
             available: false,
-            error: result.error.flatten().fieldErrors.username?.[0],
+            errors: { username: [res.error] },
         };
     }
 
@@ -29,23 +27,22 @@ export async function checkUsernameAvailability(username: string) {
     return { available: !exists, error: null };
 }
 
-export async function createUser(prevState: ActionState, formData: FormData): Promise<ActionState> {
-    const rawData = {
-        username: formData.get('username'),
-        // ... other fields
-    };
+export async function createUser(
+    _prevState: ActionState,
+    formData: FormData
+): Promise<ActionState> {
+    const usernameInput = formData.get('username');
 
-    const result = userSchema.safeParse(rawData);
-
-    if (!result.success) {
+    const res = validateUsername(usernameInput);
+    if (!res.ok) {
         return {
-            errors: result.error.flatten().fieldErrors,
+            errors: { username: [res.error] },
             message: 'Validation failed',
         };
     }
 
     // Final server-side availability check
-    const availabilityCheck = await checkUsernameAvailability(result.data.username);
+    const availabilityCheck = await checkUsernameAvailability(res.value);
     if (!availabilityCheck.available) {
         return {
             errors: { username: ['Username is already taken'] },
