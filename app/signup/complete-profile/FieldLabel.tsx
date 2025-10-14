@@ -6,7 +6,7 @@ function SubLabel({ children }: { children: React.ReactNode }) {
     return <p className="text-xs text-gray-500 mt-1">{children}</p>;
 }
 
-export async function FieldLabel({ label, sublabel }: { label: string; sublabel?: string }) {
+export function FieldLabel({ label, sublabel }: { label: string; sublabel?: string }) {
     return (
         <div>
             <Label>{label}</Label>
