@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { createSupabaseClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/consoleUtils';
 import UserMenu from './UserMenu';
 import { Container } from '@/app/Container';
 import UserAvatar from '@/app/UserAvatar';

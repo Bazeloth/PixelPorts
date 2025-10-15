@@ -1,4 +1,3 @@
-import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
 import Image from 'next/image';
 
 export type AvatarProps = {
