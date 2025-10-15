@@ -1,6 +1,6 @@
 'use client';
 
-import { JSX, useTransition } from 'react';
+import { JSX } from 'react';
 import { signInWithOAuth } from '@/app/login/actions';
 
 type Provider = 'google' | 'linkedin';
@@ -57,16 +57,13 @@ function LinkedInIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 function OAuthButton({ provider }: { provider: Provider }) {
-    const [pending, startTransition] = useTransition();
     const styles = providerStyles(provider)!;
 
-    const onClick = () => {
-        startTransition(async () => {
-            const res = await signInWithOAuth(provider);
-            if (res && 'url' in res && res.url) {
-                window.location.href = res.url;
-            }
-        });
+    const onClick = async () => {
+        const res = await signInWithOAuth(provider);
+        if (res && 'url' in res && res.url) {
+            window.location.href = res.url;
+        }
     };
 
     return (
@@ -74,10 +71,9 @@ function OAuthButton({ provider }: { provider: Provider }) {
             type="button"
             onClick={onClick}
             className="group relative w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200"
-            disabled={pending}
         >
             <styles.Icon className="w-5 h-5 mr-2" />
-            {pending ? 'Connecting…' : styles.label}
+            {styles.label}
         </button>
     );
 }

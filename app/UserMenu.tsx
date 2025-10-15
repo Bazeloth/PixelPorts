@@ -1,8 +1,5 @@
-'use client';
-
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useFormStatus } from 'react-dom';
 import { signOutAction } from '@/app/actions/auth';
 
 export type UserMenuProps = {
@@ -11,7 +8,6 @@ export type UserMenuProps = {
 };
 
 function SignOutForm({ onSubmitted }: { onSubmitted: () => void }) {
-    const { pending } = useFormStatus();
     return (
         <form action={signOutAction} onSubmit={() => onSubmitted?.()}>
             <button
@@ -19,7 +15,6 @@ function SignOutForm({ onSubmitted }: { onSubmitted: () => void }) {
                 className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center w-full text-left"
                 role="menuitem"
                 aria-label="Sign out"
-                disabled={pending}
             >
                 <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -29,7 +24,7 @@ function SignOutForm({ onSubmitted }: { onSubmitted: () => void }) {
                         strokeLinejoin="round"
                     />
                 </svg>
-                {pending ? 'Signing out…' : 'Sign out'}
+                Sign out
             </button>
         </form>
     );
