@@ -3,6 +3,8 @@ import { createSupabaseClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/consoleUtils';
 import UserMenu from './UserMenu';
 import { Container } from '@/app/Container';
+import UserAvatar from '@/app/UserAvatar';
+import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
 
 const NavLinks = () => (
     <div className="hidden md:block">
@@ -36,36 +38,7 @@ export default async function Header() {
         data: { user },
     } = await supabase.auth.getUser();
 
-    // Try to fetch profile only if we have a user
-    let profile: {
-        name: string | null;
-        avatar_file_ext: string | null;
-    } | null = null;
-    if (user) {
-        const { data: profileData, error: profileErr } = await supabase
-            .from('userprofiles')
-            .select('name, avatar_file_ext')
-            .eq('id', user.id)
-            .maybeSingle();
-
-        if (profileErr) {
-            logger.Error('Error fetching user profile', { user, profileErr });
-        }
-
-        profile = profileData; // could be null if there is no row yet
-    }
-
-    // Build avatar URL safely; fall back if missing
-    const avatarExt = profile?.avatar_file_ext ?? null;
-    const displayName = profile?.name ?? 'User';
-    let avatarFallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}`;
-    const avatarUrl =
-        user && avatarExt
-            ? (supabase.storage.from('avatars').getPublicUrl(`${user.id}.${avatarExt}`).data
-                  ?.publicUrl ??
-              // fallback if storage is misconfigured
-              avatarFallbackUrl)
-            : avatarFallbackUrl;
+    const profile = await getUserAndProfile();
 
     return (
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -149,7 +122,10 @@ export default async function Header() {
                                     Upload Work
                                 </Link>
 
-                                <UserMenu avatarUrl={avatarUrl} displayName={displayName} />
+                                <UserMenu
+                                    avatar={<UserAvatar userId={user.id} />}
+                                    displayName={profile?.profile?.name ?? null}
+                                />
                             </>
                         ) : (
                             <>

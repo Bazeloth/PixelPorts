@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useFormStatus } from 'react-dom';
 import { signOutAction } from '@/app/actions/auth';
 
 export type UserMenuProps = {
-    avatarUrl: string;
-    displayName: string;
+    avatar: ReactNode;
+    displayName: string | null;
 };
 
 function SignOutForm({ onSubmitted }: { onSubmitted: () => void }) {
@@ -35,7 +35,7 @@ function SignOutForm({ onSubmitted }: { onSubmitted: () => void }) {
     );
 }
 
-export default function UserMenu({ avatarUrl, displayName }: UserMenuProps) {
+export default function UserMenu({ avatar, displayName }: UserMenuProps) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
@@ -73,11 +73,7 @@ export default function UserMenu({ avatarUrl, displayName }: UserMenuProps) {
                     aria-haspopup="menu"
                     aria-expanded={open}
                 >
-                    <img
-                        className="h-8 w-8 rounded-full"
-                        src={avatarUrl}
-                        alt={`${displayName}'s profile picture`}
-                    />
+                    {avatar}
                 </button>
             </div>
 
@@ -88,9 +84,12 @@ export default function UserMenu({ avatarUrl, displayName }: UserMenuProps) {
                     aria-label="User menu"
                     className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5"
                 >
-                    <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-200">
-                        <div className="font-medium">{displayName || 'Your Name'}</div>
-                    </div>
+                    {displayName && (
+                        <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-200">
+                            <div className="font-medium">{displayName}</div>
+                        </div>
+                    )}
+
                     <Link
                         href="/profile"
                         className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"

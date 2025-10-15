@@ -1,10 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import Link from 'next/link';
-import { createSupabaseClient } from '@/lib/supabase/server';
 import { Inter } from 'next/font/google';
 import Header from '@/app/Header';
-import UserProviderServer from '@/lib/supabase/UserProviderServer';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!;
 
@@ -42,10 +39,8 @@ export default async function RootLayout({
     return (
         <html lang="en">
             <body className={`${inter.className} bg-gray-50 antialiased`}>
-                <UserProviderServer>
-                    <Header />
-                    {children}
-                </UserProviderServer>
+                <Header />
+                {children}
             </body>
         </html>
     );
