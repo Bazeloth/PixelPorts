@@ -1,7 +1,7 @@
 'use client';
 
 import { JSX } from 'react';
-import { signInWithOAuth } from '@/app/login/actions';
+import { createSupabaseClient } from '@/lib/supabase/client';
 
 type Provider = 'google' | 'linkedin';
 
@@ -60,9 +60,22 @@ function OAuthButton({ provider }: { provider: Provider }) {
     const styles = providerStyles(provider)!;
 
     const onClick = async () => {
-        const res = await signInWithOAuth(provider);
-        if (res && 'url' in res && res.url) {
-            window.location.href = res.url;
+        const supabase = await createSupabaseClient();
+        const next = '/signup/complete-profile';
+        const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`;
+
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: provider as any,
+            options: { redirectTo },
+        });
+
+        if (error) {
+            console.error('OAuth sign-in failed:', error);
+            return;
+        }
+
+        if (data?.url) {
+            window.location.assign(data.url);
         }
     };
 
@@ -70,7 +83,7 @@ function OAuthButton({ provider }: { provider: Provider }) {
         <button
             type="button"
             onClick={onClick}
-            className="group relative w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200"
+            className="group relative w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 cursor-pointer"
         >
             <styles.Icon className="w-5 h-5 mr-2" />
             {styles.label}
