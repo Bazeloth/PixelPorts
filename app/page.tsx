@@ -20,10 +20,10 @@ export default async function Home() {
                             process, and grow your career with meaningful exposure.
                         </p>
                         <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto">
+                            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto cursor-pointer">
                                 Start Your Portfolio
                             </button>
-                            <button className="border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto">
+                            <button className="border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto cursor-pointer">
                                 Explore Designs
                             </button>
                         </div>
@@ -145,7 +145,7 @@ export default async function Home() {
                     <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
                         Join emerging designers building their careers on Pixelports
                     </p>
-                    <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200">
+                    <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 cursor-pointer">
                         Start Your Portfolio Today
                     </button>
                 </Container>

@@ -45,7 +45,7 @@ export default async function FeaturedDesigner() {
                                     Prototyping
                                 </span>
                             </div>
-                            <button className="bg-white text-indigo-600 px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition duration-200">
+                            <button className="bg-white text-indigo-600 px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition duration-200 cursor-pointer">
                                 View Full Project
                             </button>
                         </div>
