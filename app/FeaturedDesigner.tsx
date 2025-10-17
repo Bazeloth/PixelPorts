@@ -12,7 +12,7 @@ export default async function FeaturedDesigner() {
                     <div className="flex flex-col lg:flex-row items-center">
                         <div className="lg:w-1/3 mb-8 lg:mb-0">
                             <img
-                                src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
+                                src="https://images.unsplash.com/profile-1495427732560-fe5248ad6638?ixlib=rb-4.1.0&auto=format&fit=crop&q=60&w=687&dpr=1&crop=face"
                                 alt="Featured Designer"
                                 className="w-32 h-32 rounded-full mx-auto border-4 border-white/20"
                             />
