@@ -2,6 +2,7 @@ import FeaturedDesigner from '@/app/FeaturedDesigner';
 import ShotCard from '@/app/ShotCard';
 import ShotFilters from '@/app/ShotFilters';
 import { Container } from '@/app/Container';
+import RecentlyJoined from '@/app/RecentlyJoined';
 
 export default async function Home() {
     return (
@@ -37,7 +38,7 @@ export default async function Home() {
                 <Container>
                     <div className="flex justify-between items-center mb-12">
                         <div>
-                            <h2 className="text-3xl font-bold text-gray-900 mb-2">Recent Work</h2>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-2">Discover</h2>
                             <p className="text-gray-600">Fresh designs from our community</p>
                         </div>
                         <ShotFilters />
@@ -134,6 +135,21 @@ export default async function Home() {
                             Load More Designs
                         </button>
                     </div>
+                </Container>
+            </section>
+
+            <section className="py-16 bg-white">
+                <Container>
+                    <div className="flex justify-between items-center mb-12">
+                        <div>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                                Recently Joined
+                            </h2>
+                            <p className="text-gray-600">Discover new designers on Pixelports</p>
+                        </div>
+                    </div>
+
+                    <RecentlyJoined />
                 </Container>
             </section>
 
