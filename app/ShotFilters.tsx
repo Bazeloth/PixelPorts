@@ -1,16 +1,16 @@
 export default async function ShotFilters() {
     return (
-        <div className="flex space-x-2">
-            <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition duration-200">
+        <div className="flex items-center gap-2 bg-white rounded-lg p-2 border border-slate-200">
+            <button className="px-4 py-1.5 rounded-md font-medium transition-all text-xs bg-indigo-600 text-white">
                 All
             </button>
-            <button className="text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-white transition duration-200">
+            <button className="px-4 py-1.5 rounded-md font-medium transition-all text-xs text-slate-600 hover:bg-slate-50 cursor-pointer">
                 UI/UX
             </button>
-            <button className="text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-white transition duration-200">
+            <button className="px-4 py-1.5 rounded-md font-medium transition-all text-xs text-slate-600 hover:bg-slate-50 cursor-pointer">
                 Branding
             </button>
-            <button className="text-gray-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-white transition duration-200">
+            <button className="px-4 py-1.5 rounded-md font-medium transition-all text-xs text-slate-600 hover:bg-slate-50 cursor-pointer">
                 Web
             </button>
         </div>

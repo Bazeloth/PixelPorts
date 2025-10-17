@@ -51,7 +51,7 @@ export default async function ShotCard({
                         </span>
                     ))}
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between border-t border-slate-100 pt-2">
                     <div className="flex items-center">
                         <Image
                             src={designer.src}
