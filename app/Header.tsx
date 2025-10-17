@@ -1,9 +1,8 @@
 import Link from 'next/link';
 import { createSupabaseClient } from '@/lib/supabase/server';
-import UserMenu from './UserMenu';
 import { Container } from '@/app/Container';
-import UserAvatar from '@/app/UserAvatar';
-import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
+import { ArrowRight } from 'lucide-react';
+import { connection } from 'next/server';
 
 const NavLinks = () => (
     <div className="hidden md:block">
@@ -31,13 +30,12 @@ const NavLinks = () => (
 );
 
 export default async function Header() {
+    await connection();
     const supabase = await createSupabaseClient();
 
     const {
         data: { user },
     } = await supabase.auth.getUser();
-
-    const profile = await getUserAndProfile();
 
     return (
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -102,29 +100,19 @@ export default async function Header() {
                         {user ? (
                             <>
                                 <Link
-                                    href="/upload"
-                                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center"
+                                    href="/logout"
+                                    className="text-gray-600 hover:text-gray-900 text-sm font-medium"
                                 >
-                                    <svg
-                                        className="w-4 h-4 mr-2"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            d="M12 4v16m8-8H4"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
-                                    Upload Work
+                                    Sign Out
                                 </Link>
-
-                                <UserMenu
-                                    avatar={<UserAvatar userId={user.id} />}
-                                    displayName={profile?.profile?.name ?? null}
-                                />
+                                <Link
+                                    href="/signup/complete-profile"
+                                    className="bg-white border border-gray-300 rounded-lg flex items-center gap-2 px-6 py-2 text-sm font-medium hover:bg-gray-50 transition duration-200"
+                                    aria-label="Complete your profile"
+                                >
+                                    <ArrowRight className="w-4 h-4 text-gray-700" />
+                                    Complete Profile
+                                </Link>
                             </>
                         ) : (
                             <>
@@ -138,7 +126,7 @@ export default async function Header() {
                                     href="/signup"
                                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200"
                                 >
-                                    Join Pixelports
+                                    Get Started
                                 </Link>
                             </>
                         )}
