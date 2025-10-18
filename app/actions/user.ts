@@ -1,6 +1,6 @@
 'use server';
 
-import { validateUsername } from '@/lib/validation/username';
+import { validateUsername } from '@/lib/utils/username';
 
 type ActionState =
     | {

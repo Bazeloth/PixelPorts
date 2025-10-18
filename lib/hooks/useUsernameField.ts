@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { checkUsernameAvailability } from '@/app/actions/user';
 import useDebounce from '@/lib/hooks/useDebounce';
-import { logger } from '@/lib/consoleUtils';
-import { validateUsername } from '@/lib/validation/username';
+import { logger } from '@/lib/utils/console';
+import { validateUsername } from '@/lib/utils/username';
 
 export function useUsernameField(serverError?: string[]) {
     const [username, setUsername] = useState('');

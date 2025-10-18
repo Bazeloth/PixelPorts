@@ -1,6 +1,6 @@
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { logger } from '@/lib/consoleUtils';
+import { logger } from '@/lib/utils/console';
 import AuthPage from '@/app/auth/AuthPage';
 
 export const dynamic = 'force-dynamic';

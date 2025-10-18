@@ -1,7 +1,7 @@
 'use server';
 
 import { createSupabaseClient } from '@/lib/supabase/server';
-import { isValidEmail } from '@/lib/emailUtils';
+import { isValidEmail } from '@/lib/utils/email';
 
 export type SignInResult = { success: true } | { success: false; error: string };
 

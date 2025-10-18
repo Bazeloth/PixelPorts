@@ -1,7 +1,11 @@
 import { NextRequest } from 'next/server';
 import { createSupabaseClient } from '@/lib/supabase/server';
-import { fetchShotCardsPage, findFirstImageSource, getTextSnippetFromBlocks } from '@/lib/shotUtils';
-import { getAvatarUrl } from '@/lib/avatar';
+import {
+    fetchShotCardsPage,
+    findFirstImageSource,
+    getTextSnippetFromBlocks,
+} from '@/lib/utils/shot';
+import { getAvatarUrl } from '@/lib/utils/avatar';
 
 export async function GET(req: NextRequest) {
     try {
@@ -14,7 +18,6 @@ export async function GET(req: NextRequest) {
 
         const { items, nextCursor } = await fetchShotCardsPage({ limit, cursor });
         const supabase = await createSupabaseClient();
-
 
         const payload = items.map((shot) => {
             const imageSrc =

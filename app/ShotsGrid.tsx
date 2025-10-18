@@ -3,9 +3,8 @@ import {
     fetchShotCardsPage,
     findFirstImageSource,
     getTextSnippetFromBlocks,
-} from '@/lib/shotUtils';
+} from '@/lib/utils/shot';
 import { createSupabaseClient } from '@/lib/supabase/server';
-import { getAvatarUrl } from '@/lib/avatar';
 
 export default async function ShotsGrid({
     category = 'all',
@@ -73,3 +72,4 @@ export default async function ShotsGrid({
 // Lazy import the client component to avoid importing it at the top in a server file
 // This pattern uses the RSC allowance to reference a client component symbol below.
 import LoadMore from './LoadMore';
+import { getAvatarUrl } from '@/lib/utils/avatar';
