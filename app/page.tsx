@@ -3,7 +3,7 @@ import ShotCard from '@/app/ShotCard';
 import ShotFilters from '@/app/ShotFilters';
 import { Container } from '@/app/Container';
 import RecentlyJoined from '@/app/RecentlyJoined';
-import ProjectGrid from '@/app/ProjectGrid';
+import ShotsGrid from '@/app/ShotsGrid';
 
 export default async function Home() {
     return (
@@ -45,7 +45,7 @@ export default async function Home() {
                         <ShotFilters defaultCategory={'all'} />
                     </div>
 
-                    <ProjectGrid initialLimit={12} />
+                    <ShotsGrid initialLimit={12} />
                 </Container>
             </section>
 

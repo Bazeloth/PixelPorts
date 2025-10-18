@@ -7,7 +7,7 @@ import {
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { getAvatarUrl } from '@/lib/avatar';
 
-export default async function ProjectGrid({
+export default async function ShotsGrid({
     category = 'all',
     initialLimit = 12,
 }: {
