@@ -1,30 +1,22 @@
+'use client';
+
 import Image from 'next/image';
 
-export type ShotCardProps = {
+export type ShotCardClientProps = {
     title: string;
     description: string;
     tags: string[];
-    designer: ShotCardDesignersProps;
-    image: ShotCardImageProps;
+    designer: { name: string; src: string };
+    image: { src: string; alt: string };
 };
 
-export type ShotCardImageProps = {
-    src: string;
-    alt: string;
-};
-
-export type ShotCardDesignersProps = {
-    name: string;
-    src: string;
-};
-
-export default async function ShotCard({
+export default function ShotCardClient({
     title,
     description,
     tags,
     designer,
     image,
-}: ShotCardProps) {
+}: ShotCardClientProps) {
     return (
         <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition duration-200 overflow-hidden group cursor-pointer flex flex-col">
             <div className="bg-gradient-to-br from-blue-400 to-blue-600 relative overflow-hidden w-[400px] h-[192px]">
@@ -34,6 +26,7 @@ export default async function ShotCard({
                     fill
                     className="object-cover group-hover:scale-105 transition duration-300"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    priority={false}
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-300"></div>
             </div>

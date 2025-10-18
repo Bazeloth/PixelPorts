@@ -3,6 +3,7 @@ import ShotCard from '@/app/ShotCard';
 import ShotFilters from '@/app/ShotFilters';
 import { Container } from '@/app/Container';
 import RecentlyJoined from '@/app/RecentlyJoined';
+import ProjectGrid from '@/app/ProjectGrid';
 
 export default async function Home() {
     return (
@@ -44,97 +45,7 @@ export default async function Home() {
                         <ShotFilters defaultCategory={'all'} />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <ShotCard
-                            title={'Banking App Redesign'}
-                            description={'Modern take on mobile banking with improved UX flow'}
-                            tags={['Mobile design', 'UI/UX']}
-                            designer={{
-                                src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80',
-                                name: 'Alex Rivera',
-                            }}
-                            image={{
-                                src: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=764&q=80',
-                                alt: 'Banking App Redesign',
-                            }}
-                        />
-
-                        <ShotCard
-                            title={'E-commerce Platform'}
-                            description={'Clean, conversion-focused design for fashion retail'}
-                            tags={['Web Design', 'E-commerce']}
-                            designer={{
-                                src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
-                                name: 'Maya Patel',
-                            }}
-                            image={{
-                                src: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=739&q=80',
-                                alt: 'E-commerce Platform',
-                            }}
-                        />
-
-                        <ShotCard
-                            title={'Sustainable Brand Identity'}
-                            description={'Eco-friendly startup complete brand package'}
-                            tags={['Branding', 'Identity']}
-                            designer={{
-                                src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
-                                name: 'Jordan Kim',
-                            }}
-                            image={{
-                                src: 'https://images.unsplash.com/photo-1586717799252-bd134ad00e26?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80',
-                                alt: 'Sustainable Brand Identity',
-                            }}
-                        />
-
-                        <ShotCard
-                            title={'Food Delivery App'}
-                            description={'Streamlined ordering experience with local focus'}
-                            tags={['Mobile design', 'Product design']}
-                            designer={{
-                                src: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80',
-                                name: 'Emma Chen',
-                            }}
-                            image={{
-                                src: 'https://images.unsplash.com/photo-1559028006-448665bd7c7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=736&q=80',
-                                alt: 'Food Delivery App',
-                            }}
-                        />
-
-                        <ShotCard
-                            title={'SaaS Dashboard'}
-                            description={'Analytics platform with intuitive data visualization'}
-                            tags={['Web Design', 'Dashboard']}
-                            designer={{
-                                src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80',
-                                name: 'David Park',
-                            }}
-                            image={{
-                                src: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80',
-                                alt: 'SaaS Dashboard',
-                            }}
-                        />
-
-                        <ShotCard
-                            title={'Medical App Interface'}
-                            description={'Patient-focused healthcare management system'}
-                            tags={['Mobile design', 'Healthcare']}
-                            designer={{
-                                src: 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
-                                name: 'Lisa Wong',
-                            }}
-                            image={{
-                                src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80',
-                                alt: 'Medical App Interface',
-                            }}
-                        />
-                    </div>
-
-                    <div className="text-center mt-12">
-                        <button className="bg-white border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition duration-200">
-                            Load More Designs
-                        </button>
-                    </div>
+                    <ProjectGrid initialLimit={12} />
                 </Container>
             </section>
 

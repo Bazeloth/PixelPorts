@@ -22,7 +22,9 @@ export default function UserAvatar({
 }: AvatarProps) {
     // Case 1: User has uploaded a profile picture
     if (avatarFileExt) {
-        const avatarUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${userId}.${avatarFileExt}`; // todo: replace with api call from supabase client
+        // Use shared utility to construct the public URL without requiring a Supabase client
+        const { buildAvatarUrlFromEnv, FALLBACK_AVATAR_URL } = require('@/lib/avatar');
+        const avatarUrl = buildAvatarUrlFromEnv(userId, avatarFileExt) || FALLBACK_AVATAR_URL;
 
         return (
             <Image

@@ -1,0 +1,75 @@
+import ShotCard from '@/app/ShotCard';
+import {
+    fetchShotCardsPage,
+    findFirstImageSource,
+    getTextSnippetFromBlocks,
+} from '@/lib/shotUtils';
+import { createSupabaseClient } from '@/lib/supabase/server';
+import { getAvatarUrl } from '@/lib/avatar';
+
+export default async function ProjectGrid({
+    category = 'all',
+    initialLimit = 12,
+}: {
+    category?: string;
+    initialLimit?: number;
+}) {
+    // Fetch initial page of shots
+    const { items, nextCursor } = await fetchShotCardsPage({ limit: initialLimit });
+    const supabase = await createSupabaseClient();
+
+    const cards = items.map((shot) => {
+        const imageSrc =
+            findFirstImageSource(supabase, shot.blocks) ??
+            'https://images.unsplash.com/photo-1586717799252-bd134ad00e26?auto=format&fit=crop&w=1200&q=60';
+
+        return {
+            key: shot.id,
+            title: shot.title,
+            description: getTextSnippetFromBlocks(shot.blocks),
+            tags: [] as string[],
+            designer: {
+                name: shot.author.name,
+                src: getAvatarUrl({
+                    supabase,
+                    userId: shot.author.id,
+                    avatarFileExt: shot.author.avatar_file_ext,
+                }),
+            },
+            image: {
+                src: imageSrc,
+                alt: shot.alt || shot.title || 'Project image',
+            },
+        };
+    });
+
+    return (
+        <section className="mt-4">
+            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {cards.map((c) => (
+                    <li key={c.key}>
+                        {/* Keep link structure simple for now; integrate slugs later */}
+                        <ShotCard
+                            title={c.title}
+                            description={c.description}
+                            tags={c.tags}
+                            designer={c.designer}
+                            image={c.image}
+                        />
+                    </li>
+                ))}
+            </ul>
+
+            {nextCursor && (
+                <div className="flex justify-center mt-6">
+                    {/* Client loader will append more items under this grid */}
+                    <LoadMore initialCursor={nextCursor} category={category} />
+                </div>
+            )}
+        </section>
+    );
+}
+
+// Lazy import the client component to avoid importing it at the top in a server file
+// This pattern uses the RSC allowance to reference a client component symbol below.
+import LoadMore from './LoadMore';
