@@ -44,9 +44,9 @@ export default async function Home() {
                         </div>
                         <ShotFilters defaultCategory={'all'} />
                     </div>
-
-                    <ShotsGrid initialLimit={12} />
                 </Container>
+
+                <ShotsGrid initialLimit={12} />
             </section>
 
             <section className="py-16 bg-white">
