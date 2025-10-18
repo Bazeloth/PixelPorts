@@ -182,6 +182,9 @@ export async function fetchShotCards(userId?: string): Promise<ShotCard[]> {
 export async function fetchShotCardsPage({ limit, cursor }: { limit: number; cursor?: string }) {
     const supabase = await createSupabaseClient();
 
+    // Fetch one extra record to determine if there is a next page
+    const pageSizePlusOne = limit + 1;
+
     let query = supabase
         .from('shots')
         .select(
@@ -229,7 +232,7 @@ export async function fetchShotCardsPage({ limit, cursor }: { limit: number; cur
     `
         )
         .order('created_at', { ascending: false })
-        .limit(limit);
+        .limit(pageSizePlusOne);
 
     if (cursor) {
         query = query.lt('created_at', cursor);
@@ -241,7 +244,7 @@ export async function fetchShotCardsPage({ limit, cursor }: { limit: number; cur
     }
 
     const rows = (data as unknown as any[]) ?? [];
-    const items: ShotCard[] = rows.map((shot: any) => {
+    const mapped: ShotCard[] = rows.map((shot: any) => {
         const shotBlocks: ShotBlock[] = (shot.shot_blocks ?? [])
             .sort((a: any, b: any) => a.position - b.position)
             .map((block: any) => ({
@@ -296,7 +299,9 @@ export async function fetchShotCardsPage({ limit, cursor }: { limit: number; cur
         };
     });
 
-    const nextCursor = items.length === limit ? items[items.length - 1].created_at : undefined;
+    const hasMore = mapped.length > limit;
+    const items = hasMore ? mapped.slice(0, limit) : mapped;
+    const nextCursor = hasMore ? items[items.length - 1].created_at : undefined;
     return { items, nextCursor };
 }
 
