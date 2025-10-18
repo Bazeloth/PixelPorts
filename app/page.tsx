@@ -1,5 +1,4 @@
 import FeaturedDesigner from '@/app/FeaturedDesigner';
-import ShotCard from '@/app/ShotCard';
 import ShotFilters from '@/app/ShotFilters';
 import { Container } from '@/app/Container';
 import RecentlyJoined from '@/app/RecentlyJoined';
