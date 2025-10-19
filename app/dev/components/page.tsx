@@ -79,6 +79,20 @@ export default function DevComponentsPage() {
                     ))}
                 </div>
             </section>
+
+            <section>
+                <h2 className="text-sm font-semibold mb-2">RecentlyJoined (mock — empty)</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="col-span-full text-sm text-gray-500">No recently joined users yet.</div>
+                </div>
+            </section>
+
+            <section>
+                <h2 className="text-sm font-semibold mb-2">RecentlyJoined (mock — error)</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="col-span-full text-sm text-red-600">Failed to load recently joined</div>
+                </div>
+            </section>
         </main>
     );
 }

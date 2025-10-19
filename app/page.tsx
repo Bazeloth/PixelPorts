@@ -32,7 +32,11 @@ export default async function Home() {
                 </Container>
             </section>
 
-            <FeaturedDesigner />
+            <section className="py-16 bg-white">
+                <Container>
+                    <FeaturedDesigner />
+                </Container>
+            </section>
 
             <section className="py-16 bg-gray-50">
                 <Container>
