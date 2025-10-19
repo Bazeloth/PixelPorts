@@ -1,10 +1,6 @@
 export default async function FeaturedDesigner() {
     return (
         <>
-            <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Designer</h2>
-                <p className="text-gray-600">Spotlighting exceptional emerging talent</p>
-            </div>
             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 text-white">
                 <div className="flex flex-col lg:flex-row items-center">
                     <div className="lg:w-1/3 mb-8 lg:mb-0">

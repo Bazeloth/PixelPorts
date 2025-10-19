@@ -3,6 +3,7 @@ import ShotFilters from '@/app/ShotFilters';
 import { Container } from '@/app/Container';
 import RecentlyJoined from '@/app/RecentlyJoined';
 import ShotsGrid from '@/app/ShotsGrid';
+import { ArrowRightIcon } from 'lucide-react';
 
 export default async function Home() {
     return (
@@ -22,7 +23,7 @@ export default async function Home() {
                         </p>
                         <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
                             <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto cursor-pointer">
-                                Start Your Portfolio
+                                Get Started <ArrowRightIcon className="inline-block w-4 h-4 ml-2" />
                             </button>
                             <button className="border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto cursor-pointer">
                                 Explore Designs
@@ -34,15 +35,9 @@ export default async function Home() {
 
             <section className="py-16 bg-white">
                 <Container>
-                    <FeaturedDesigner />
-                </Container>
-            </section>
-
-            <section className="py-16 bg-gray-50">
-                <Container>
                     <div className="flex justify-between items-center mb-12">
                         <div>
-                            <h2 className="text-3xl font-bold text-gray-900 mb-2">Discover</h2>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-2">Recent</h2>
                             <p className="text-gray-600">Fresh designs from our community</p>
                         </div>
                         <ShotFilters defaultCategory={'all'} />
@@ -52,6 +47,17 @@ export default async function Home() {
                 <ShotsGrid initialLimit={12} />
             </section>
 
+            <section className="py-16 bg-gray-50">
+                <Container>
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Designer</h2>
+                        <p className="text-gray-600">Spotlighting exceptional emerging talent</p>
+                    </div>
+
+                    <FeaturedDesigner />
+                </Container>
+            </section>
+
             <section className="py-16 bg-white">
                 <Container>
                     <div className="flex justify-between items-center mb-12">
@@ -59,7 +65,7 @@ export default async function Home() {
                             <h2 className="text-3xl font-bold text-gray-900 mb-2">
                                 Recently Joined
                             </h2>
-                            <p className="text-gray-600">Discover new designers on Pixelports</p>
+                            <p className="text-gray-600">Welcome our newest members</p>
                         </div>
                     </div>
 

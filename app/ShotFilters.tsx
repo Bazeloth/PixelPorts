@@ -36,10 +36,10 @@ export default function ShotFilters({
                         onChangeAction?.(c.key);
                     }}
                     className={
-                        'px-4 py-1.5 rounded-md font-medium transition-all text-xs ' +
+                        'px-4 py-1.5 rounded-md font-medium transition-bg text-xs ' +
                         (active === c.key
-                            ? 'bg-indigo-600 text-white'
-                            : 'text-slate-600 hover:bg-slate-50')
+                            ? 'bg-neutral-700 text-white'
+                            : 'text-zinc-600 hover:bg-zinc-100')
                     }
                 >
                     {c.label}

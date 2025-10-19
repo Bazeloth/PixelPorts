@@ -1,33 +1,35 @@
 import Link from 'next/link';
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { Container } from '@/app/Container';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRightIcon, PlusIcon } from 'lucide-react';
 import { connection } from 'next/server';
 
 const NavLinks = () => (
     <div className="hidden md:block">
         <div className="ml-10 flex items-baseline space-x-4">
             <Link
-                href="/discover"
+                href="/"
                 className="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium"
             >
-                Discover
+                Home
             </Link>
             <Link
-                href="/browse"
+                href="/explore"
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
             >
-                Browse
+                Explore
             </Link>
             <Link
-                href="/about"
+                href="/designers"
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
             >
-                About
+                Designers
             </Link>
         </div>
     </div>
 );
+
+export const dynamic = 'force-dynamic';
 
 export default async function Header() {
     await connection();
@@ -107,11 +109,10 @@ export default async function Header() {
                                 </Link>
                                 <Link
                                     href="/signup/complete-profile"
-                                    className="bg-white border border-gray-300 rounded-lg flex items-center gap-2 px-6 py-2 text-sm font-medium hover:bg-gray-50 transition duration-200"
+                                    className="bg-indigo-600 hover:bg-indigo-700 text-white border border-gray-300 rounded-full flex items-center gap-2 px-6 py-2 text-sm font-medium hover:bg-gray-50 transition duration-200"
                                     aria-label="Complete your profile"
                                 >
-                                    <ArrowRight className="w-4 h-4 text-gray-700" />
-                                    Complete Profile
+                                    <PlusIcon className="w-4 h-4" /> Upload
                                 </Link>
                             </>
                         ) : (
@@ -126,7 +127,8 @@ export default async function Header() {
                                     href="/signup"
                                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200"
                                 >
-                                    Get Started
+                                    Get Started{' '}
+                                    <ArrowRightIcon className="inline-block w-4 h-4 ml-2" />
                                 </Link>
                             </>
                         )}
