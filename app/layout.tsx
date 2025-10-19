@@ -31,6 +31,8 @@ export const viewport: Viewport = {
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
+import Providers from '@/app/providers';
+
 export default async function RootLayout({
     children,
 }: Readonly<{
@@ -39,8 +41,10 @@ export default async function RootLayout({
     return (
         <html lang="en">
             <body className={`${inter.className} bg-gray-50 antialiased`}>
-                <Header />
-                {children}
+                <Providers>
+                    <Header />
+                    {children}
+                </Providers>
             </body>
         </html>
     );

@@ -1,10 +1,10 @@
+import { NextResponse } from 'next/server';
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { formatJoinRelative, pickGradientFromId } from '@/lib/utils/date';
 import { initialsFromName } from '@/lib/utils/username';
-import RecentlyJoinedClient from './RecentlyJoinedClient';
 import type { UIUser } from '@/app/types';
 
-export default async function RecentlyJoined() {
+export async function GET() {
   try {
     const supabase = await createSupabaseClient();
     const { data, error } = await supabase
@@ -13,7 +13,9 @@ export default async function RecentlyJoined() {
       .order('created_at', { ascending: false })
       .limit(6);
 
-    // Do not throw; handle gracefully and let client-side React Query manage re-fetch and errors.
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
     type Row = {
       id: string;
@@ -31,11 +33,9 @@ export default async function RecentlyJoined() {
       gradient: pickGradientFromId(p.id),
     }));
 
-    return <RecentlyJoinedClient users={users} />;
+    return NextResponse.json({ users });
   } catch (e: any) {
     const msg = e?.message ?? 'Failed to load recently joined';
-    return (
-      <div className="col-span-full text-center text-sm text-red-600">{msg}</div>
-    );
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
