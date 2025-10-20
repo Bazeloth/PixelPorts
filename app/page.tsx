@@ -8,9 +8,9 @@ import { ArrowRightIcon } from 'lucide-react';
 export default async function Home() {
     return (
         <>
-            <section className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 pt-12 pb-20">
-                <Container>
-                    <div className="text-center">
+            <section className="bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+                <Container className="bg-[linear-gradient(#e5e7eb_1px,transparent_1px),linear-gradient(90deg,#e5e7eb_1px,transparent_1px)] bg-[length:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_100%)]">
+                    <div className="pt-12 pb-20 text-center">
                         <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
                             Showcase Your <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
@@ -25,7 +25,7 @@ export default async function Home() {
                             <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto cursor-pointer">
                                 Get Started <ArrowRightIcon className="inline-block w-4 h-4 ml-2" />
                             </button>
-                            <button className="border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto cursor-pointer">
+                            <button className="bg-white border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto cursor-pointer">
                                 Explore Designs
                             </button>
                         </div>
