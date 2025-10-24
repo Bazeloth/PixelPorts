@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { Inter } from 'next/font/google';
 import Header from '@/app/Header';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!;
@@ -29,8 +28,6 @@ export const viewport: Viewport = {
     initialScale: 1,
 };
 
-const inter = Inter({ subsets: ['latin'], display: 'swap' });
-
 import Providers from '@/app/providers';
 
 export default async function RootLayout({
@@ -40,7 +37,7 @@ export default async function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${inter.className} bg-gray-50 antialiased`}>
+            <body className="font-sans bg-gray-50 antialiased">
                 <Providers>
                     <Header />
                     {children}

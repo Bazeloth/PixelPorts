@@ -1,5 +1,50 @@
 @import 'tailwindcss';
 
 @theme {
-    --font-family-sans: "Inter", system-ui, sans-serif;
+    --font-sans: "Proxima Soft", system-ui, sans-serif;
+}
+
+/* Proxima Soft webfont setup (expects files in /public/fonts/proxima-soft/)
+   Add your licensed font files to: public/fonts/proxima-soft/
+   Filenames used below are conventional; adjust if your files differ. */
+@font-face {
+    font-family: "Proxima Soft";
+    src:
+        local("Proxima Soft Regular"),
+        local("Proxima Soft"),
+        url("/fonts/proxima-soft/ProximaSoft-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Proxima Soft";
+    src:
+        local("Proxima Soft Medium"),
+        local("Proxima Soft"),
+        url("/fonts/proxima-soft/ProximaSoft-Medium.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Proxima Soft";
+    src:
+        local("Proxima Soft SemiBold"),
+        local("Proxima Soft Semibold"),
+        local("Proxima Soft"),
+        url("/fonts/proxima-soft/ProximaSoft-SemiBold.woff2") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Proxima Soft";
+    src:
+        local("Proxima Soft Bold"),
+        local("Proxima Soft"),
+        url("/fonts/proxima-soft/ProximaSoft-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
 }

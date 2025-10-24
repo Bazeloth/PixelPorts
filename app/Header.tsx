@@ -102,7 +102,7 @@ export default async function Header() {
                         {user ? (
                             <>
                                 <Link
-                                    href="/logout"
+                                    href="/api/logout"
                                     className="text-gray-600 hover:text-gray-900 text-sm font-medium"
                                 >
                                     Sign Out

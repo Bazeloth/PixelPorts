@@ -1,6 +1,6 @@
-import { signOutAction } from '@/app/logout/actions';
+import { redirect } from 'next/navigation';
 
-export default async function LogoutPage() {
-    await signOutAction();
-    return null; // unreachable due to redirect
+export default function LogoutPage() {
+    // This route is no longer responsible for signing out. It simply redirects home.
+    redirect('/');
 }
