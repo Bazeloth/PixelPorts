@@ -29,11 +29,7 @@ export async function signInWithPassword(formData: FormData): Promise<SignInResu
     }
 
     // Ensure the app reflects the new auth state immediately
-    try {
-        revalidatePath('/', 'layout');
-    } catch {
-        // ignore revalidate errors
-    }
+    revalidatePath('/', 'layout');
 
     // Full redirect to refresh server components like Header
     redirect('/');
