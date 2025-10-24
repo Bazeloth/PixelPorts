@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useActionState } from 'react';
+import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { SignInResult, signInWithPassword } from '@/app/login/actions';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 function SubmitButton() {
@@ -28,13 +27,6 @@ export default function LoginForm() {
         success: false,
         error: '',
     });
-    const router = useRouter();
-
-    useEffect(() => {
-        if (state.success) {
-            router.replace('/');
-        }
-    }, [state, router]);
 
     return (
         <form action={formAction} className="mt-8 space-y-6">

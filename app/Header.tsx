@@ -3,6 +3,7 @@ import { createSupabaseClient } from '@/lib/supabase/server';
 import { Container } from '@/app/Container';
 import { ArrowRightIcon, PlusIcon } from 'lucide-react';
 import { connection } from 'next/server';
+import { signOutAction } from '@/app/logout/actions';
 
 const NavLinks = () => (
     <div className="hidden md:block">
@@ -101,12 +102,14 @@ export default async function Header() {
                     <div className="flex items-center space-x-4">
                         {user ? (
                             <>
-                                <Link
-                                    href="/api/logout"
-                                    className="text-gray-600 hover:text-gray-900 text-sm font-medium"
-                                >
-                                    Sign Out
-                                </Link>
+                                <form action={signOutAction}>
+                                    <button
+                                        type="submit"
+                                        className="text-gray-600 hover:text-gray-900 text-sm font-medium"
+                                    >
+                                        Sign Out
+                                    </button>
+                                </form>
                                 <Link
                                     href="/signup/complete-profile"
                                     className="bg-indigo-600 hover:bg-indigo-700 text-white border border-gray-300 rounded-full flex items-center gap-2 px-6 py-2 text-sm font-medium hover:bg-gray-50 transition duration-200"

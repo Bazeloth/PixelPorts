@@ -2,6 +2,8 @@
 
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { isValidEmail } from '@/lib/utils/email';
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
 export type SignInResult = { success: true } | { success: false; error: string };
 
@@ -26,7 +28,15 @@ export async function signInWithPassword(formData: FormData): Promise<SignInResu
         };
     }
 
-    return { success: true };
+    // Ensure the app reflects the new auth state immediately
+    try {
+        revalidatePath('/', 'layout');
+    } catch {
+        // ignore revalidate errors
+    }
+
+    // Full redirect to refresh server components like Header
+    redirect('/');
 }
 
 export type FieldErrors = Partial<Record<'email' | 'password' | 'confirm', string>>;
