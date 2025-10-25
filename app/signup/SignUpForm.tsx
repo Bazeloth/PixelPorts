@@ -5,6 +5,7 @@ import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import type { SignUpResult } from '@/app/login/actions';
 import { signUpWithEmail } from '@/app/login/actions';
+import { track, Events } from '@/lib/analytics';
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -31,6 +32,11 @@ export default function SignUpForm() {
 
     useEffect(() => {
         if (state.success) {
+            // Track signup completion (email+password)
+            try {
+                track(Events.UserSignedUp, { method: 'email' });
+            } catch {}
+
             if ('needsVerification' in state && state.needsVerification) {
                 router.replace(`/signup/verify?email=${encodeURIComponent(state.email)}`);
             } else {

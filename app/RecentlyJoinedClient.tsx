@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { RecentlyJoinedUser } from '@/app/types';
 import { setFollow } from '@/app/actions/follow';
+import { track, Events } from '@/lib/analytics';
 
 async function fetchRecentlyJoined(): Promise<RecentlyJoinedUser[]> {
     const res = await fetch('/api/recently-joined', { cache: 'no-store' });
@@ -41,6 +42,10 @@ export default function RecentlyJoinedClient({ users }: { users: RecentlyJoinedU
             const res = await setFollow(id, next);
             if (!('ok' in res) || !res.ok) {
                 throw new Error((res as any).error || 'Failed to persist');
+            }
+            // Track only follow (not unfollow)
+            if (next) {
+                track(Events.UserFollowed, { target_user_id: id, source: 'recently_joined' });
             }
         } catch (_e) {
             // Revert on error

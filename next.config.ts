@@ -17,6 +17,11 @@ const nextConfig: NextConfig = {
             },
             {
                 protocol: 'https',
+                hostname: 'api-eu.mixpanel.com',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
                 hostname: 'images.unsplash.com',
                 pathname: '/**',
             },

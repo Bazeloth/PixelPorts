@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { track, Events } from '@/lib/analytics';
 
 const CATEGORIES = [
     { key: 'all', label: 'All' },
@@ -34,6 +35,8 @@ export default function ShotFilters({
                     onClick={() => {
                         setActive(c.key);
                         onChangeAction?.(c.key);
+                        // Track discovery tab/category switch (mapped to roadmap's tab_switched)
+                        track(Events.TabSwitched, { tab: c.key });
                     }}
                     className={
                         'px-4 py-1.5 rounded-md font-medium transition-bg text-xs ' +

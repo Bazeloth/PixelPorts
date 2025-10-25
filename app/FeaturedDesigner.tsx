@@ -1,4 +1,14 @@
-export default async function FeaturedDesigner() {
+'use client';
+
+import { track, Events } from '@/lib/analytics';
+
+export default function FeaturedDesigner() {
+    const shot = {
+        id: 'featured-placeholder',
+        title: 'EcoTrack - Sustainability App',
+        designer: 'Sarah Chen',
+    };
+
     return (
         <>
             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 text-white">
@@ -18,7 +28,7 @@ export default async function FeaturedDesigner() {
                         </div>
                     </div>
                     <div className="lg:w-2/3 lg:pl-8">
-                        <h4 className="text-2xl font-bold mb-4">EcoTrack - Sustainability App</h4>
+                        <h4 className="text-2xl font-bold mb-4">{shot.title}</h4>
                         <p className="text-indigo-100 mb-6">
                             A comprehensive mobile app helping users track their environmental
                             impact and make sustainable choices. Features include carbon footprint
@@ -36,7 +46,16 @@ export default async function FeaturedDesigner() {
                                 Prototyping
                             </span>
                         </div>
-                        <button className="bg-white text-indigo-600 px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition duration-200 cursor-pointer">
+                        <button
+                            className="bg-white text-indigo-600 px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition duration-200 cursor-pointer"
+                            onClick={() =>
+                                track(Events.FeaturedShotClicked, {
+                                    shot_id: shot.id,
+                                    shot_title: shot.title,
+                                    designer_name: shot.designer,
+                                })
+                            }
+                        >
                             View Full Project
                         </button>
                     </div>
