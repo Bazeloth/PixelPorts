@@ -18,8 +18,8 @@ export default async function Home() {
                             </span>
                         </h1>
                         <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                            A platform built for emerging designers. Get discovered, share your
-                            process, and grow your career with meaningful exposure.
+                            A platform built for emerging designers. Share your process, get
+                            discovered, and grow your career with meaningful exposure.
                         </p>
                         <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
                             <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto cursor-pointer">
