@@ -4,8 +4,9 @@ import { validateUsername } from '@/lib/utils/username';
 
 type ActionState =
     | {
-          errors: { username?: string[] };
+          errors: { username?: string[]; name?: string[] };
           message: string;
+          values?: { name?: string; username?: string };
       }
     | {
           success: boolean;
@@ -30,35 +31,72 @@ export async function createUser(
     _prevState: ActionState,
     formData: FormData
 ): Promise<ActionState> {
+    // Extract
+    const rawName = formData.get('name');
     const usernameInput = formData.get('username');
 
+    // Normalize + basic validations for name
+    const name = typeof rawName === 'string' ? rawName.trim() : '';
+    const nameErrors: string[] = [];
+    if (!name) nameErrors.push('Full name is required');
+    if (name && (name.length < 1 || name.length > 60)) {
+        nameErrors.push('Full name must be between 1 and 60 characters');
+    }
+
+    // Validate username with existing util
     const res = validateUsername(usernameInput);
+
+    // Early return on invalid username (this narrows the union for res afterwards)
     if (!res.ok) {
         return {
-            errors: { username: [res.error] },
+            errors: {
+                ...(nameErrors.length ? { name: nameErrors } : {}),
+                username: [res.error],
+            },
             message: 'Validation failed',
+            values: {
+                name,
+                username: typeof usernameInput === 'string' ? usernameInput : '',
+            },
         };
     }
 
-    // Final server-side availability check using the normalized shape
-    const availabilityCheck = await checkUsernameAvailability(res.value);
-    if (!('ok' in availabilityCheck) || !availabilityCheck.ok) {
+    const username = res.value;
+
+    if (nameErrors.length) {
+        return {
+            errors: { name: nameErrors },
+            message: 'Validation failed',
+            values: { name, username },
+        };
+    }
+
+    // Final server-side availability check using normalized username
+    const availabilityCheck = await checkUsernameAvailability(username);
+    if (!availabilityCheck.ok) {
         return {
             errors: { username: [availabilityCheck.error] },
             message: 'Validation failed',
+            values: { name, username },
         };
     }
     if (!availabilityCheck.available) {
         return {
             errors: { username: ['Username is already taken'] },
             message: 'Username unavailable',
+            values: { name, username },
         };
     }
 
     try {
-        // ... create user in database
+        // ... create user in database, including `name` and `username`
+        // e.g., await db.user.create({ data: { name, username, ... } })
         return { success: true };
     } catch (error) {
-        return { errors: {}, message: 'Something went wrong' };
+        return {
+            errors: {},
+            message: 'Something went wrong',
+            values: { name, username },
+        };
     }
 }
