@@ -52,7 +52,7 @@ export function useUsernameField(serverError?: string[]) {
     const usernameIsUnavailable = !isChecking && (available === false || !!error);
 
     return {
-        name: 'username' as const,
+        name: 'username',
         value: username,
         error,
         isChecking,

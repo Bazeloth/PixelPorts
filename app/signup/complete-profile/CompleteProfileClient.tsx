@@ -8,6 +8,9 @@ import { createUser } from '@/app/actions/user';
 export default function CompleteProfileClient() {
     const [state, formAction, isPending] = useActionState(createUser, null);
 
+    const values = (state && 'values' in state ? state.values : undefined) ?? {};
+    const errors = (state && 'errors' in state ? state.errors : undefined) ?? {};
+
     return (
         <form action={formAction}>
             <div className="space-y-6">
@@ -20,29 +23,26 @@ export default function CompleteProfileClient() {
                         <input
                             type="text"
                             name="name"
+                            defaultValue={values.name ?? ''}
                             className="w-full rounded-md border border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                             placeholder="e.g., Alex Johnson"
                             autoComplete="name"
                             maxLength={60}
                             required
-                            defaultValue={
-                                state && 'values' in state ? (state.values?.name ?? '') : ''
-                            }
                         />
-                        {state && 'errors' in state && state.errors?.name?.length ? (
-                            <p className="text-xs text-red-500 mt-1">{state.errors.name[0]}</p>
+                        {errors.name?.length ? (
+                            <p className="text-xs text-red-500 mt-1">{errors.name[0]}</p>
                         ) : null}
                     </div>
 
                     <FieldLabel label="Username" sublabel="A unique name for your profile." />
                     <UsernameControl
-                        serverError={
-                            state && 'errors' in state ? state.errors?.username : undefined
-                        }
+                        defaultValue={values.username ?? ''}
+                        serverError={errors.username}
                     />
 
                     <button type="submit" disabled={isPending}>
-                        Sign Up
+                        {isPending ? 'Saving…' : 'Sign Up'}
                     </button>
                 </div>
             </div>

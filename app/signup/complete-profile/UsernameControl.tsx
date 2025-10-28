@@ -1,9 +1,23 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useUsernameField } from '@/lib/hooks/useUsernameField';
+import { USERNAME_CONSTRAINTS } from '@/lib/constants/username';
 
-export function UsernameControl({ serverError }: { serverError?: string[] }) {
+export function UsernameControl({
+    defaultValue,
+    serverError,
+}: {
+    defaultValue?: string;
+    serverError?: string[];
+}) {
     const username = useUsernameField(serverError);
+
+    useEffect(() => {
+        if (defaultValue !== (username.value ?? '')) {
+            username.onChange({ target: { value: defaultValue } } as any);
+        }
+    }, []);
 
     const border = username.isUnavailable
         ? 'border-red-300 focus-within:ring-red-500 focus-within:border-red-500'
@@ -20,9 +34,13 @@ export function UsernameControl({ serverError }: { serverError?: string[] }) {
                     name={username.name}
                     className="flex-1 rounded-r-md border-0 py-2 px-3 text-gray-900 placeholder-gray-400 focus:outline-none text-sm"
                     placeholder="username"
-                    value={username.value}
+                    value={username.value ?? ''}
                     onChange={username.onChange}
                     disabled={username.isChecking}
+                    minLength={USERNAME_CONSTRAINTS.minLength}
+                    maxLength={USERNAME_CONSTRAINTS.maxLength}
+                    pattern={USERNAME_CONSTRAINTS.pattern.source}
+                    required
                 />
                 {username.isChecking && (
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -81,7 +99,9 @@ export function UsernameControl({ serverError }: { serverError?: string[] }) {
             {username.isChecking && (
                 <p className="text-xs text-gray-500 mt-1">Checking availability...</p>
             )}
-            {username.error && <p className="text-xs text-red-500 mt-1">{username.error}</p>}
+            {(username.error || serverError?.[0]) && (
+                <p className="text-xs text-red-500 mt-1">{username.error || serverError?.[0]}</p>
+            )}
         </div>
     );
 }
