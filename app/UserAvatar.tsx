@@ -23,7 +23,7 @@ export default function UserAvatar({
     // Case 1: User has uploaded a profile picture
     if (avatarFileExt) {
         // Use shared utility to construct the public URL without requiring a Supabase client
-        const { buildAvatarUrlFromEnv, FALLBACK_AVATAR_URL } = require('@/lib/avatar');
+        const { buildAvatarUrlFromEnv, FALLBACK_AVATAR_URL } = require('@/lib/utils/avatar');
         const avatarUrl = buildAvatarUrlFromEnv(userId, avatarFileExt) || FALLBACK_AVATAR_URL;
 
         return (
