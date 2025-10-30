@@ -1,12 +1,20 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { FieldLabel } from '@/app/signup/complete-profile/FieldLabel';
 import { UsernameControl } from '@/app/signup/complete-profile/UsernameControl';
-import { createUser } from '@/app/actions/user';
+import { createUserProfile } from '@/app/actions/user';
+import { useRouter } from 'next/navigation';
 
 export default function CompleteProfileClient() {
-    const [state, formAction, isPending] = useActionState(createUser, null);
+    const [state, formAction, isPending] = useActionState(createUserProfile, null);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (state && 'success' in state && state.success) {
+            router.replace('/');
+        }
+    }, [state, router]);
 
     const values = (state && 'values' in state ? state.values : undefined) ?? {};
     const errors = (state && 'errors' in state ? state.errors : undefined) ?? {};

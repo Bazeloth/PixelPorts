@@ -1,6 +1,8 @@
 'use server';
 
 import { validateUsername } from '@/lib/utils/username';
+import { createSupabaseClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/console';
 
 type ActionState =
     | {
@@ -21,13 +23,23 @@ export async function checkUsernameAvailability(
         return { ok: false, error: res.error };
     }
 
-    // Check database
-    const exists = false; // simulate
+    const supabase = await createSupabaseClient();
 
-    return { ok: true, available: !exists };
+    // Check database
+    const { count, error } = await supabase
+        .from('userprofiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('username', username);
+
+    if (error) {
+        logger.Error('Error checking username availability', error);
+        return { ok: false, error: 'something went wrong' };
+    }
+
+    return { ok: true, available: count === 0 };
 }
 
-export async function createUser(
+export async function createUserProfile(
     _prevState: ActionState,
     formData: FormData
 ): Promise<ActionState> {
@@ -88,15 +100,17 @@ export async function createUser(
         };
     }
 
-    try {
-        // ... create user in database, including `name` and `username`
-        // e.g., await db.user.create({ data: { name, username, ... } })
-        return { success: true };
-    } catch (error) {
+    const supabase = await createSupabaseClient();
+    const { error } = await supabase.from('userprofiles').insert([{ name, username }]);
+
+    if (error) {
+        logger.Error('Unable to create profile', error);
         return {
             errors: {},
-            message: 'Something went wrong',
+            message: 'Unable to create profile. Please try again later.',
             values: { name, username },
         };
     }
+
+    return { success: true };
 }
