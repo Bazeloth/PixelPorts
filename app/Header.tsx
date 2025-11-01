@@ -5,31 +5,6 @@ import { ArrowRightIcon, PlusIcon } from 'lucide-react';
 import { connection } from 'next/server';
 import { signOutAction } from '@/app/logout/actions';
 
-const NavLinks = () => (
-    <div className="hidden md:block">
-        <div className="ml-10 flex items-baseline space-x-4">
-            <Link
-                href="/"
-                className="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium"
-            >
-                Home
-            </Link>
-            <Link
-                href="/explore"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-            >
-                Explore
-            </Link>
-            <Link
-                href="/designers"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-            >
-                Designers
-            </Link>
-        </div>
-    </div>
-);
-
 export const dynamic = 'force-dynamic';
 
 export default async function Header() {
@@ -43,7 +18,7 @@ export default async function Header() {
     return (
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
             <Container as={'nav'}>
-                <div className="flex justify-between items-center h-16">
+                <div className="mx-auto px-8 py-3 flex items-center justify-between">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
                             <Link href="/" aria-label="PixelPorts - Go to homepage">
@@ -96,8 +71,6 @@ export default async function Header() {
                             </Link>
                         </div>
                     </div>
-
-                    <NavLinks />
 
                     <div className="flex items-center space-x-4">
                         {user ? (

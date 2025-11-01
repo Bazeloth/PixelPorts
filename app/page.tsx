@@ -16,27 +16,28 @@ export default async function Home() {
                             A platform for emerging designers
                         </h1>
                         <p className="text-lg text-neutral-500 mb-8 max-w-[480px]">
-                            Show your work, build your portfolio, and get discovered. No
+                            Showcase your work, build your portfolio, and get discovered. No
                             gatekeeping, no politics—just great design getting seen.
                         </p>
                         <div className="flex gap-3">
                             <a
-                                href="/signup"
-                                className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
-                            >
-                                Get Started
-                            </a>
-                            <a
                                 href="/about"
                                 className="px-5 py-2.5 bg-transparent text-neutral-900 text-sm font-medium rounded-lg border border-neutral-200 hover:border-neutral-900 transition-colors"
                             >
-                                Learn More
+                                How does it work?
+                            </a>
+                            <a
+                                href="/signup"
+                                className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                            >
+                                Let's get started{' '}
+                                <ArrowRightIcon className="inline-block w-4 h-4 ml-2" />
                             </a>
                         </div>
                     </div>
 
                     <div>
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div className="bg-white rounded-2xl overflow-hidden">
                             <img
                                 src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&amp;h=360&amp;fit=crop"
                                 alt="Featured work"

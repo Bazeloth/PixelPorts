@@ -13,8 +13,8 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
     const header = isSignIn
         ? { title: 'Welcome back', subtitle: 'Sign in to your Pixelports account' }
         : {
-              title: 'Create your account',
-              subtitle: 'Join Pixelports and showcase your design work',
+              title: 'Welcome to PixelPorts',
+              subtitle: 'Join the community of designers and creators',
           };
 
     const dividerText = isSignIn ? 'Or continue with email' : 'Or create account with email';
