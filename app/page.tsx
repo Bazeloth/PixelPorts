@@ -1,7 +1,5 @@
-import FeaturedDesigner from '@/app/FeaturedDesigner';
 import ShotFilters from '@/app/ShotFilters';
 import { Container } from '@/app/Container';
-import RecentlyJoined from '@/app/RecentlyJoined';
 import ShotsGrid from '@/app/ShotsGrid';
 import { ArrowRightIcon } from 'lucide-react';
 import FaqAccordion from '@/app/FaqAccordion';
@@ -16,8 +14,8 @@ export default async function Home() {
                             A platform for emerging designers
                         </h1>
                         <p className="text-lg text-neutral-500 mb-8 max-w-[480px]">
-                            Showcase your work, build your portfolio, and get discovered. No
-                            gatekeeping, no politics—just great design getting seen.
+                            Let your work speak for itself—we ensure it gets seen. No follower count
+                            required.
                         </p>
                         <div className="flex gap-3">
                             <a
@@ -92,32 +90,6 @@ export default async function Home() {
                 </div>
             </section>
 
-            <section className="bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-                <Container className="bg-[linear-gradient(#e5e7eb_1px,transparent_1px),linear-gradient(90deg,#e5e7eb_1px,transparent_1px)] bg-[length:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_100%)]">
-                    <div className="pt-12 pb-20 text-center">
-                        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-                            Showcase Your <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
-                                Design Journey
-                            </span>
-                        </h1>
-                        <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                            A platform built for emerging designers. Share your process, get
-                            discovered, and grow your career with meaningful exposure.
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto cursor-pointer">
-                                Get Started <ArrowRightIcon className="inline-block w-4 h-4 ml-2" />
-                            </button>
-                            <button className="bg-white border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto cursor-pointer">
-                                Explore Designs
-                            </button>
-                        </div>
-                    </div>
-                </Container>
-            </section>
-
             <section className="py-16 bg-white">
                 <Container>
                     <div className="flex justify-between items-center mb-12">
@@ -130,32 +102,6 @@ export default async function Home() {
                 </Container>
 
                 <ShotsGrid initialLimit={12} />
-            </section>
-
-            <section className="py-16 bg-gray-50">
-                <Container>
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Designer</h2>
-                        <p className="text-gray-600">Spotlighting exceptional emerging talent</p>
-                    </div>
-
-                    <FeaturedDesigner />
-                </Container>
-            </section>
-
-            <section className="py-16 bg-white">
-                <Container>
-                    <div className="flex justify-between items-center mb-12">
-                        <div>
-                            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                                Recently Joined
-                            </h2>
-                            <p className="text-gray-600">Welcome our newest members</p>
-                        </div>
-                    </div>
-
-                    <RecentlyJoined />
-                </Container>
             </section>
 
             <section className="bg-gray-900 py-16">
