@@ -6,17 +6,17 @@ import { ChevronDown } from 'lucide-react';
 type FaqItemProps = {
     title: string;
     children: React.ReactNode;
-    isOpen?: boolean; // controlled open state
-    onToggle?: () => void; // controlled toggle handler
+    isOpen?: boolean;
+    onToggleAction?: () => void;
 };
 
-export function FaqItem({ title, children, isOpen, onToggle }: FaqItemProps) {
+export function FaqItem({ title, children, isOpen, onToggleAction }: FaqItemProps) {
     const [internalOpen, setInternalOpen] = useState(false);
     const open = isOpen ?? internalOpen;
 
     const handleClick = () => {
-        if (onToggle) {
-            onToggle();
+        if (onToggleAction) {
+            onToggleAction();
         } else {
             setInternalOpen((prev) => !prev);
         }
