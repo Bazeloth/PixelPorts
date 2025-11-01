@@ -14,8 +14,8 @@ export default async function Home() {
                             A platform for emerging designers
                         </h1>
                         <p className="text-lg text-neutral-500 mb-8 max-w-[480px]">
-                            Let your work speak for itself—we ensure it gets seen. No follower count
-                            required.
+                            Let your work speak for itself—we make sure it gets seen. No follower
+                            count required.
                         </p>
                         <div className="flex gap-3">
                             <a
@@ -28,7 +28,7 @@ export default async function Home() {
                                 href="/signup"
                                 className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
                             >
-                                Let's get started{' '}
+                                Get Discovered{' '}
                                 <ArrowRightIcon className="inline-block w-4 h-4 ml-2" />
                             </a>
                         </div>
