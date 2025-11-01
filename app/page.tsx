@@ -4,10 +4,127 @@ import { Container } from '@/app/Container';
 import RecentlyJoined from '@/app/RecentlyJoined';
 import ShotsGrid from '@/app/ShotsGrid';
 import { ArrowRightIcon } from 'lucide-react';
+import { FaqItem } from '@/app/FaqItem';
 
 export default async function Home() {
     return (
         <>
+            <section>
+                <Container className="mx-auto px-8 py-32 lg:py-40 grid lg:grid-cols-2 gap-20 items-center">
+                    <div>
+                        <h1 className="text-5xl lg:text-[56px] font-bold leading-tight tracking-tight mb-6">
+                            A platform for emerging designers
+                        </h1>
+                        <p className="text-lg text-neutral-500 mb-8 max-w-[480px]">
+                            Show your work, build your portfolio, and get discovered. No
+                            gatekeeping, no politics—just great design getting seen.
+                        </p>
+                        <div className="flex gap-3">
+                            <a
+                                href="/signup"
+                                className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                            >
+                                Get Started
+                            </a>
+                            <a
+                                href="/about"
+                                className="px-5 py-2.5 bg-transparent text-neutral-900 text-sm font-medium rounded-lg border border-neutral-200 hover:border-neutral-900 transition-colors"
+                            >
+                                Learn More
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                            <img
+                                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&amp;h=360&amp;fit=crop"
+                                alt="Featured work"
+                                className="w-full h-[360px] object-cover"
+                            />
+                            <div className="p-6">
+                                <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-900 rounded-md text-xs font-semibold mb-3">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        className="w-3 h-3"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                                            clipRule="evenodd"
+                                        ></path>
+                                    </svg>
+                                    Featured
+                                </span>
+                                <h3 className="text-lg font-semibold text-neutral-900 mb-3">
+                                    Dashboard Analytics Interface
+                                </h3>
+                                <div className="flex items-center gap-3">
+                                    <img
+                                        src="https://i.pravatar.cc/64?img=1"
+                                        alt="Designer"
+                                        className="w-8 h-8 rounded-full"
+                                    />
+                                    <div className="flex-1">
+                                        <div className="text-sm font-medium text-neutral-900">
+                                            Sarah Chen
+                                        </div>
+                                        <div className="text-xs text-neutral-400">
+                                            3 days on PixelPorts
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Container>
+            </section>
+
+            <section className="py-20 bg-white">
+                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
+                        Frequently asked questions
+                    </h2>
+                    <div className="space-y-4">
+                        <FaqItem title={'How is PixelPorts different from Dribbble or Behance?'}>
+                            PixelPorts uses an algorithm that gives newcomers a visibility boost.
+                            Your work gets amplified 3-4x in the first few months to help you build
+                            an audience, then gradually transitions as you grow. We believe good
+                            work should be discovered regardless of follower count.
+                        </FaqItem>
+
+                        <FaqItem title={'Is PixelPorts free?'}>
+                            Yes! Visibility is always free on PixelPorts. You'll never have to pay
+                            to boost your posts or get discovered. We may introduce premium features
+                            later for advanced analytics and portfolio customization, but getting
+                            seen will always be free.
+                        </FaqItem>
+
+                        <FaqItem title={'Who should join PixelPorts?'}>
+                            PixelPorts is built for emerging designers—bootcamp grads, self-taught
+                            designers, or anyone who hasn't built a large following yet. If you're
+                            struggling to get your work seen on other platforms, this is for you.
+                        </FaqItem>
+
+                        <FaqItem title={'How does the visibility boost work?'}>
+                            Every upload appears in our Discover and New Designers feeds. The
+                            algorithm surfaces work based on engagement rate, audience diversity,
+                            content quality, and a follower handicap. Designers with fewer followers
+                            get amplified more to create a level playing field.
+                        </FaqItem>
+
+                        <FaqItem title={'What happens when I get more followers?'}>
+                            The boost gradually decreases as you grow your audience. This is smooth
+                            and success-based—we don't punish you for gaining followers. The goal is
+                            to help you get established, then let your work and following speak for
+                            themselves.
+                        </FaqItem>
+                    </div>
+                </div>
+            </section>
+
             <section className="bg-gradient-to-br from-indigo-50 via-white to-purple-50">
                 <Container className="bg-[linear-gradient(#e5e7eb_1px,transparent_1px),linear-gradient(90deg,#e5e7eb_1px,transparent_1px)] bg-[length:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_100%)]">
                     <div className="pt-12 pb-20 text-center">
@@ -21,6 +138,7 @@ export default async function Home() {
                             A platform built for emerging designers. Share your process, get
                             discovered, and grow your career with meaningful exposure.
                         </p>
+
                         <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
                             <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition duration-200 w-full sm:w-auto cursor-pointer">
                                 Get Started <ArrowRightIcon className="inline-block w-4 h-4 ml-2" />
