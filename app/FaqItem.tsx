@@ -26,7 +26,7 @@ export function FaqItem({ title, children, isOpen, onToggle }: FaqItemProps) {
         <div className="border border-gray-200 rounded-lg">
             <button
                 onClick={handleClick}
-                className="w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-gray-900 hover:text-purple-600 cursor-pointer"
+                className={`w-full text-left px-6 py-4 flex justify-between items-center font-semibold ${open ? 'text-purple-600' : 'text-gray-900'} hover:text-purple-600 cursor-pointer`}
             >
                 <span>{title}</span>
                 <svg
