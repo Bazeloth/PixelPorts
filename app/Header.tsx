@@ -103,8 +103,7 @@ export default async function Header() {
                                     href="/signup"
                                     className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
                                 >
-                                    Get Started{' '}
-                                    <ArrowRightIcon className="inline-block w-4 h-4 ml-2" />
+                                    Sign Up
                                 </Link>
                             </>
                         )}

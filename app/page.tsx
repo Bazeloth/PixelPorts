@@ -19,7 +19,7 @@ export default async function Home() {
                         </p>
                         <div className="flex gap-3">
                             <a
-                                href="/about"
+                                href="#faq-visibility"
                                 className="px-5 py-2.5 bg-transparent text-neutral-900 text-sm font-medium rounded-lg border border-neutral-200 hover:border-neutral-900 transition-colors"
                             >
                                 How does it work?
@@ -82,15 +82,6 @@ export default async function Home() {
             </section>
 
             <section className="py-20 bg-white">
-                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
-                        Frequently asked questions
-                    </h2>
-                    <FaqAccordion />
-                </div>
-            </section>
-
-            <section className="py-16 bg-white">
                 <Container>
                     <div className="flex justify-between items-center mb-12">
                         <div>
@@ -104,7 +95,16 @@ export default async function Home() {
                 <ShotsGrid initialLimit={12} />
             </section>
 
-            <section className="bg-gray-900 py-16">
+            <section className="py-20">
+                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
+                        Frequently asked questions
+                    </h2>
+                    <FaqAccordion />
+                </div>
+            </section>
+
+            <section className="py-20 bg-gray-900">
                 <Container className="text-center">
                     <h2 className="text-3xl font-bold text-white mb-4">
                         Ready to showcase your work?
