@@ -20,7 +20,7 @@ export default async function Home() {
                         <div className="flex gap-3">
                             <a
                                 href="#faq-visibility"
-                                className="px-5 py-2.5 bg-transparent text-neutral-900 text-sm font-medium rounded-lg border border-neutral-200 hover:border-neutral-900 transition-colors"
+                                className="px-5 py-2.5 bg-white text-neutral-900 text-sm font-medium rounded-lg border border-neutral-200 hover:border-neutral-900 transition-colors"
                             >
                                 How does it work?
                             </a>
