@@ -3,7 +3,7 @@ import { createSupabaseClient } from '@/lib/supabase/server';
 export type User = {
     id: string;
     email: string;
-    profile: { name: string | null; avatar_file_ext: string | null } | null;
+    profile: { name: string | null; avatar_file_ext: string | null; username: string | null } | null;
 } | null;
 
 export const getUserAndProfile = async (): Promise<User> => {
@@ -15,7 +15,7 @@ export const getUserAndProfile = async (): Promise<User> => {
 
     const { data } = await supabase
         .from('userprofiles')
-        .select('name, avatar_file_ext')
+        .select('name, avatar_file_ext, username')
         .eq('id', user.id)
         .maybeSingle();
 
@@ -24,8 +24,9 @@ export const getUserAndProfile = async (): Promise<User> => {
         email: user.email!,
         profile: data
             ? {
-                  name: data.name,
-                  avatar_file_ext: data.avatar_file_ext,
+                  name: data.name ?? null,
+                  avatar_file_ext: data.avatar_file_ext ?? null,
+                  username: data.username ?? null,
               }
             : null,
     };

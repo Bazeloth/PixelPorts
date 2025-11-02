@@ -1,20 +1,16 @@
 import Link from 'next/link';
-import { createSupabaseClient } from '@/lib/supabase/server';
 import { Container } from '@/app/Container';
 import { PlusIcon } from 'lucide-react';
 import { connection } from 'next/server';
-import { signOutAction } from '@/app/logout/actions';
 import UserAvatar from '@/app/UserAvatar';
+import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
+import ClickAwayCloseDetails from '@/app/ClickAwayCloseDetails';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Header() {
     await connection();
-    const supabase = await createSupabaseClient();
-
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getUserAndProfile();
 
     return (
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -76,23 +72,48 @@ export default async function Header() {
                     <div className="flex items-center space-x-4">
                         {user ? (
                             <>
-                                <form action={signOutAction}>
-                                    <button
-                                        type="submit"
-                                        className="px-5 py-2.5 bg-white text-neutral-900 text-sm font-medium rounded-lg border-transparent cursor-pointer transition-colors"
-                                    >
-                                        Sign Out
-                                    </button>
-                                </form>
                                 <Link
                                     href="/signup/complete-profile"
                                     className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
-                                    aria-label="Complete your profile"
+                                    aria-label="Upload a new shot"
                                 >
                                     <PlusIcon className="w-4 h-4" /> Upload
                                 </Link>
 
-                                <UserAvatar userId={user.id} />
+                                <ClickAwayCloseDetails>
+                                    <details className="relative" data-close-on-click-away>
+                                        <summary className="list-none cursor-pointer">
+                                            <UserAvatar
+                                                userId={user.id}
+                                                displayName={user.profile?.name ?? undefined}
+                                                avatarFileExt={
+                                                    user.profile?.avatar_file_ext ?? undefined
+                                                }
+                                                size={36}
+                                                className="ring-1 ring-neutral-200 hover:ring-neutral-300 transition"
+                                            />
+                                        </summary>
+                                        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-neutral-200 py-2 z-50">
+                                            <Link
+                                                href={
+                                                    user.profile?.username
+                                                        ? `/profile/${user.profile.username}`
+                                                        : '/signup/complete-profile'
+                                                }
+                                                className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
+                                            >
+                                                Profile
+                                            </Link>
+                                            <a
+                                                href="/logout"
+                                                className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
+                                                rel="nofollow"
+                                            >
+                                                Sign out
+                                            </a>
+                                        </div>
+                                    </details>
+                                </ClickAwayCloseDetails>
                             </>
                         ) : (
                             <>
