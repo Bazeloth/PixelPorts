@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { Container } from '@/app/Container';
-import { ArrowRightIcon, PlusIcon } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
 import { connection } from 'next/server';
 import { signOutAction } from '@/app/logout/actions';
+import UserAvatar from '@/app/UserAvatar';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,7 +19,7 @@ export default async function Header() {
     return (
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
             <Container as={'nav'}>
-                <div className="mx-auto px-8 py-3 flex items-center justify-between">
+                <div className="py-3 flex items-center justify-between">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
                             <Link href="/" aria-label="PixelPorts - Go to homepage">
@@ -78,18 +79,20 @@ export default async function Header() {
                                 <form action={signOutAction}>
                                     <button
                                         type="submit"
-                                        className="text-gray-600 hover:text-gray-900 text-sm font-medium"
+                                        className="px-5 py-2.5 bg-white text-neutral-900 text-sm font-medium rounded-lg border-transparent cursor-pointer transition-colors"
                                     >
                                         Sign Out
                                     </button>
                                 </form>
                                 <Link
                                     href="/signup/complete-profile"
-                                    className="bg-indigo-600 hover:bg-indigo-700 text-white border border-gray-300 rounded-full flex items-center gap-2 px-6 py-2 text-sm font-medium hover:bg-gray-50 transition duration-200"
+                                    className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
                                     aria-label="Complete your profile"
                                 >
                                     <PlusIcon className="w-4 h-4" /> Upload
                                 </Link>
+
+                                <UserAvatar userId={user.id} />
                             </>
                         ) : (
                             <>
