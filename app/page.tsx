@@ -171,6 +171,11 @@ export default async function Home() {
                             <h4 className="font-semibold text-gray-900 mb-4">Support</h4>
                             <ul className="space-y-2 text-sm text-gray-600">
                                 <li>
+                                    <a href="/about" className="hover:text-gray-900">
+                                        About
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="#" className="hover:text-gray-900">
                                         Help Center
                                     </a>
