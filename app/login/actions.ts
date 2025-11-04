@@ -101,7 +101,7 @@ function normalizeSupabaseSignUpError(msg: string) {
     return 'Sign up failed. Please try again.';
 }
 
-export type OAuthProvider = 'google' | 'linkedin';
+export type OAuthProvider = 'google';
 
 export async function signInWithOAuth(provider: OAuthProvider) {
     const supabase = await createSupabaseClient();
