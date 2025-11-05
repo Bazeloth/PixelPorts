@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import Icon from '@/app/Icon';
 import {
     Image as ImageIcon,
@@ -11,7 +10,13 @@ import {
     LayoutGrid,
     ArrowLeftRight,
     X,
+    LucideIcon,
 } from 'lucide-react';
+import {
+    MAX_BLOCKS,
+    UploadActionsProvider,
+    useUploadActions,
+} from '@/app/upload/UploadActionsContext';
 
 // Types
 type BlockType = 'heading' | 'paragraph' | 'image' | 'carousel' | 'grid' | 'before-after';
@@ -22,104 +27,35 @@ type Block = {
     data: any;
 };
 
-const MAX_BLOCKS = 10;
+function UploadShotPage() {
+    const uploadActions = useUploadActions();
+    const thumbnailInputRef = useRef<HTMLInputElement | null>(null);
 
-export default function UploadShotPage() {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [category, setCategory] = useState('');
-    const [blocks, setBlocks] = useState<Block[]>([]);
-
-    // Thumbnail
-    const thumbnailInputRef = useRef<HTMLInputElement>(null);
-    const [thumbnailSrc, setThumbnailSrc] = useState<string | null>(null);
-
-    const blockCount = blocks.length;
-
-    const addBlock = useCallback(
-        (type: BlockType) => {
-            if (blocks.length >= MAX_BLOCKS) {
-                alert('Maximum 10 blocks allowed');
-                return;
-            }
-            const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-            setBlocks((prev) => [...prev, { id, type, data: {} }]);
-        },
-        [blocks.length]
-    );
-
-    const removeBlock = useCallback((id: string) => {
-        setBlocks((prev) => prev.filter((b) => b.id !== id));
-    }, []);
-
-    const triggerThumbnailUpload = useCallback(() => {
+    const triggerThumbnailUpload = () => {
         thumbnailInputRef.current?.click();
-    }, []);
+    };
 
     const handleThumbnailUpload = useCallback((file?: File | null) => {
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-            setThumbnailSrc(String(e.target?.result || ''));
+            uploadActions.setThumbnailSrc(String(e.target?.result || ''));
         };
         reader.readAsDataURL(file);
     }, []);
 
-    // Shared helpers
+    const removeBlock = useCallback((id: string) => {
+        uploadActions.setBlocks((prev) => prev.filter((b) => b.id !== id));
+    }, []);
+
     const updateBlockData = useCallback((id: string, updater: (data: any) => any) => {
-        setBlocks((prev) =>
+        uploadActions.setBlocks((prev) =>
             prev.map((b) => (b.id === id ? { ...b, data: updater({ ...(b.data || {}) }) } : b))
         );
     }, []);
 
-    // Actions
-    const validate = () => {
-        if (!thumbnailSrc) {
-            alert('Please upload a thumbnail image');
-            return false;
-        }
-        if (!title.trim()) {
-            alert('Please enter a title');
-            return false;
-        }
-        if (!category) {
-            alert('Please select a category');
-            return false;
-        }
-        return true;
-    };
-
-    const saveDraft = () => {
-        if (!validate()) return;
-        const shotData = { thumbnail: thumbnailSrc, title, description, category, blocks };
-        // Replace with real persistence later
-        console.log('Saving draft:', shotData);
-        alert('Draft saved!');
-    };
-
-    const publishShot = () => {
-        if (!validate()) return;
-        const shotData = { thumbnail: thumbnailSrc, title, description, category, blocks };
-        // Replace with API call + redirect
-        console.log('Publishing shot:', shotData);
-        alert('Shot published! (This would submit to your backend and redirect to the shot page)');
-    };
-
-    // Listen for header actions (Save/Publish) dispatched from HeaderRightSwitch -> UploadHeaderActions
-    useEffect(() => {
-        const handleSave = () => saveDraft();
-        const handlePublish = () => publishShot();
-        window.addEventListener('upload:saveDraft', handleSave);
-        window.addEventListener('upload:publish', handlePublish);
-        return () => {
-            window.removeEventListener('upload:saveDraft', handleSave);
-            window.removeEventListener('upload:publish', handlePublish);
-        };
-    }, [saveDraft, publishShot, thumbnailSrc, title, description, category, blocks]);
-
     return (
         <div className="bg-gray-50">
-
             {/* Two-column layout */}
             <main className="flex h-[calc(100vh-4rem)]">
                 {/* Left - Live preview */}
@@ -141,8 +77,8 @@ export default function UploadShotPage() {
                                 <input
                                     type="text"
                                     placeholder="Click to add title..."
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
+                                    value={uploadActions.title}
+                                    onChange={(e) => uploadActions.setTitle(e.target.value)}
                                     className="w-full text-4xl font-bold text-gray-900 placeholder-gray-300 border-none focus:outline-none focus:ring-0 p-0 bg-transparent"
                                 />
                             </div>
@@ -153,7 +89,7 @@ export default function UploadShotPage() {
                                 onClick={triggerThumbnailUpload}
                             >
                                 <div className="block-toolbar hidden md:flex"></div>
-                                {!thumbnailSrc ? (
+                                {!uploadActions.thumbnailSrc ? (
                                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-20 text-center bg-gray-50">
                                         <Icon
                                             icon={ImageIcon}
@@ -171,7 +107,7 @@ export default function UploadShotPage() {
                                 ) : (
                                     <div>
                                         <img
-                                            src={thumbnailSrc}
+                                            src={uploadActions.thumbnailSrc}
                                             alt="Shot image"
                                             className="w-full rounded-lg"
                                         />
@@ -191,15 +127,15 @@ export default function UploadShotPage() {
                                 <textarea
                                     rows={3}
                                     placeholder="Click to add description (optional)..."
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
+                                    value={uploadActions.description}
+                                    onChange={(e) => uploadActions.setDescription(e.target.value)}
                                     className="w-full text-lg text-gray-700 placeholder-gray-300 border-none focus:outline-none focus:ring-0 p-0 bg-transparent resize-none"
                                 />
                             </div>
 
                             {/* Content blocks */}
                             <div className="space-y-8">
-                                {blocks.length === 0 ? (
+                                {uploadActions.blocks.length === 0 ? (
                                     <div
                                         id="add-block-prompt"
                                         className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg"
@@ -216,7 +152,7 @@ export default function UploadShotPage() {
                                     </div>
                                 ) : null}
 
-                                {blocks.map((block) => (
+                                {uploadActions.blocks.map((block) => (
                                     <PreviewBlock
                                         key={block.id}
                                         block={block}
@@ -243,8 +179,8 @@ export default function UploadShotPage() {
                         </label>
                         <select
                             id="category-input"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
+                            value={uploadActions.category}
+                            onChange={(e) => uploadActions.setCategory(e.target.value)}
                             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-600 bg-white"
                         >
                             <option value="">Select a category</option>
@@ -265,7 +201,8 @@ export default function UploadShotPage() {
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-sm font-semibold text-gray-900">Content blocks</h3>
                             <span className="text-xs text-gray-500">
-                                <span id="block-count">{blockCount}</span>/10
+                                <span id="block-count">{uploadActions.blockCount}</span>/
+                                {MAX_BLOCKS}
                             </span>
                         </div>
                         <p className="text-xs text-gray-600 mb-4">
@@ -275,23 +212,23 @@ export default function UploadShotPage() {
                         <div className="space-y-2">
                             <SidebarButton
                                 label="Heading"
-                                onClick={() => addBlock('heading')}
+                                onClick={() => uploadActions.addBlock('heading')}
                                 icon={Heading1}
                             />
                             <SidebarButton
                                 label="Paragraph"
-                                onClick={() => addBlock('paragraph')}
+                                onClick={() => uploadActions.addBlock('paragraph')}
                                 icon={Text}
                             />
                             <SidebarButton
                                 label="Image"
-                                onClick={() => addBlock('image')}
+                                onClick={() => uploadActions.addBlock('image')}
                                 icon={ImageIcon}
                             />
                             <div className="flex items-center gap-2">
                                 <button
                                     type="button"
-                                    onClick={() => addBlock('carousel')}
+                                    onClick={() => uploadActions.addBlock('carousel')}
                                     className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
                                 >
                                     <Icon
@@ -311,7 +248,7 @@ export default function UploadShotPage() {
                             <div className="flex items-center gap-2">
                                 <button
                                     type="button"
-                                    onClick={() => addBlock('grid')}
+                                    onClick={() => uploadActions.addBlock('grid')}
                                     className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
                                 >
                                     <Icon
@@ -331,7 +268,7 @@ export default function UploadShotPage() {
                             <div className="flex items-center gap-2">
                                 <button
                                     type="button"
-                                    onClick={() => addBlock('before-after')}
+                                    onClick={() => uploadActions.addBlock('before-after')}
                                     className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
                                 >
                                     <Icon
@@ -352,7 +289,7 @@ export default function UploadShotPage() {
                     </div>
 
                     {/* Active blocks */}
-                    {blocks.length > 0 && (
+                    {uploadActions.blocks.length > 0 && (
                         <div id="blocks-list">
                             <div className="border-t border-gray-300 pt-4 mb-3">
                                 <h3 className="text-sm font-semibold text-gray-900 mb-3">
@@ -360,7 +297,7 @@ export default function UploadShotPage() {
                                 </h3>
                             </div>
                             <div id="blocks-container" className="space-y-2">
-                                {blocks.map((b) => (
+                                {uploadActions.blocks.map((b) => (
                                     <div
                                         key={b.id}
                                         className="bg-white border border-gray-300 rounded-lg p-3 flex items-center justify-between"
@@ -391,7 +328,16 @@ export default function UploadShotPage() {
     );
 }
 
+export default function UploadPage() {
+    return (
+        <UploadActionsProvider>
+            <UploadShotPage />
+        </UploadActionsProvider>
+    );
+}
+
 function labelFor(t: BlockType) {
+    // todo: incorperate this into the type itself as an attribute?
     return (
         {
             heading: 'Heading',
@@ -403,8 +349,6 @@ function labelFor(t: BlockType) {
         } as const
     )[t];
 }
-
-import type { LucideIcon } from 'lucide-react';
 
 function SidebarButton({
     label,
@@ -666,7 +610,6 @@ function PreviewBlock({
                         ))}
                         {thumbs.length < 10 && (
                             <CarouselThumbPicker
-                                index={thumbs.length}
                                 onPick={(file) => onThumbFile(thumbs.length, file)}
                             />
                         )}
@@ -877,13 +820,7 @@ function PreviewBlock({
     return null;
 }
 
-function CarouselThumbPicker({
-    index,
-    onPick,
-}: {
-    index: number;
-    onPick: (file?: File | null) => void;
-}) {
+function CarouselThumbPicker({ onPick }: { onPick: (file?: File | null) => void }) {
     const inputRef = useRef<HTMLInputElement>(null);
     return (
         <div

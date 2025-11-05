@@ -1,12 +1,9 @@
 import Link from 'next/link';
 import { Container } from '@/app/Container';
-import { Plus } from 'lucide-react';
-import Icon from '@/app/Icon';
 import { connection } from 'next/server';
-import UserAvatar from '@/app/UserAvatar';
 import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
-import ClickAwayCloseDetails from '@/app/ClickAwayCloseDetails';
 import HeaderRightSwitch from '@/app/HeaderRightSwitch';
+import { UploadActionsProvider } from '@/app/upload/UploadActionsContext';
 
 export const dynamic = 'force-dynamic';
 
@@ -71,11 +68,9 @@ export default async function Header() {
                         </div>
                     </div>
 
-                    <HeaderRightSwitch isLoggedIn={!!user}>
-                        <HeaderRightSwitch.UploadActions />
-                        <HeaderRightSwitch.UserActions user={user} />
-                        <HeaderRightSwitch.GuestActions />
-                    </HeaderRightSwitch>
+                    <UploadActionsProvider>
+                        <HeaderRightSwitch user={user} />
+                    </UploadActionsProvider>
                 </div>
             </Container>
         </header>

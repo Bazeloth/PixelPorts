@@ -3,10 +3,14 @@ import { createSupabaseClient } from '@/lib/supabase/server';
 export type User = {
     id: string;
     email: string;
-    profile: { name: string | null; avatar_file_ext: string | null; username: string | null } | null;
-} | null;
+    profile: {
+        name: string | null;
+        avatar_file_ext: string | null;
+        username: string | null;
+    } | null;
+};
 
-export const getUserAndProfile = async (): Promise<User> => {
+export const getUserAndProfile = async (): Promise<User | null> => {
     const supabase = await createSupabaseClient();
     const {
         data: { user },

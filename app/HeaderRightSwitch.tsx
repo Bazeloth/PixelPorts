@@ -7,16 +7,10 @@ import { Plus } from 'lucide-react';
 import Icon from '@/app/Icon';
 import UserAvatar from '@/app/UserAvatar';
 import ClickAwayCloseDetails from '@/app/ClickAwayCloseDetails';
+import { User } from '@/lib/supabase/getUserAndProfile';
+import { useUploadActions } from '@/app/upload/UploadActionsContext';
 
-// Upload actions (kept here to centralize header right-side variants)
-function UploadHeaderActions() {
-    const onSave = () => {
-        window.dispatchEvent(new CustomEvent('upload:saveDraft'));
-    };
-    const onPublish = () => {
-        window.dispatchEvent(new CustomEvent('upload:publish'));
-    };
-
+function UploadHeaderActions({ onSave, onPublish }: { onSave: () => void; onPublish: () => void }) {
     return (
         <div className="flex items-center gap-4">
             <Link href="/" className="text-gray-700 hover:text-gray-900 font-medium">
@@ -40,8 +34,7 @@ function UploadHeaderActions() {
     );
 }
 
-// Logged-in default actions
-function UserHeaderActions({ user }: { user: any }) {
+function UserHeaderActions({ user }: { user: User }) {
     return (
         <div className="flex items-center space-x-4">
             <Link
@@ -56,16 +49,20 @@ function UserHeaderActions({ user }: { user: any }) {
                 <details className="relative" data-close-on-click-away>
                     <summary className="list-none cursor-pointer">
                         <UserAvatar
-                            userId={user?.id}
-                            displayName={user?.profile?.name ?? undefined}
-                            avatarFileExt={user?.profile?.avatar_file_ext ?? undefined}
+                            userId={user.id}
+                            displayName={user.profile?.name ?? undefined}
+                            avatarFileExt={user.profile?.avatar_file_ext ?? undefined}
                             size={36}
                             className="ring-1 ring-neutral-200 hover:ring-neutral-300 transition"
                         />
                     </summary>
                     <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-neutral-200 py-2 z-50">
                         <Link
-                            href={user?.profile?.username ? `/profile/${user.profile.username}` : '/signup/complete-profile'}
+                            href={
+                                user.profile?.username
+                                    ? `/profile/${user.profile.username}`
+                                    : '/signup/complete-profile'
+                            }
                             className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
                         >
                             Profile
@@ -84,7 +81,6 @@ function UserHeaderActions({ user }: { user: any }) {
     );
 }
 
-// Guest default actions
 function GuestHeaderActions() {
     return (
         <div className="flex items-center space-x-4">
@@ -104,44 +100,20 @@ function GuestHeaderActions() {
     );
 }
 
-function HeaderRightSwitchBase({
-    isLoggedIn,
-    page,
-    children,
-}: {
-    isLoggedIn: boolean;
-    page?: string;
-    children?: React.ReactNode;
-}) {
+export default function HeaderRightSwitch({ user }: { user: User | null }) {
     const pathname = usePathname();
-    const resolvedPage = page ?? ((pathname === '/upload' || pathname?.startsWith('/upload/')) ? 'upload' : undefined);
+    const resolvedPage =
+        pathname === '/upload' || pathname?.startsWith('/upload/') ? 'upload' : undefined;
 
-    // Extract named children if provided
-    const childArray = React.Children.toArray(children) as React.ReactElement[];
-    const uploadChild = childArray.find(
-        (c) => React.isValidElement(c) && c.type === UploadHeaderActions
-    );
-    const userChild = childArray.find(
-        (c) => React.isValidElement(c) && c.type === UserHeaderActions
-    );
-    const guestChild = childArray.find(
-        (c) => React.isValidElement(c) && c.type === GuestHeaderActions
-    );
+    const { saveDraft: onSave, publishShot: onPublish } = useUploadActions();
 
-    if (resolvedPage === 'upload' && isLoggedIn) {
-        return uploadChild ?? <UploadHeaderActions />;
+    if (resolvedPage === 'upload' && user) {
+        return <UploadHeaderActions onSave={onSave} onPublish={onPublish} />;
     }
-    if (isLoggedIn) {
-        return userChild ?? null;
+
+    if (user) {
+        return <UserHeaderActions user={user} />;
     }
-    return guestChild ?? null;
+
+    return <GuestHeaderActions />;
 }
-
-// Attach compound subcomponent API
-const HeaderRightSwitch = Object.assign(HeaderRightSwitchBase, {
-    UploadActions: UploadHeaderActions,
-    UserActions: UserHeaderActions,
-    GuestActions: GuestHeaderActions,
-});
-
-export default HeaderRightSwitch;
