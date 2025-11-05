@@ -26,7 +26,7 @@ function UploadHeaderActions({ onSave, onPublish }: { onSave: () => void; onPubl
             <button
                 type="button"
                 onClick={onPublish}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg hover:from-purple-700 hover:to-blue-700 font-medium"
+                className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
             >
                 Publish
             </button>
