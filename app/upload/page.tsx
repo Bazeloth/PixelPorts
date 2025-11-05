@@ -17,9 +17,7 @@ import {
     UploadActionsProvider,
     useUploadActions,
 } from '@/app/upload/UploadActionsContext';
-
-// Types
-type BlockType = 'heading' | 'paragraph' | 'image' | 'carousel' | 'grid' | 'before-after';
+import { BlockType, blockTypes } from '@/lib/constants/blockTypes';
 
 type Block = {
     id: string;
@@ -337,17 +335,7 @@ export default function UploadPage() {
 }
 
 function labelFor(t: BlockType) {
-    // todo: incorperate this into the type itself as an attribute?
-    return (
-        {
-            heading: 'Heading',
-            paragraph: 'Paragraph',
-            image: 'Image',
-            carousel: 'Carousel',
-            grid: 'Grid gallery',
-            'before-after': 'Before/After',
-        } as const
-    )[t];
+    return blockTypes[t];
 }
 
 function SidebarButton({

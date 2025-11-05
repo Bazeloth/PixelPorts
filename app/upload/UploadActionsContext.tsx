@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { BlockType } from '@/lib/constants/blockTypes';
 
 export type UploadActions = {
     saveDraft: () => void;
@@ -27,7 +28,6 @@ export function useUploadActions() {
     return ctx;
 }
 
-export type BlockType = 'heading' | 'paragraph' | 'image' | 'carousel' | 'grid' | 'before-after';
 export const MAX_BLOCKS = 10;
 
 export function UploadActionsProvider({ children }: { children: React.ReactNode }) {
