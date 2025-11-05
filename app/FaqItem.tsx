@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import Icon from '@/app/Icon';
 
 type FaqItemProps = {
     title: string;
@@ -29,14 +30,9 @@ export function FaqItem({ title, children, isOpen, onToggleAction }: FaqItemProp
                 className={`w-full text-left px-6 py-4 flex justify-between items-center font-semibold ${open ? 'text-purple-600' : 'text-gray-900'} hover:text-purple-600 cursor-pointer`}
             >
                 <span>{title}</span>
-                <svg
-                    className={`w-5 h-5 transform transition-transform ${open ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <ChevronDown />
-                </svg>
+                <span className={`transform transition-transform ${open ? 'rotate-180' : ''}`}>
+                    <Icon icon={ChevronDown} size="md" />
+                </span>
             </button>
             <div className={`px-6 pb-4 text-gray-600 ${open ? '' : 'hidden'}`}>{children}</div>
         </div>

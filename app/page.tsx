@@ -2,6 +2,7 @@ import ShotFilters from '@/app/ShotFilters';
 import { Container } from '@/app/Container';
 import ShotsGrid from '@/app/ShotsGrid';
 import { ArrowRightIcon } from 'lucide-react';
+import Icon from '@/app/Icon';
 import FaqAccordion from '@/app/FaqAccordion';
 
 export default async function Home() {
@@ -29,14 +30,19 @@ export default async function Home() {
                                 href="/signup"
                                 className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
                             >
-                                Get Discovered{' '}
-                                <ArrowRightIcon className="inline-block w-4 h-4 ml-2" />
+                                Get Discovered
+                                <Icon
+                                    icon={ArrowRightIcon}
+                                    size="sm"
+                                    className="inline-block ml-2"
+                                    ariaLabel="Proceed"
+                                />
                             </a>
                         </div>
                     </div>
 
                     <div>
-                        <div className="bg-white rounded-2xl overflow-hidden">
+                        <div className="bg-white rounded-2xl overflow-hidden relative">
                             <img
                                 src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&amp;h=360&amp;fit=crop"
                                 alt="Featured work"
