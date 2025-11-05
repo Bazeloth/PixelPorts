@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
 import { BlockType } from '@/lib/constants/blockTypes';
-import { MAX_IMAGE_BYTES, MAX_TOTAL_BYTES, MAX_TOTAL_BYTES_MB } from '@/app/upload/uploadPolicy';
+import { MAX_TOTAL_BYTES, MAX_TOTAL_BYTES_MB } from '@/app/upload/uploadPolicy';
 
 export type UploadActions = {
     saveDraft: () => void;

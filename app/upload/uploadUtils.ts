@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { ALLOWED_IMAGE_MIME_TYPES, MAX_IMAGE_BYTES } from './uploadPolicy';
+import { ALLOWED_IMAGE_MIME_TYPES, MAX_IMAGE_BYTES, MAX_IMAGE_BYTES_MB } from './uploadPolicy';
 
 export type FileValidationError = { type: 'type' | 'size'; message: string };
 
@@ -12,14 +12,13 @@ export function validateImageFile(file: File): FileValidationError | null {
         };
     }
     if (file.size > MAX_IMAGE_BYTES) {
-        const mb = (MAX_IMAGE_BYTES / (1024 * 1024)).toFixed(0);
-        return { type: 'size', message: `File too large. Max ${mb} MB.` };
+        return { type: 'size', message: `File too large. Max ${MAX_IMAGE_BYTES_MB} MB.` };
     }
     return null;
 }
 
 export function handleImageFile(file: File, cb: (src: string) => void) {
     const reader = new FileReader();
-    reader.onload = (e) => cb(String((e.target as FileReader).result || ""));
+    reader.onload = (e) => cb(String((e.target as FileReader).result || ''));
     reader.readAsDataURL(file);
 }
