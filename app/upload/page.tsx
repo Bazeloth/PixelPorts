@@ -17,13 +17,7 @@ import {
     UploadActionsProvider,
     useUploadActions,
 } from '@/app/upload/UploadActionsContext';
-import { BlockType, blockTypes } from '@/lib/constants/blockTypes';
-
-type Block = {
-    id: string;
-    type: BlockType;
-    data: any;
-};
+import { Block, BlockType, blockTypes } from '@/lib/constants/blockTypes';
 
 function UploadShotPage() {
     const uploadActions = useUploadActions();

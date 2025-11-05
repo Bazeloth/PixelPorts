@@ -8,3 +8,8 @@ export const blockTypes = {
 } as const;
 
 export type BlockType = keyof typeof blockTypes;
+export type Block = {
+    id: string;
+    type: BlockType;
+    data: any;
+};
