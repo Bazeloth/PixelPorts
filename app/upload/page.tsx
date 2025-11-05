@@ -3,7 +3,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Icon from '@/app/Icon';
-import { Image as ImageIcon, Plus, Heading1, Text, LayoutGrid, ArrowLeftRight, X } from 'lucide-react';
+import {
+    Image as ImageIcon,
+    Plus,
+    Heading1,
+    Text,
+    LayoutGrid,
+    ArrowLeftRight,
+    X,
+} from 'lucide-react';
 
 // Types
 type BlockType = 'heading' | 'paragraph' | 'image' | 'carousel' | 'grid' | 'before-after';
@@ -22,9 +30,9 @@ export default function UploadShotPage() {
     const [category, setCategory] = useState('');
     const [blocks, setBlocks] = useState<Block[]>([]);
 
-    // Cover
-    const coverInputRef = useRef<HTMLInputElement>(null);
-    const [coverSrc, setCoverSrc] = useState<string | null>(null);
+    // Thumbnail
+    const thumbnailInputRef = useRef<HTMLInputElement>(null);
+    const [thumbnailSrc, setThumbnailSrc] = useState<string | null>(null);
 
     const blockCount = blocks.length;
 
@@ -44,15 +52,15 @@ export default function UploadShotPage() {
         setBlocks((prev) => prev.filter((b) => b.id !== id));
     }, []);
 
-    const triggerCoverUpload = useCallback(() => {
-        coverInputRef.current?.click();
+    const triggerThumbnailUpload = useCallback(() => {
+        thumbnailInputRef.current?.click();
     }, []);
 
-    const handleCoverUpload = useCallback((file?: File | null) => {
+    const handleThumbnailUpload = useCallback((file?: File | null) => {
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-            setCoverSrc(String(e.target?.result || ''));
+            setThumbnailSrc(String(e.target?.result || ''));
         };
         reader.readAsDataURL(file);
     }, []);
@@ -66,8 +74,8 @@ export default function UploadShotPage() {
 
     // Actions
     const validate = () => {
-        if (!coverSrc) {
-            alert('Please upload a cover image');
+        if (!thumbnailSrc) {
+            alert('Please upload a thumbnail image');
             return false;
         }
         if (!title.trim()) {
@@ -83,7 +91,7 @@ export default function UploadShotPage() {
 
     const saveDraft = () => {
         if (!validate()) return;
-        const shotData = { cover: coverSrc, title, description, category, blocks };
+        const shotData = { thumbnail: thumbnailSrc, title, description, category, blocks };
         // Replace with real persistence later
         console.log('Saving draft:', shotData);
         alert('Draft saved!');
@@ -91,7 +99,7 @@ export default function UploadShotPage() {
 
     const publishShot = () => {
         if (!validate()) return;
-        const shotData = { cover: coverSrc, title, description, category, blocks };
+        const shotData = { thumbnail: thumbnailSrc, title, description, category, blocks };
         // Replace with API call + redirect
         console.log('Publishing shot:', shotData);
         alert('Shot published! (This would submit to your backend and redirect to the shot page)');
@@ -113,7 +121,7 @@ export default function UploadShotPage() {
                         </div>
                         <div className="flex items-center gap-4">
                             <Link
-                                href="/discover"
+                                href="/"
                                 className="text-gray-700 hover:text-gray-900 font-medium"
                             >
                                 Cancel
@@ -164,13 +172,13 @@ export default function UploadShotPage() {
                                 />
                             </div>
 
-                            {/* Cover Image */}
+                            {/* Thumbnail Image */}
                             <div
                                 className="editable-block cursor-pointer"
-                                onClick={triggerCoverUpload}
+                                onClick={triggerThumbnailUpload}
                             >
                                 <div className="block-toolbar hidden md:flex"></div>
-                                {!coverSrc ? (
+                                {!thumbnailSrc ? (
                                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-20 text-center bg-gray-50">
                                         <Icon
                                             icon={ImageIcon}
@@ -188,18 +196,18 @@ export default function UploadShotPage() {
                                 ) : (
                                     <div>
                                         <img
-                                            src={coverSrc}
+                                            src={thumbnailSrc}
                                             alt="Shot image"
                                             className="w-full rounded-lg"
                                         />
                                     </div>
                                 )}
                                 <input
-                                    ref={coverInputRef}
+                                    ref={thumbnailInputRef}
                                     type="file"
                                     accept="image/*"
                                     className="hidden"
-                                    onChange={(e) => handleCoverUpload(e.target.files?.[0])}
+                                    onChange={(e) => handleThumbnailUpload(e.target.files?.[0])}
                                 />
                             </div>
 
