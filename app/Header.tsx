@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Container } from '@/app/Container';
-import { PlusIcon } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import Icon from '@/app/Icon';
 import { connection } from 'next/server';
 import UserAvatar from '@/app/UserAvatar';
@@ -78,7 +78,7 @@ export default async function Header() {
                                     className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
                                     aria-label="Upload a new shot"
                                 >
-                                    <Icon icon={PlusIcon} size="sm" ariaLabel="Upload" className="mr-1" /> Upload
+                                    <Icon icon={Plus} size="sm" ariaLabel="Upload" className="mr-1" /> Upload
                                 </Link>
 
                                 <ClickAwayCloseDetails>

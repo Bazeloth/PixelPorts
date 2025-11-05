@@ -48,3 +48,30 @@
     font-style: normal;
     font-display: swap;
 }
+
+/* Upload page helpers */
+.editable-block {
+  position: relative;
+  transition: all 0.2s;
+}
+.editable-block:hover {
+  outline: 2px dashed #8b5cf6; /* indigo-500 */
+  outline-offset: 4px;
+}
+.editable-block:focus-within {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 4px;
+}
+.block-toolbar {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  display: none;
+  gap: 4px;
+}
+.editable-block:hover .block-toolbar,
+.editable-block:focus-within .block-toolbar {
+  display: flex;
+}
+
+/* Before/After slider visuals - clip-path kept inline in component now */
