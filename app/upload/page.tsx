@@ -105,45 +105,20 @@ export default function UploadShotPage() {
         alert('Shot published! (This would submit to your backend and redirect to the shot page)');
     };
 
+    // Listen for header actions (Save/Publish) dispatched from HeaderRightSwitch -> UploadHeaderActions
+    useEffect(() => {
+        const handleSave = () => saveDraft();
+        const handlePublish = () => publishShot();
+        window.addEventListener('upload:saveDraft', handleSave);
+        window.addEventListener('upload:publish', handlePublish);
+        return () => {
+            window.removeEventListener('upload:saveDraft', handleSave);
+            window.removeEventListener('upload:publish', handlePublish);
+        };
+    }, [saveDraft, publishShot, thumbnailSrc, title, description, category, blocks]);
+
     return (
         <div className="bg-gray-50">
-            {/* Top bar that mimics the provided nav (our global Header already renders, this is the page-local control bar) */}
-            <nav className="bg-white border-b border-gray-200">
-                <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-16">
-                        <div className="flex items-center gap-8">
-                            <Link href="/" className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full" />
-                                <span className="text-xl font-semibold text-gray-900">
-                                    PixelPorts
-                                </span>
-                            </Link>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <Link
-                                href="/"
-                                className="text-gray-700 hover:text-gray-900 font-medium"
-                            >
-                                Cancel
-                            </Link>
-                            <button
-                                type="button"
-                                onClick={saveDraft}
-                                className="px-6 py-2 border-2 border-gray-300 rounded-lg hover:border-gray-400 font-medium"
-                            >
-                                Save draft
-                            </button>
-                            <button
-                                type="button"
-                                onClick={publishShot}
-                                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg hover:from-purple-700 hover:to-blue-700 font-medium"
-                            >
-                                Publish
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </nav>
 
             {/* Two-column layout */}
             <main className="flex h-[calc(100vh-4rem)]">
