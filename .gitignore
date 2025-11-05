@@ -39,3 +39,13 @@ Thumbs.db
 /.turbo
 /.idea
 .vscode/
+
+
+# Playwright snapshots (visual baselines stored locally)
+# Ignore snapshot directories created next to spec files like: example.spec.ts-snapshots/
+# This prevents committing local visual baselines that may differ from CI.
+tests/**/*-snapshots/**
+**/*-snapshots/**
+# Also ignore common screenshot/snapshot folders if present
+tests/**/__screenshots__/**
+tests/**/__snapshots__/**
