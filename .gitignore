@@ -1,15 +1,41 @@
-# Playwright test artifacts (regenerable)
-playwright-report/
-test-results/
-blob-report/
+# Dependencies
+/node_modules
 
-# Playwright traces (if saved outside defaults)
-*.trace.zip
-traces/
+# Next.js build output
+/.next
+/out
 
-# Coverage outputs (when enabled)
-coverage/
-.nyc_output/
+# Production
+/build
 
-# Storybook static build (if you generate it locally)
-# storybook-static/
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Tests and coverage
+/coverage
+/playwright-report
+/test-results
+
+# Misc
+/.vercel
+/.turbo
+/.idea
+.vscode/
