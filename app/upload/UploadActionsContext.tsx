@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
 import { BlockType } from '@/lib/constants/blockTypes';
 
 export type UploadActions = {
@@ -31,6 +31,8 @@ export function useUploadActions() {
 export const MAX_BLOCKS = 10;
 
 export function UploadActionsProvider({ children }: { children: React.ReactNode }) {
+    // Monotonic client-side counter for generating stable IDs without randomness or time
+    const nextIdRef = useRef(0);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
@@ -45,7 +47,7 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
                 alert('Maximum 10 blocks allowed');
                 return prevBlocks;
             }
-            const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+            const id = `block-${nextIdRef.current++}`;
             return [...prevBlocks, { id, type, data: {} }];
         });
     }, []);
