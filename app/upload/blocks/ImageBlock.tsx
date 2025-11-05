@@ -5,7 +5,9 @@ import Icon from '@/app/Icon';
 import { Image as ImageIcon } from 'lucide-react';
 import { Block } from '@/lib/constants/blockTypes';
 import { BlockToolbar, ToolbarButton, ToolbarDangerButton } from '@/app/upload/BlockToolbar';
-import { handleImageFile } from '@/app/upload/uploadUtils';
+import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
+import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
+import { useUploadActions } from '@/app/upload/UploadActionsContext';
 
 export default function ImageBlock({
     block,
@@ -17,9 +19,21 @@ export default function ImageBlock({
     updateBlockDataAction: (updater: (data: any) => any) => void;
 }) {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { tryReplaceBytes } = useUploadActions();
 
-    const onFile = (f?: File | null) =>
-        f && handleImageFile(f, (src) => updateBlockDataAction((d) => ({ ...d, image: src })));
+    const onFile = (f?: File | null) => {
+        if (!f) return;
+        const err = validateImageFile(f);
+        if (err) {
+            alert(err.message);
+            return;
+        }
+        const prev = Number(block.data?.imageBytes || 0);
+        if (!tryReplaceBytes(prev, f.size)) return;
+        handleImageFile(f, (src) =>
+            updateBlockDataAction((d) => ({ ...d, image: src, imageBytes: f.size }))
+        );
+    };
 
     return (
         <div
@@ -28,7 +42,7 @@ export default function ImageBlock({
         >
             <BlockToolbar className="flex gap-2">
                 <ToolbarButton
-                    onClick={(e) => {
+                    onClickAction={(e) => {
                         e.stopPropagation();
                         fileInputRef.current?.click();
                     }}
@@ -36,7 +50,7 @@ export default function ImageBlock({
                     Change
                 </ToolbarButton>
                 <ToolbarDangerButton
-                    onClick={(e) => {
+                    onClickAction={(e) => {
                         e.stopPropagation();
                         onRemoveAction();
                     }}
@@ -71,7 +85,7 @@ export default function ImageBlock({
             <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept={ACCEPT_IMAGE_TYPES}
                 className="hidden"
                 onChange={(e) => onFile(e.target.files?.[0])}
             />

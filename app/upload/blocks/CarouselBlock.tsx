@@ -5,7 +5,9 @@ import Icon from '@/app/Icon';
 import { Image as ImageIcon, Plus } from 'lucide-react';
 import { Block } from '@/lib/constants/blockTypes';
 import { BlockToolbar, ToolbarDangerButton } from '@/app/upload/BlockToolbar';
-import { handleImageFile } from '@/app/upload/uploadUtils';
+import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
+import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
+import { useUploadActions } from '@/app/upload/UploadActionsContext';
 
 export default function CarouselBlock({
     block,
@@ -17,25 +19,48 @@ export default function CarouselBlock({
     updateBlockDataAction: (updater: (data: any) => any) => void;
 }) {
     const mainInputRef = useRef<HTMLInputElement>(null);
+    const { tryReplaceBytes } = useUploadActions();
 
-    const setMainImage = (src: string) => updateBlockDataAction((d) => ({ ...d, mainImage: src }));
-    const addThumbAt = (index: number, src: string) =>
+    const setMainImage = (src: string, size?: number) =>
+        updateBlockDataAction((d) => ({
+            ...d,
+            mainImage: src,
+            ...(typeof size === 'number' ? { mainImageBytes: size } : {}),
+        }));
+    const addThumbAt = (index: number, src: string, size: number) =>
         updateBlockDataAction((d) => {
             const thumbnails: string[] = [...(d.thumbnails || [])];
+            const thumbnailSizes: number[] = [...(d.thumbnailSizes || [])];
             thumbnails[index] = src;
-            return { ...d, thumbnails };
+            thumbnailSizes[index] = size;
+            return { ...d, thumbnails, thumbnailSizes };
         });
 
-    const onMainFile = (f?: File | null) => f && handleImageFile(f, setMainImage);
-    const onThumbFile = (index: number, f?: File | null) =>
-        f && handleImageFile(f, (src) => addThumbAt(index, src));
+    const onMainFile = (f?: File | null) => {
+        if (!f) return;
+        const err = validateImageFile(f);
+        if (err) return alert(err.message);
+        const prev = Number(block.data?.mainImageBytes || 0);
+        if (!tryReplaceBytes(prev, f.size)) return;
+        handleImageFile(f, (src) => setMainImage(src, f.size));
+    };
+    const onThumbFile = (index: number, f?: File | null) => {
+        if (!f) return;
+        const err = validateImageFile(f);
+        if (err) return alert(err.message);
+        const prev = Number(block.data?.thumbnailSizes?.[index] || 0);
+        if (!tryReplaceBytes(prev, f.size)) return;
+        handleImageFile(f, (src) => addThumbAt(index, src, f.size));
+    };
 
     const thumbs: string[] = block.data?.thumbnails || [];
 
     return (
         <div className="editable-block">
             <BlockToolbar>
-                <ToolbarDangerButton onClick={() => onRemoveAction()}>Delete</ToolbarDangerButton>
+                <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
+                    Delete
+                </ToolbarDangerButton>
             </BlockToolbar>
             <div className="space-y-4">
                 {/* Main image */}
@@ -66,7 +91,7 @@ export default function CarouselBlock({
                     <input
                         ref={mainInputRef}
                         type="file"
-                        accept="image/*"
+                        accept={ACCEPT_IMAGE_TYPES}
                         className="hidden"
                         onChange={(e) => onMainFile(e.target.files?.[0])}
                     />
@@ -116,7 +141,7 @@ function CarouselThumbPicker({ onPick }: { onPick: (file?: File | null) => void 
             <input
                 ref={inputRef}
                 type="file"
-                accept="image/*"
+                accept={ACCEPT_IMAGE_TYPES}
                 className="hidden"
                 onChange={(e) => onPick(e.target.files?.[0])}
             />

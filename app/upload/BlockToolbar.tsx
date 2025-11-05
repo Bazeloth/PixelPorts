@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
 export function BlockToolbar({
     children,
-    className = "",
+    className = '',
 }: {
     children: React.ReactNode;
     className?: string;
@@ -13,15 +13,15 @@ export function BlockToolbar({
 }
 
 export function ToolbarButton({
-    onClick,
+    onClickAction,
     children,
 }: {
-    onClick: (e: React.MouseEvent) => void;
+    onClickAction: (e: React.MouseEvent) => void;
     children: React.ReactNode;
 }) {
     return (
         <button
-            onClick={onClick}
+            onClick={onClickAction}
             className="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50"
         >
             {children}
@@ -30,15 +30,15 @@ export function ToolbarButton({
 }
 
 export function ToolbarDangerButton({
-    onClick,
+    onClickAction,
     children,
 }: {
-    onClick: (e: React.MouseEvent) => void;
+    onClickAction: (e: React.MouseEvent) => void;
     children: React.ReactNode;
 }) {
     return (
         <button
-            onClick={onClick}
+            onClick={onClickAction}
             className="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-red-50 hover:border-red-300 hover:text-red-600"
         >
             {children}

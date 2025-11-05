@@ -16,7 +16,9 @@ export default function ParagraphBlock({
     return (
         <div className="editable-block">
             <BlockToolbar>
-                <ToolbarDangerButton onClick={() => onRemoveAction()}>Delete</ToolbarDangerButton>
+                <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
+                    Delete
+                </ToolbarDangerButton>
             </BlockToolbar>
             <textarea
                 rows={4}

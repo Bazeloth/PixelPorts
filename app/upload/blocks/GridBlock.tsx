@@ -1,11 +1,13 @@
-"use client";
+'use client';
 
-import React from "react";
-import Icon from "@/app/Icon";
-import { Plus } from "lucide-react";
-import { Block } from "@/lib/constants/blockTypes";
-import { BlockToolbar, ToolbarDangerButton } from "@/app/upload/BlockToolbar";
-import { handleImageFile } from "@/app/upload/uploadUtils";
+import React from 'react';
+import Icon from '@/app/Icon';
+import { Plus } from 'lucide-react';
+import { Block } from '@/lib/constants/blockTypes';
+import { BlockToolbar, ToolbarDangerButton } from '@/app/upload/BlockToolbar';
+import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
+import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
+import { useUploadActions } from '@/app/upload/UploadActionsContext';
 
 export default function GridBlock({
     block,
@@ -16,21 +18,33 @@ export default function GridBlock({
     onRemoveAction: () => void;
     updateBlockDataAction: (updater: (data: any) => any) => void;
 }) {
-    const setGridAt = (index: number, src: string) =>
+    const { tryReplaceBytes } = useUploadActions();
+
+    const setGridAt = (index: number, src: string, size: number) =>
         updateBlockDataAction((d) => {
             const images: string[] = [...(d.images || [])];
+            const imageSizes: number[] = [...(d.imageSizes || [])];
             images[index] = src;
-            return { ...d, images };
+            imageSizes[index] = size;
+            return { ...d, images, imageSizes };
         });
 
-    const onGridFile = (index: number, f?: File | null) =>
-        f && handleImageFile(f, (src) => setGridAt(index, src));
+    const onGridFile = (index: number, f?: File | null) => {
+        if (!f) return;
+        const err = validateImageFile(f);
+        if (err) return alert(err.message);
+        const prev = Number(block.data?.imageSizes?.[index] || 0);
+        if (!tryReplaceBytes(prev, f.size)) return;
+        handleImageFile(f, (src) => setGridAt(index, src, f.size));
+    };
     const images: string[] = block.data?.images || [];
 
     return (
         <div className="editable-block">
             <BlockToolbar>
-                <ToolbarDangerButton onClick={() => onRemoveAction()}>Delete</ToolbarDangerButton>
+                <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
+                    Delete
+                </ToolbarDangerButton>
             </BlockToolbar>
             <div className="grid grid-cols-2 gap-4">
                 {[0, 1, 2, 3].map((i) => (
@@ -40,7 +54,7 @@ export default function GridBlock({
                         onClick={() =>
                             document
                                 .getElementById(`grid-input-${block.id}-${i}`)
-                                ?.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+                                ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
                         }
                     >
                         {images[i] ? (
@@ -51,17 +65,22 @@ export default function GridBlock({
                             />
                         ) : (
                             <div>
-                                <Icon icon={Plus} size={20} className="w-5 h-5 text-gray-400 mx-auto mb-1" ariaLabel="Add image" />
+                                <Icon
+                                    icon={Plus}
+                                    size={20}
+                                    className="w-5 h-5 text-gray-400 mx-auto mb-1"
+                                    ariaLabel="Add image"
+                                />
                                 <p className="text-xs text-gray-500">
                                     Image {i + 1}
-                                    {i >= 2 ? " (optional)" : ""}
+                                    {i >= 2 ? ' (optional)' : ''}
                                 </p>
                             </div>
                         )}
                         <input
                             id={`grid-input-${block.id}-${i}`}
                             type="file"
-                            accept="image/*"
+                            accept={ACCEPT_IMAGE_TYPES}
                             className="hidden"
                             onChange={(e) => onGridFile(i, e.target.files?.[0])}
                         />

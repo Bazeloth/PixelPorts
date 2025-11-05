@@ -17,6 +17,8 @@ import {
     UploadActionsProvider,
     useUploadActions,
 } from '@/app/upload/UploadActionsContext';
+import { ACCEPT_IMAGE_TYPES, MAX_TOTAL_BYTES } from '@/app/upload/uploadPolicy';
+import { validateImageFile } from '@/app/upload/uploadUtils';
 import { Block, BlockType, blockTypes } from '@/lib/constants/blockTypes';
 import HeadingBlock from '@/app/upload/blocks/HeadingBlock';
 import ParagraphBlock from '@/app/upload/blocks/ParagraphBlock';
@@ -35,14 +37,35 @@ function UploadShotPage() {
 
     const handleThumbnailUpload = useCallback((file?: File | null) => {
         if (!file) return;
+        const err = validateImageFile(file);
+        if (err) {
+            alert(err.message);
+            return;
+        }
+        const prev = uploadActions.thumbnailBytes || 0;
+        if (!uploadActions.tryReplaceBytes(prev, file.size)) return;
         const reader = new FileReader();
         reader.onload = (e) => {
             uploadActions.setThumbnailSrc(String(e.target?.result || ''));
+            uploadActions.setThumbnailBytes(file.size);
         };
         reader.readAsDataURL(file);
     }, []);
 
     const removeBlock = useCallback((id: string) => {
+        // release any bytes this block holds before removing
+        const blk = uploadActions.blocks.find((b) => b.id === id);
+        if (blk) {
+            const d = blk.data || {};
+            let bytes = 0;
+            bytes += Number(d.imageBytes || 0);
+            bytes += Number(d.mainImageBytes || 0);
+            if (Array.isArray(d.thumbnailSizes)) bytes += d.thumbnailSizes.reduce((a: number, v: number) => a + (Number(v) || 0), 0);
+            if (Array.isArray(d.imageSizes)) bytes += d.imageSizes.reduce((a: number, v: number) => a + (Number(v) || 0), 0);
+            bytes += Number(d.beforeBytes || 0);
+            bytes += Number(d.afterBytes || 0);
+            if (bytes) uploadActions.releaseBytes(bytes);
+        }
         uploadActions.setBlocks((prev) => prev.filter((b) => b.id !== id));
     }, []);
 
@@ -114,7 +137,7 @@ function UploadShotPage() {
                                 <input
                                     ref={thumbnailInputRef}
                                     type="file"
-                                    accept="image/*"
+                                    accept={ACCEPT_IMAGE_TYPES}
                                     className="hidden"
                                     onChange={(e) => handleThumbnailUpload(e.target.files?.[0])}
                                 />
@@ -193,6 +216,17 @@ function UploadShotPage() {
                     </div>
 
                     <div className="border-t border-gray-300 my-6" />
+
+                    {/* Total upload size UI */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
+                        <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-700">Total upload size</span>
+                            <span className="font-semibold text-gray-900"><span id="total-size">{(uploadActions.totalBytes / (1024*1024)).toFixed(1)}</span> / {Math.floor(MAX_TOTAL_BYTES / (1024*1024))} MB</span>
+                        </div>
+                        <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
+                            <div id="size-progress" className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.round((uploadActions.totalBytes / MAX_TOTAL_BYTES) * 100))}%` }} />
+                        </div>
+                    </div>
 
                     {/* Add Content Blocks */}
                     <div className="mb-6">

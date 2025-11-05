@@ -1,11 +1,13 @@
-"use client";
+'use client';
 
-import React, { useRef, useCallback, useEffect, useState } from "react";
-import Icon from "@/app/Icon";
-import { Plus } from "lucide-react";
-import { Block } from "@/lib/constants/blockTypes";
-import { BlockToolbar, ToolbarDangerButton } from "@/app/upload/BlockToolbar";
-import { handleImageFile } from "@/app/upload/uploadUtils";
+import React, { useRef, useCallback, useEffect, useState } from 'react';
+import Icon from '@/app/Icon';
+import { Plus } from 'lucide-react';
+import { Block } from '@/lib/constants/blockTypes';
+import { BlockToolbar, ToolbarDangerButton } from '@/app/upload/BlockToolbar';
+import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
+import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
+import { useUploadActions } from '@/app/upload/UploadActionsContext';
 
 export default function BeforeAfterBlock({
     block,
@@ -18,12 +20,29 @@ export default function BeforeAfterBlock({
 }) {
     const beforeInputRef = useRef<HTMLInputElement>(null);
     const afterInputRef = useRef<HTMLInputElement>(null);
+    const { tryReplaceBytes } = useUploadActions();
 
-    const setBefore = (src: string) => updateBlockDataAction((d) => ({ ...d, beforeImage: src }));
-    const setAfter = (src: string) => updateBlockDataAction((d) => ({ ...d, afterImage: src }));
+    const setBefore = (src: string, size: number) =>
+        updateBlockDataAction((d) => ({ ...d, beforeImage: src, beforeBytes: size }));
+    const setAfter = (src: string, size: number) =>
+        updateBlockDataAction((d) => ({ ...d, afterImage: src, afterBytes: size }));
 
-    const onBeforeFile = (f?: File | null) => f && handleImageFile(f, setBefore);
-    const onAfterFile = (f?: File | null) => f && handleImageFile(f, setAfter);
+    const onBeforeFile = (f?: File | null) => {
+        if (!f) return;
+        const err = validateImageFile(f);
+        if (err) return alert(err.message);
+        const prev = Number(block.data?.beforeBytes || 0);
+        if (!tryReplaceBytes(prev, f.size)) return;
+        handleImageFile(f, (src) => setBefore(src, f.size));
+    };
+    const onAfterFile = (f?: File | null) => {
+        if (!f) return;
+        const err = validateImageFile(f);
+        if (err) return alert(err.message);
+        const prev = Number(block.data?.afterBytes || 0);
+        if (!tryReplaceBytes(prev, f.size)) return;
+        handleImageFile(f, (src) => setAfter(src, f.size));
+    };
 
     const before = block.data?.beforeImage;
     const after = block.data?.afterImage;
@@ -62,51 +81,75 @@ export default function BeforeAfterBlock({
     return (
         <div className="editable-block">
             <BlockToolbar>
-                <ToolbarDangerButton onClick={() => onRemoveAction()}>Delete</ToolbarDangerButton>
+                <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
+                    Delete
+                </ToolbarDangerButton>
             </BlockToolbar>
             <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-4 mb-2">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Before</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Before
+                        </label>
                         <div
                             className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 aspect-square flex items-center justify-center cursor-pointer hover:border-purple-600"
                             onClick={() => beforeInputRef.current?.click()}
                         >
                             {before ? (
-                                <img src={before} className="w-full h-full object-cover rounded-lg" alt="Before" />
+                                <img
+                                    src={before}
+                                    className="w-full h-full object-cover rounded-lg"
+                                    alt="Before"
+                                />
                             ) : (
                                 <div>
-                                    <Icon icon={Plus} size={20} className="w-8 h-8 text-gray-400 mx-auto mb-1" ariaLabel="Upload before" />
+                                    <Icon
+                                        icon={Plus}
+                                        size={20}
+                                        className="w-8 h-8 text-gray-400 mx-auto mb-1"
+                                        ariaLabel="Upload before"
+                                    />
                                     <p className="text-xs text-gray-500">Upload before</p>
                                 </div>
                             )}
                             <input
                                 ref={beforeInputRef}
                                 type="file"
-                                accept="image/*"
+                                accept={ACCEPT_IMAGE_TYPES}
                                 className="hidden"
                                 onChange={(e) => onBeforeFile(e.target.files?.[0])}
                             />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">After</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            After
+                        </label>
                         <div
                             className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 aspect-square flex items-center justify-center cursor-pointer hover:border-purple-600"
                             onClick={() => afterInputRef.current?.click()}
                         >
                             {after ? (
-                                <img src={after} className="w-full h-full object-cover rounded-lg" alt="After" />
+                                <img
+                                    src={after}
+                                    className="w-full h-full object-cover rounded-lg"
+                                    alt="After"
+                                />
                             ) : (
                                 <div>
-                                    <Icon icon={Plus} size={20} className="w-8 h-8 text-gray-400 mx-auto mb-1" ariaLabel="Upload after" />
+                                    <Icon
+                                        icon={Plus}
+                                        size={20}
+                                        className="w-8 h-8 text-gray-400 mx-auto mb-1"
+                                        ariaLabel="Upload after"
+                                    />
                                     <p className="text-xs text-gray-500">Upload after</p>
                                 </div>
                             )}
                             <input
                                 ref={afterInputRef}
                                 type="file"
-                                accept="image/*"
+                                accept={ACCEPT_IMAGE_TYPES}
                                 className="hidden"
                                 onChange={(e) => onAfterFile(e.target.files?.[0])}
                             />
@@ -115,7 +158,10 @@ export default function BeforeAfterBlock({
                 </div>
 
                 {showSlider && (
-                    <div ref={containerRef} className="relative rounded-lg overflow-hidden aspect-[16/9] bg-black/5">
+                    <div
+                        ref={containerRef}
+                        className="relative rounded-lg overflow-hidden aspect-[16/9] bg-black/5"
+                    >
                         <img src={after || ''} alt="After" className="w-full h-full object-cover" />
                         <img
                             ref={beforeImgRef}
