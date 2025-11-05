@@ -72,75 +72,9 @@ export default async function Header() {
                     </div>
 
                     <HeaderRightSwitch isLoggedIn={!!user}>
-                        <div className="flex items-center space-x-4">
-                            {user ? (
-                                <>
-                                    <Link
-                                        href="/signup/complete-profile"
-                                        className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
-                                        aria-label="Upload a new shot"
-                                    >
-                                        <Icon
-                                            icon={Plus}
-                                            size="sm"
-                                            ariaLabel="Upload"
-                                            className="mr-1"
-                                        />{' '}
-                                        Upload
-                                    </Link>
-
-                                    <ClickAwayCloseDetails>
-                                        <details className="relative" data-close-on-click-away>
-                                            <summary className="list-none cursor-pointer">
-                                                <UserAvatar
-                                                    userId={user.id}
-                                                    displayName={user.profile?.name ?? undefined}
-                                                    avatarFileExt={
-                                                        user.profile?.avatar_file_ext ?? undefined
-                                                    }
-                                                    size={36}
-                                                    className="ring-1 ring-neutral-200 hover:ring-neutral-300 transition"
-                                                />
-                                            </summary>
-                                            <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-neutral-200 py-2 z-50">
-                                                <Link
-                                                    href={
-                                                        user.profile?.username
-                                                            ? `/profile/${user.profile.username}`
-                                                            : '/signup/complete-profile'
-                                                    }
-                                                    className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
-                                                >
-                                                    Profile
-                                                </Link>
-                                                <a
-                                                    href="/logout"
-                                                    className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
-                                                    rel="nofollow"
-                                                >
-                                                    Sign out
-                                                </a>
-                                            </div>
-                                        </details>
-                                    </ClickAwayCloseDetails>
-                                </>
-                            ) : (
-                                <>
-                                    <Link
-                                        href="/login"
-                                        className="px-5 py-2.5 bg-transparent text-neutral-900 text-sm font-medium rounded-lg border border-neutral-200 hover:border-neutral-900 transition-colors"
-                                    >
-                                        Sign In
-                                    </Link>
-                                    <Link
-                                        href="/signup"
-                                        className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
-                                    >
-                                        Create Account
-                                    </Link>
-                                </>
-                            )}
-                        </div>
+                        <HeaderRightSwitch.UploadActions />
+                        <HeaderRightSwitch.UserActions user={user} />
+                        <HeaderRightSwitch.GuestActions />
                     </HeaderRightSwitch>
                 </div>
             </Container>
