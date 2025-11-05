@@ -37,17 +37,16 @@ function UploadShotPage() {
 
     const handleThumbnailUpload = useCallback((file?: File | null) => {
         if (!file) return;
+
         const err = validateImageFile(file);
         if (err) {
             alert(err.message);
             return;
         }
-        const prev = uploadActions.thumbnailBytes || 0;
-        if (!uploadActions.tryReplaceBytes(prev, file.size)) return;
+
         const reader = new FileReader();
         reader.onload = (e) => {
-            uploadActions.setThumbnailSrc(String(e.target?.result || ''));
-            uploadActions.setThumbnailBytes(file.size);
+            uploadActions.setThumbnail(String(e.target?.result || ''), file.size);
         };
         reader.readAsDataURL(file);
     }, []);

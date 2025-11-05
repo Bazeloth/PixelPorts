@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
 import { BlockType } from '@/lib/constants/blockTypes';
-import { MAX_TOTAL_BYTES } from '@/app/upload/uploadPolicy';
+import { MAX_IMAGE_BYTES, MAX_TOTAL_BYTES, MAX_TOTAL_BYTES_MB } from '@/app/upload/uploadPolicy';
 
 export type UploadActions = {
     saveDraft: () => void;
@@ -19,13 +19,13 @@ export type UploadActions = {
     setBlocks: React.Dispatch<React.SetStateAction<any[]>>;
     thumbnailSrc: string | null;
     setThumbnailSrc: React.Dispatch<React.SetStateAction<string | null>>;
+    setThumbnail: (src: string, bytes: number) => void;
     // Upload size tracking
     totalBytes: number;
     tryAddBytes: (bytes: number) => boolean;
     tryReplaceBytes: (oldBytes: number, newBytes: number) => boolean;
     releaseBytes: (bytes: number) => void;
     thumbnailBytes: number;
-    setThumbnailBytes: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const UploadActionsContext = createContext<UploadActions | null>(null);
@@ -56,7 +56,7 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
     const addBlock = useCallback((type: BlockType) => {
         setBlocks((prevBlocks) => {
             if (prevBlocks.length >= MAX_BLOCKS) {
-                alert('Maximum 10 blocks allowed');
+                alert(`Maximum ${MAX_BLOCKS} blocks allowed`);
                 return prevBlocks;
             }
             const id = `block-${nextIdRef.current++}`;
@@ -67,7 +67,7 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
     const tryAddBytes = useCallback(
         (bytes: number) => {
             if (totalBytes + bytes > MAX_TOTAL_BYTES) {
-                alert('Total upload size exceeds 100 MB.');
+                alert(`Total upload size exceeds ${MAX_TOTAL_BYTES_MB} MB.`);
                 return false;
             }
             setTotalBytes((prev) => prev + bytes);
@@ -80,7 +80,7 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
         (oldBytes: number, newBytes: number) => {
             const current = totalBytes - (oldBytes || 0);
             if (current + newBytes > MAX_TOTAL_BYTES) {
-                alert('Total upload size exceeds 100 MB.');
+                alert(`Total upload size exceeds ${MAX_TOTAL_BYTES_MB} MB.`);
                 return false;
             }
             setTotalBytes(current + newBytes);
@@ -95,6 +95,21 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             setTotalBytes((prev) => Math.max(0, prev - bytes));
         },
         [setTotalBytes]
+    );
+
+    const setThumbnail = useCallback(
+        (src: string, bytes: number) => {
+            // Calculate what total would be if we replaced existing thumbnail bytes with new bytes
+            const currentExcludingThumb = totalBytes - (thumbnailBytes || 0);
+            if (currentExcludingThumb + bytes > MAX_TOTAL_BYTES) {
+                alert(`Total upload size exceeds ${MAX_TOTAL_BYTES_MB} MB.`);
+                return;
+            }
+            setThumbnailSrc(src);
+            setThumbnailBytes(bytes);
+            setTotalBytes(currentExcludingThumb + bytes);
+        },
+        [totalBytes, thumbnailBytes]
     );
 
     const validate = useCallback(() => {
@@ -141,12 +156,12 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             addBlock,
             thumbnailSrc,
             setThumbnailSrc,
+            setThumbnail,
             totalBytes,
             tryAddBytes,
             tryReplaceBytes,
             releaseBytes,
             thumbnailBytes,
-            setThumbnailBytes,
         }),
         [
             saveDraft,
@@ -163,12 +178,12 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             addBlock,
             thumbnailSrc,
             setThumbnailSrc,
+            setThumbnail,
             totalBytes,
             tryAddBytes,
             tryReplaceBytes,
             releaseBytes,
             thumbnailBytes,
-            setThumbnailBytes,
         ]
     );
 
