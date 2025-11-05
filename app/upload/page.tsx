@@ -60,8 +60,10 @@ function UploadShotPage() {
             let bytes = 0;
             bytes += Number(d.imageBytes || 0);
             bytes += Number(d.mainImageBytes || 0);
-            if (Array.isArray(d.thumbnailSizes)) bytes += d.thumbnailSizes.reduce((a: number, v: number) => a + (Number(v) || 0), 0);
-            if (Array.isArray(d.imageSizes)) bytes += d.imageSizes.reduce((a: number, v: number) => a + (Number(v) || 0), 0);
+            if (Array.isArray(d.thumbnailSizes))
+                bytes += d.thumbnailSizes.reduce((a: number, v: number) => a + (Number(v) || 0), 0);
+            if (Array.isArray(d.imageSizes))
+                bytes += d.imageSizes.reduce((a: number, v: number) => a + (Number(v) || 0), 0);
             bytes += Number(d.beforeBytes || 0);
             bytes += Number(d.afterBytes || 0);
             if (bytes) uploadActions.releaseBytes(bytes);
@@ -221,10 +223,21 @@ function UploadShotPage() {
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-700">Total upload size</span>
-                            <span className="font-semibold text-gray-900"><span id="total-size">{(uploadActions.totalBytes / (1024*1024)).toFixed(1)}</span> / {Math.floor(MAX_TOTAL_BYTES / (1024*1024))} MB</span>
+                            <span className="font-semibold text-gray-900">
+                                <span id="total-size">
+                                    {(uploadActions.totalBytes / (1024 * 1024)).toFixed(1)}
+                                </span>{' '}
+                                / {Math.floor(MAX_TOTAL_BYTES / (1024 * 1024))} MB
+                            </span>
                         </div>
                         <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                            <div id="size-progress" className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.round((uploadActions.totalBytes / MAX_TOTAL_BYTES) * 100))}%` }} />
+                            <div
+                                id="size-progress"
+                                className="bg-blue-600 h-1.5 rounded-full"
+                                style={{
+                                    width: `${Math.min(100, Math.round((uploadActions.totalBytes / MAX_TOTAL_BYTES) * 100))}%`,
+                                }}
+                            />
                         </div>
                     </div>
 
@@ -405,7 +418,11 @@ function PreviewBlock({
     switch (block.type) {
         case 'heading':
             return (
-                <HeadingBlock block={block} onRemoveAction={onRemoveAction} updateBlockDataAction={updateBlockDataAction} />
+                <HeadingBlock
+                    block={block}
+                    onRemoveAction={onRemoveAction}
+                    updateBlockDataAction={updateBlockDataAction}
+                />
             );
         case 'paragraph':
             return (
@@ -417,7 +434,11 @@ function PreviewBlock({
             );
         case 'image':
             return (
-                <ImageBlock block={block} onRemoveAction={onRemoveAction} updateBlockDataAction={updateBlockDataAction} />
+                <ImageBlock
+                    block={block}
+                    onRemoveAction={onRemoveAction}
+                    updateBlockDataAction={updateBlockDataAction}
+                />
             );
         case 'carousel':
             return (
@@ -429,7 +450,11 @@ function PreviewBlock({
             );
         case 'grid':
             return (
-                <GridBlock block={block} onRemoveAction={onRemoveAction} updateBlockDataAction={updateBlockDataAction} />
+                <GridBlock
+                    block={block}
+                    onRemoveAction={onRemoveAction}
+                    updateBlockDataAction={updateBlockDataAction}
+                />
             );
         case 'before-after':
             return (

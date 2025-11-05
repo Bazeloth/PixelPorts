@@ -41,12 +41,14 @@ export const MAX_BLOCKS = 10;
 export function UploadActionsProvider({ children }: { children: React.ReactNode }) {
     // Monotonic client-side counter for generating stable IDs without randomness or time
     const nextIdRef = useRef(0);
+
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
     const [blocks, setBlocks] = useState<any[]>([]);
     const [thumbnailSrc, setThumbnailSrc] = useState<string | null>(null);
     const [thumbnailBytes, setThumbnailBytes] = useState<number>(0);
+
     const [totalBytes, setTotalBytes] = useState<number>(0);
 
     const blockCount = blocks.length;
@@ -62,29 +64,38 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
         });
     }, []);
 
-    const tryAddBytes = useCallback((bytes: number) => {
-        if (totalBytes + bytes > MAX_TOTAL_BYTES) {
-            alert('Total upload size exceeds 100 MB.');
-            return false;
-        }
-        setTotalBytes((v) => v + bytes);
-        return true;
-    }, [totalBytes]);
+    const tryAddBytes = useCallback(
+        (bytes: number) => {
+            if (totalBytes + bytes > MAX_TOTAL_BYTES) {
+                alert('Total upload size exceeds 100 MB.');
+                return false;
+            }
+            setTotalBytes((prev) => prev + bytes);
+            return true;
+        },
+        [totalBytes, setTotalBytes]
+    );
 
-    const tryReplaceBytes = useCallback((oldBytes: number, newBytes: number) => {
-        const current = totalBytes - (oldBytes || 0);
-        if (current + newBytes > MAX_TOTAL_BYTES) {
-            alert('Total upload size exceeds 100 MB.');
-            return false;
-        }
-        setTotalBytes(current + newBytes);
-        return true;
-    }, [totalBytes]);
+    const tryReplaceBytes = useCallback(
+        (oldBytes: number, newBytes: number) => {
+            const current = totalBytes - (oldBytes || 0);
+            if (current + newBytes > MAX_TOTAL_BYTES) {
+                alert('Total upload size exceeds 100 MB.');
+                return false;
+            }
+            setTotalBytes(current + newBytes);
+            return true;
+        },
+        [totalBytes, setTotalBytes]
+    );
 
-    const releaseBytes = useCallback((bytes: number) => {
-        if (!bytes) return;
-        setTotalBytes((v) => Math.max(0, v - bytes));
-    }, []);
+    const releaseBytes = useCallback(
+        (bytes: number) => {
+            if (!bytes) return;
+            setTotalBytes((prev) => Math.max(0, prev - bytes));
+        },
+        [setTotalBytes]
+    );
 
     const validate = useCallback(() => {
         if (!thumbnailSrc) {
