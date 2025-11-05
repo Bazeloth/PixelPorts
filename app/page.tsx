@@ -11,11 +11,12 @@ export default async function Home() {
                 <Container className="mx-auto px-8 py-32 lg:py-40 grid lg:grid-cols-2 gap-20 items-center">
                     <div>
                         <h1 className="text-5xl lg:text-[56px] font-bold leading-tight tracking-tight mb-6">
-                            A platform for emerging designers
+                            Our mission
                         </h1>
+                        <p className="text-neutral-600"></p>
                         <p className="text-lg text-neutral-500 mb-8 max-w-[480px]">
-                            Let your work speak for itself—we make sure it gets seen. No follower
-                            count required.
+                            Help emerging designers showcase their work, connect with peers, and get
+                            discovered by people who value ideas and execution over clout.
                         </p>
                         <div className="flex gap-3">
                             <a
