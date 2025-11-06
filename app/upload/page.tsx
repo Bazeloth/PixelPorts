@@ -280,66 +280,56 @@ function UploadShotPage() {
                                 onClick={() => uploadActions.addBlock('image')}
                                 icon={ImageIcon}
                             />
-                            <div className="flex items-center gap-2">
-                                <button
-                                    type="button"
-                                    onClick={() => uploadActions.addBlock('carousel')}
-                                    className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
-                                >
-                                    <Icon
-                                        icon={ImageIcon}
-                                        size="md"
-                                        className="text-gray-600"
-                                        ariaLabel="Carousel"
-                                    />
-                                    <span className="text-sm font-medium text-gray-700">
-                                        Carousel
-                                    </span>
-                                    <span className="text-xs text-gray-500 ml-auto">
-                                        1 main + 9 thumbnails
-                                    </span>
-                                </button>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    type="button"
-                                    onClick={() => uploadActions.addBlock('grid')}
-                                    className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
-                                >
-                                    <Icon
-                                        icon={LayoutGrid}
-                                        size="md"
-                                        className="text-gray-600"
-                                        ariaLabel="Grid gallery"
-                                    />
-                                    <span className="text-sm font-medium text-gray-700">
-                                        Grid gallery
-                                    </span>
-                                    <span className="text-xs text-gray-500 ml-auto">
-                                        2-4 images
-                                    </span>
-                                </button>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    type="button"
-                                    onClick={() => uploadActions.addBlock('before-after')}
-                                    className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
-                                >
-                                    <Icon
-                                        icon={ArrowLeftRight}
-                                        size="md"
-                                        className="text-gray-600"
-                                        ariaLabel="Before/After"
-                                    />
-                                    <span className="text-sm font-medium text-gray-700">
-                                        Before/After
-                                    </span>
-                                    <span className="text-xs text-gray-500 ml-auto">
-                                        Slider comparison
-                                    </span>
-                                </button>
-                            </div>
+                            <button
+                                type="button"
+                                onClick={() => uploadActions.addBlock('carousel')}
+                                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
+                            >
+                                <Icon
+                                    icon={ImageIcon}
+                                    size="md"
+                                    className="text-gray-600"
+                                    ariaLabel="Carousel"
+                                />
+                                <span className="text-sm font-medium text-gray-700">Carousel</span>
+                                <span className="text-xs text-gray-500 ml-auto">
+                                    1 main + 9 thumbnails
+                                </span>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => uploadActions.addBlock('grid')}
+                                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
+                            >
+                                <Icon
+                                    icon={LayoutGrid}
+                                    size="md"
+                                    className="text-gray-600"
+                                    ariaLabel="Grid gallery"
+                                />
+                                <span className="text-sm font-medium text-gray-700">
+                                    Grid gallery
+                                </span>
+                                <span className="text-xs text-gray-500 ml-auto">2-4 images</span>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => uploadActions.addBlock('before-after')}
+                                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
+                            >
+                                <Icon
+                                    icon={ArrowLeftRight}
+                                    size="md"
+                                    className="text-gray-600"
+                                    ariaLabel="Before/After"
+                                />
+                                <span className="text-sm font-medium text-gray-700">
+                                    Before/After
+                                </span>
+                                <span className="text-xs text-gray-500 ml-auto">
+                                    Slider comparison
+                                </span>
+                            </button>
                         </div>
                     </div>
 
