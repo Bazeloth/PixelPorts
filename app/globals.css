@@ -51,26 +51,41 @@
 
 /* Upload page helpers */
 .editable-block {
-  position: relative;
-}
-.editable-block:hover {
-  outline: 2px dashed #8b5cf6; /* indigo-500 */
-  outline-offset: 4px;
-}
-.editable-block:focus-within {
-  outline: 2px solid #8b5cf6;
-  outline-offset: 4px;
-}
-.block-toolbar {
-  position: absolute;
-  top: -40px;
-  right: 0;
-  display: none;
-  gap: 4px;
-}
-.editable-block:hover .block-toolbar,
-.editable-block:focus-within .block-toolbar {
-  display: flex;
+    position: relative;
+    transition: all 0.15s ease;
+    padding: 4px;
 }
 
-/* Before/After slider visuals - clip-path kept inline in component now */
+.editable-block:hover {
+    outline: 2px dashed #a855f7; /* purple-500 */
+    outline-offset: 4px;
+    background-color: #faf5ff; /* purple-50 */
+    border-radius: 8px;
+}
+
+.editable-block:focus-within {
+    outline: 2px solid #a855f7;
+    background-color: #faf5ff;
+    border-radius: 8px;
+}
+
+.block-toolbar {
+    position: absolute;
+    top: -24px;
+    right: 0;
+    display: none;
+    gap: 4px;
+    background: white;
+    padding: 4px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.15);
+}
+
+.block-toolbar:hover {
+    display: flex;
+}
+
+.editable-block:hover .block-toolbar,
+.editable-block:focus-within .block-toolbar {
+    display: flex;
+}

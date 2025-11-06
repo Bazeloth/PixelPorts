@@ -50,7 +50,7 @@ export default function GridBlock({
                 {[0, 1, 2, 3].map((i) => (
                     <div
                         key={i}
-                        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 aspect-square flex items-center justify-center cursor-pointer hover:border-purple-600 overflow-hidden"
+                        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 aspect-square flex items-center justify-center cursor-pointer overflow-hidden"
                         onClick={() =>
                             document
                                 .getElementById(`grid-input-${block.id}-${i}`)
