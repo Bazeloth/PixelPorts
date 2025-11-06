@@ -164,7 +164,7 @@ function UploadShotPage() {
                                     />
                                 ))}
 
-                                {uploadActions.blocks.length === 0 ? (
+                                {uploadActions.blocks.length < MAX_BLOCKS ? (
                                     <div
                                         id="add-block-prompt"
                                         className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg"
@@ -176,7 +176,9 @@ function UploadShotPage() {
                                             ariaLabel="Add"
                                         />
                                         <p className="text-gray-400">
-                                            Add content blocks from the right panel
+                                            {uploadActions.blocks.length === 0
+                                                ? 'Add content blocks from the right panel'
+                                                : 'Add more content blocks from the right panel'}
                                         </p>
                                     </div>
                                 ) : null}
