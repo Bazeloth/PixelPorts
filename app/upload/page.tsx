@@ -189,7 +189,7 @@ function UploadShotPage() {
                 </div>
 
                 {/* Right - Controls */}
-                <div className="w-96 sticky top-22 bg-gray-50 p-6 self-start">
+                <div className="w-96 sticky top-22 bg-gray-50 pl-6 pt-6 self-start">
                     <h2 className="text-lg font-semibold text-gray-900 mb-6">Shot details</h2>
 
                     {/* Category */}
