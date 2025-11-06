@@ -354,7 +354,7 @@ function UploadShotPage() {
                                         </span>
                                         <button
                                             onClick={() => removeBlock(b.id)}
-                                            className="text-gray-400 hover:text-red-600"
+                                            className="text-gray-400 hover:text-red-600 cursor-pointer"
                                             aria-label="Delete block"
                                         >
                                             <Icon
