@@ -266,17 +266,17 @@ function UploadShotPage() {
 
                         <div className="space-y-2">
                             <SidebarButton
-                                label="Heading"
+                                blockType="heading"
                                 onClick={() => uploadActions.addBlock('heading')}
                                 icon={Heading1}
                             />
                             <SidebarButton
-                                label="Paragraph"
+                                blockType="paragraph"
                                 onClick={() => uploadActions.addBlock('paragraph')}
                                 icon={Text}
                             />
                             <SidebarButton
-                                label="Image"
+                                blockType="image"
                                 onClick={() => uploadActions.addBlock('image')}
                                 icon={ImageIcon}
                             />
@@ -296,7 +296,7 @@ function UploadShotPage() {
                                         Carousel
                                     </span>
                                     <span className="text-xs text-gray-500 ml-auto">
-                                        1 main + thumbnails
+                                        1 main + 9 thumbnails
                                     </span>
                                 </button>
                             </div>
@@ -396,21 +396,23 @@ function labelFor(t: BlockType) {
 }
 
 function SidebarButton({
-    label,
+    blockType: BlockType,
     onClick,
-    icon: IconComp,
+    icon,
 }: {
-    label: string;
+    blockType: BlockType;
     onClick: () => void;
     icon: LucideIcon;
 }) {
+    const label = labelFor(BlockType);
+
     return (
         <button
             type="button"
             onClick={onClick}
             className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
         >
-            <Icon icon={IconComp} size="md" className="text-gray-600" ariaLabel={label} />
+            <Icon icon={icon} size="md" className="text-gray-600" ariaLabel={label} />
             <span className="text-sm font-medium text-gray-700">{label}</span>
         </button>
     );
