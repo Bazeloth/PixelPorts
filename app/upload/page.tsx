@@ -80,7 +80,7 @@ function UploadShotPage() {
     return (
         <div className="bg-gray-50">
             {/* Two-column layout */}
-            <Container as="main" className="flex">
+            <Container as="main" className="flex h-[calc(100vh-10rem)]">
                 {/* Left - Live preview */}
                 <div className="flex-1 bg-white border-r border-gray-200 p-8">
                     <div className="max-w-3xl mx-auto">
