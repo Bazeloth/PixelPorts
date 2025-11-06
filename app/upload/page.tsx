@@ -110,7 +110,7 @@ function UploadShotPage() {
                             <div className="editable-block" onClick={triggerThumbnailUpload}>
                                 <div className="block-toolbar hidden md:flex"></div>
                                 {!uploadActions.thumbnailSrc ? (
-                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-20 text-center bg-gray-50">
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-20 text-center bg-gray-50 cursor-pointer">
                                         <Icon
                                             icon={ImageIcon}
                                             size={64}
