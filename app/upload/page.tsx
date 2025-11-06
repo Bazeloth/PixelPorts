@@ -241,6 +241,8 @@ function UploadShotPage() {
                         </div>
                     </div>
 
+                    <div className="border-t border-gray-300 my-6" />
+
                     {/* Add Content Blocks */}
                     <div className="mb-6">
                         <div className="flex items-center justify-between mb-3">
