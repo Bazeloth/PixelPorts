@@ -280,56 +280,29 @@ function UploadShotPage() {
                                 onClick={() => uploadActions.addBlock('image')}
                                 icon={ImageIcon}
                             />
-                            <button
-                                type="button"
+                            <SidebarButton
+                                blockType="carousel"
                                 onClick={() => uploadActions.addBlock('carousel')}
-                                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
-                            >
-                                <Icon
-                                    icon={ImageIcon}
-                                    size="md"
-                                    className="text-gray-600"
-                                    ariaLabel="Carousel"
-                                />
-                                <span className="text-sm font-medium text-gray-700">Carousel</span>
-                                <span className="text-xs text-gray-500 ml-auto">
-                                    1 main + 9 thumbnails
-                                </span>
-                            </button>
-                            <button
-                                type="button"
+                                icon={ImageIcon}
+                            />
+                            <SidebarButton
+                                blockType={'carousel'}
+                                onClick={() => uploadActions.addBlock('carousel')}
+                                description={'1 main + 9 thumbnails'}
+                                icon={ImageIcon}
+                            />
+                            <SidebarButton
+                                blockType={'grid'}
                                 onClick={() => uploadActions.addBlock('grid')}
-                                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
-                            >
-                                <Icon
-                                    icon={LayoutGrid}
-                                    size="md"
-                                    className="text-gray-600"
-                                    ariaLabel="Grid gallery"
-                                />
-                                <span className="text-sm font-medium text-gray-700">
-                                    Grid gallery
-                                </span>
-                                <span className="text-xs text-gray-500 ml-auto">2-4 images</span>
-                            </button>
-                            <button
-                                type="button"
+                                description={'2-4 images'}
+                                icon={LayoutGrid}
+                            />
+                            <SidebarButton
+                                blockType={'before-after'}
                                 onClick={() => uploadActions.addBlock('before-after')}
-                                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
-                            >
-                                <Icon
-                                    icon={ArrowLeftRight}
-                                    size="md"
-                                    className="text-gray-600"
-                                    ariaLabel="Before/After"
-                                />
-                                <span className="text-sm font-medium text-gray-700">
-                                    Before/After
-                                </span>
-                                <span className="text-xs text-gray-500 ml-auto">
-                                    Slider comparison
-                                </span>
-                            </button>
+                                description={'Slider comparison'}
+                                icon={ArrowLeftRight}
+                            />
                         </div>
                     </div>
 
@@ -386,24 +359,29 @@ function labelFor(t: BlockType) {
 }
 
 function SidebarButton({
-    blockType: BlockType,
+    blockType,
     onClick,
     icon,
+    description = '',
 }: {
     blockType: BlockType;
     onClick: () => void;
     icon: LucideIcon;
+    description?: string;
 }) {
-    const label = labelFor(BlockType);
+    const label = labelFor(blockType);
 
     return (
         <button
             type="button"
             onClick={onClick}
-            className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors text-left"
+            className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
         >
             <Icon icon={icon} size="md" className="text-gray-600" ariaLabel={label} />
             <span className="text-sm font-medium text-gray-700">{label}</span>
+            {description ? (
+                <span className="text-xs text-gray-500 ml-auto">{description}</span>
+            ) : null}
         </button>
     );
 }
