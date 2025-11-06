@@ -17,7 +17,7 @@ export default function HeadingBlock({
         <div className="editable-block">
             <BlockToolbar>
                 <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
-                    Delete
+                    Remove
                 </ToolbarDangerButton>
             </BlockToolbar>
             <input

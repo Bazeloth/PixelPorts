@@ -82,7 +82,7 @@ export default function BeforeAfterBlock({
         <div className="editable-block">
             <BlockToolbar>
                 <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
-                    Delete
+                    Remove
                 </ToolbarDangerButton>
             </BlockToolbar>
             <div className="space-y-3">

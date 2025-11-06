@@ -59,7 +59,7 @@ export default function CarouselBlock({
         <div className="editable-block">
             <BlockToolbar>
                 <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
-                    Delete
+                    Remove
                 </ToolbarDangerButton>
             </BlockToolbar>
             <div className="space-y-4">

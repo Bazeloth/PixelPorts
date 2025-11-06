@@ -59,13 +59,11 @@
 .editable-block:hover {
     outline: 2px dashed #a855f7; /* purple-500 */
     outline-offset: 4px;
-    background-color: #faf5ff; /* purple-50 */
     border-radius: 8px;
 }
 
 .editable-block:focus-within {
     outline: 2px solid #a855f7;
-    background-color: #faf5ff;
     border-radius: 8px;
 }
 

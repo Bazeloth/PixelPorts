@@ -52,7 +52,7 @@ export default function ImageBlock({
                         onRemoveAction();
                     }}
                 >
-                    Delete
+                    Remove
                 </ToolbarDangerButton>
             </BlockToolbar>
             {!block.data.image ? (

@@ -17,7 +17,7 @@ export default function ParagraphBlock({
         <div className="editable-block">
             <BlockToolbar>
                 <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
-                    Delete
+                    Remove
                 </ToolbarDangerButton>
             </BlockToolbar>
             <textarea

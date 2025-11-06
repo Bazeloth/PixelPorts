@@ -43,7 +43,7 @@ export default function GridBlock({
         <div className="editable-block">
             <BlockToolbar>
                 <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
-                    Delete
+                    Remove
                 </ToolbarDangerButton>
             </BlockToolbar>
             <div className="grid grid-cols-2 gap-4">
