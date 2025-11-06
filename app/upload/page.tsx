@@ -27,6 +27,7 @@ import CarouselBlock from '@/app/upload/blocks/CarouselBlock';
 import GridBlock from '@/app/upload/blocks/GridBlock';
 import BeforeAfterBlock from '@/app/upload/blocks/BeforeAfterBlock';
 import { Container } from '@/app/Container';
+import { BlockToolbar, ToolbarButton, ToolbarDangerButton } from '@/app/upload/BlockToolbar';
 
 function UploadShotPage() {
     const uploadActions = useUploadActions();
@@ -108,7 +109,6 @@ function UploadShotPage() {
 
                             {/* Thumbnail Image */}
                             <div className="editable-block" onClick={triggerThumbnailUpload}>
-                                <div className="block-toolbar hidden md:flex"></div>
                                 {!uploadActions.thumbnailSrc ? (
                                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-20 text-center bg-gray-50 cursor-pointer">
                                         <Icon
@@ -125,13 +125,25 @@ function UploadShotPage() {
                                         </p>
                                     </div>
                                 ) : (
-                                    <div>
-                                        <img
-                                            src={uploadActions.thumbnailSrc}
-                                            alt="Shot image"
-                                            className="w-full rounded-lg"
-                                        />
-                                    </div>
+                                    <>
+                                        <BlockToolbar className="flex gap-2">
+                                            <ToolbarDangerButton
+                                                onClickAction={(e) => {
+                                                    e.stopPropagation();
+                                                    uploadActions.setThumbnail('', 0);
+                                                }}
+                                            >
+                                                Clear
+                                            </ToolbarDangerButton>
+                                        </BlockToolbar>
+                                        <div>
+                                            <img
+                                                src={uploadActions.thumbnailSrc}
+                                                alt="Shot image"
+                                                className="w-full rounded-lg"
+                                            />
+                                        </div>
+                                    </>
                                 )}
                                 <input
                                     ref={thumbnailInputRef}

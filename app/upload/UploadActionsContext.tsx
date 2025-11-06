@@ -18,14 +18,12 @@ export type UploadActions = {
     addBlock: (type: BlockType) => void;
     setBlocks: React.Dispatch<React.SetStateAction<any[]>>;
     thumbnailSrc: string | null;
-    setThumbnailSrc: React.Dispatch<React.SetStateAction<string | null>>;
     setThumbnail: (src: string, bytes: number) => void;
     // Upload size tracking
     totalBytes: number;
     tryAddBytes: (bytes: number) => boolean;
     tryReplaceBytes: (oldBytes: number, newBytes: number) => boolean;
     releaseBytes: (bytes: number) => void;
-    thumbnailBytes: number;
 };
 
 const UploadActionsContext = createContext<UploadActions | null>(null);
@@ -155,13 +153,11 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             setBlocks,
             addBlock,
             thumbnailSrc,
-            setThumbnailSrc,
             setThumbnail,
             totalBytes,
             tryAddBytes,
             tryReplaceBytes,
             releaseBytes,
-            thumbnailBytes,
         }),
         [
             saveDraft,
@@ -177,13 +173,11 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             setBlocks,
             addBlock,
             thumbnailSrc,
-            setThumbnailSrc,
             setThumbnail,
             totalBytes,
             tryAddBytes,
             tryReplaceBytes,
             releaseBytes,
-            thumbnailBytes,
         ]
     );
 
