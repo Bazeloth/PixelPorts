@@ -80,7 +80,7 @@ function UploadShotPage() {
     return (
         <div className="bg-gray-50">
             {/* Two-column layout */}
-            <Container as="main" className="flex h-[calc(100vh-10rem)]">
+            <Container as="main" className="flex">
                 {/* Left - Live preview */}
                 <div className="flex-1 bg-white border-r border-gray-200 p-8">
                     <div className="max-w-3xl mx-auto">
@@ -107,10 +107,7 @@ function UploadShotPage() {
                             </div>
 
                             {/* Thumbnail Image */}
-                            <div
-                                className="editable-block cursor-pointer"
-                                onClick={triggerThumbnailUpload}
-                            >
+                            <div className="editable-block" onClick={triggerThumbnailUpload}>
                                 <div className="block-toolbar hidden md:flex"></div>
                                 {!uploadActions.thumbnailSrc ? (
                                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-20 text-center bg-gray-50">

@@ -36,10 +36,7 @@ export default function ImageBlock({
     };
 
     return (
-        <div
-            className="editable-block cursor-pointer"
-            onClick={() => fileInputRef.current?.click()}
-        >
+        <div className="editable-block" onClick={() => fileInputRef.current?.click()}>
             <BlockToolbar className="flex gap-2">
                 <ToolbarButton
                     onClickAction={(e) => {
