@@ -4,10 +4,11 @@ import React, { useRef, useCallback, useEffect, useState } from 'react';
 import Icon from '@/app/Icon';
 import { Plus } from 'lucide-react';
 import { Block } from '@/lib/constants/blockTypes';
-import { BlockToolbar, ToolbarDangerButton } from '@/app/upload/BlockToolbar';
+import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
+import EditableBlock from '@/app/upload/EditableBlock';
 
 export default function BeforeAfterBlock({
     block,
@@ -79,11 +80,9 @@ export default function BeforeAfterBlock({
     }, [onMouseMove]);
 
     return (
-        <div className="editable-block">
+        <EditableBlock>
             <BlockToolbar>
-                <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
-                    Remove
-                </ToolbarDangerButton>
+                <ToolbarRemoveButton onRemoveAction={onRemoveAction} />
             </BlockToolbar>
             <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-4 mb-2">
@@ -180,6 +179,6 @@ export default function BeforeAfterBlock({
                     </div>
                 )}
             </div>
-        </div>
+        </EditableBlock>
     );
 }

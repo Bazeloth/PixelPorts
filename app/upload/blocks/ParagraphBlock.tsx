@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { Block } from '@/lib/constants/blockTypes';
-import { BlockToolbar, ToolbarDangerButton } from '@/app/upload/BlockToolbar';
+import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
+import EditableBlock from '@/app/upload/EditableBlock';
 
 export default function ParagraphBlock({
     block,
@@ -14,11 +15,9 @@ export default function ParagraphBlock({
     updateBlockDataAction: (updater: (data: any) => any) => void;
 }) {
     return (
-        <div className="editable-block">
+        <EditableBlock>
             <BlockToolbar>
-                <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
-                    Remove
-                </ToolbarDangerButton>
+                <ToolbarRemoveButton onRemoveAction={onRemoveAction} />
             </BlockToolbar>
             <textarea
                 rows={4}
@@ -27,6 +26,6 @@ export default function ParagraphBlock({
                 onChange={(e) => updateBlockDataAction((d) => ({ ...d, text: e.target.value }))}
                 className="w-full text-gray-700 placeholder-gray-300 border-none focus:outline-none focus:ring-0 p-0 bg-transparent resize-none leading-relaxed"
             />
-        </div>
+        </EditableBlock>
     );
 }

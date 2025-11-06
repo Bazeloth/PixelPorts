@@ -4,10 +4,11 @@ import React, { useRef } from 'react';
 import Icon from '@/app/Icon';
 import { Image as ImageIcon } from 'lucide-react';
 import { Block } from '@/lib/constants/blockTypes';
-import { BlockToolbar, ToolbarButton, ToolbarDangerButton } from '@/app/upload/BlockToolbar';
+import { BlockToolbar, ToolbarButton, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
+import EditableBlock from '@/app/upload/EditableBlock';
 
 export default function ImageBlock({
     block,
@@ -36,7 +37,7 @@ export default function ImageBlock({
     };
 
     return (
-        <div className="editable-block">
+        <EditableBlock>
             <BlockToolbar className="flex gap-2">
                 <ToolbarButton
                     onClickAction={(e) => {
@@ -46,14 +47,7 @@ export default function ImageBlock({
                 >
                     Change
                 </ToolbarButton>
-                <ToolbarDangerButton
-                    onClickAction={(e) => {
-                        e.stopPropagation();
-                        onRemoveAction();
-                    }}
-                >
-                    Remove
-                </ToolbarDangerButton>
+                <ToolbarRemoveButton onRemoveAction={onRemoveAction} />
             </BlockToolbar>
             {!block.data.image ? (
                 <div
@@ -89,6 +83,6 @@ export default function ImageBlock({
                 className="hidden"
                 onChange={(e) => onFile(e.target.files?.[0])}
             />
-        </div>
+        </EditableBlock>
     );
 }

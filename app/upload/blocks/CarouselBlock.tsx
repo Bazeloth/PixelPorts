@@ -4,10 +4,11 @@ import React, { useRef } from 'react';
 import Icon from '@/app/Icon';
 import { Image as ImageIcon, Plus } from 'lucide-react';
 import { Block } from '@/lib/constants/blockTypes';
-import { BlockToolbar, ToolbarDangerButton } from '@/app/upload/BlockToolbar';
+import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
+import EditableBlock from '@/app/upload/EditableBlock';
 
 export default function CarouselBlock({
     block,
@@ -56,11 +57,9 @@ export default function CarouselBlock({
     const thumbs: string[] = block.data?.thumbnails || [];
 
     return (
-        <div className="editable-block">
+        <EditableBlock>
             <BlockToolbar>
-                <ToolbarDangerButton onClickAction={() => onRemoveAction()}>
-                    Remove
-                </ToolbarDangerButton>
+                <ToolbarRemoveButton onRemoveAction={onRemoveAction} />
             </BlockToolbar>
             <div className="space-y-4">
                 {/* Main image */}
@@ -121,7 +120,7 @@ export default function CarouselBlock({
                 </div>
                 <p className="text-xs text-gray-500 text-center">Add up to 10 thumbnail images</p>
             </div>
-        </div>
+        </EditableBlock>
     );
 }
 
