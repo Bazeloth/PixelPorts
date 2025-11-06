@@ -83,7 +83,7 @@ export default function CarouselBlock({
                                     className="w-12 h-12 text-gray-400 mx-auto mb-2"
                                     ariaLabel="Upload main image"
                                 />
-                                <p className="text-gray-600">Click to upload main image</p>
+                                <p className="text-gray-600">Click to upload image</p>
                             </>
                         )}
                     </div>

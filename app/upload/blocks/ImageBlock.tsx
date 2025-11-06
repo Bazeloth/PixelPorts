@@ -4,7 +4,7 @@ import React, { useRef } from 'react';
 import Icon from '@/app/Icon';
 import { Image as ImageIcon } from 'lucide-react';
 import { Block } from '@/lib/constants/blockTypes';
-import { BlockToolbar, ToolbarButton, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
+import { BlockToolbar, ToolbarChangeButton, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
@@ -39,14 +39,13 @@ export default function ImageBlock({
     return (
         <EditableBlock>
             <BlockToolbar className="flex gap-2">
-                <ToolbarButton
-                    onClickAction={(e) => {
-                        e.stopPropagation();
-                        fileInputRef.current?.click();
-                    }}
-                >
-                    Change
-                </ToolbarButton>
+                {block.data.image ? (
+                    <ToolbarChangeButton
+                        onChangeAction={() => {
+                            fileInputRef.current?.click();
+                        }}
+                    />
+                ) : null}
                 <ToolbarRemoveButton onRemoveAction={onRemoveAction} />
             </BlockToolbar>
             {!block.data.image ? (
@@ -63,18 +62,20 @@ export default function ImageBlock({
                     <p className="text-gray-600">Click to upload image</p>
                 </div>
             ) : (
-                <div>
-                    <img src={block.data.image} alt="Image" className="w-full rounded-lg" />
-                    <input
-                        type="text"
-                        placeholder="Add caption (optional)..."
-                        value={block.data.caption || ''}
-                        onChange={(e) =>
-                            updateBlockDataAction((d) => ({ ...d, caption: e.target.value }))
-                        }
-                        className="w-full mt-3 text-sm text-gray-600 placeholder-gray-300 border-none focus:outline-none focus:ring-0 p-0 bg-transparent text-center"
-                    />
-                </div>
+                <>
+                    <div>
+                        <img src={block.data.image} alt="Image" className="w-full rounded-lg" />
+                        <input
+                            type="text"
+                            placeholder="Add caption (optional)..."
+                            value={block.data.caption || ''}
+                            onChange={(e) =>
+                                updateBlockDataAction((d) => ({ ...d, caption: e.target.value }))
+                            }
+                            className="w-full mt-3 text-sm text-gray-600 placeholder-gray-300 border-none focus:outline-none focus:ring-0 p-0 bg-transparent text-center"
+                        />
+                    </div>
+                </>
             )}
             <input
                 ref={fileInputRef}

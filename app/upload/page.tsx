@@ -27,7 +27,7 @@ import CarouselBlock from '@/app/upload/blocks/CarouselBlock';
 import GridBlock from '@/app/upload/blocks/GridBlock';
 import BeforeAfterBlock from '@/app/upload/blocks/BeforeAfterBlock';
 import { Container } from '@/app/Container';
-import { BlockToolbar, ToolbarButton, ToolbarDangerButton } from '@/app/upload/BlockToolbar';
+import { BlockToolbar, ToolbarClearButton } from '@/app/upload/BlockToolbar';
 
 function UploadShotPage() {
     const uploadActions = useUploadActions();
@@ -127,14 +127,11 @@ function UploadShotPage() {
                                 ) : (
                                     <>
                                         <BlockToolbar className="flex gap-2">
-                                            <ToolbarDangerButton
-                                                onClickAction={(e) => {
-                                                    e.stopPropagation();
+                                            <ToolbarClearButton
+                                                onClearAction={() => {
                                                     uploadActions.setThumbnail('', 0);
                                                 }}
-                                            >
-                                                Clear
-                                            </ToolbarDangerButton>
+                                            />
                                         </BlockToolbar>
                                         <div>
                                             <img
