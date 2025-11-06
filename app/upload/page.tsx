@@ -26,6 +26,7 @@ import ImageBlock from '@/app/upload/blocks/ImageBlock';
 import CarouselBlock from '@/app/upload/blocks/CarouselBlock';
 import GridBlock from '@/app/upload/blocks/GridBlock';
 import BeforeAfterBlock from '@/app/upload/blocks/BeforeAfterBlock';
+import { Container } from '@/app/Container';
 
 function UploadShotPage() {
     const uploadActions = useUploadActions();
@@ -79,9 +80,9 @@ function UploadShotPage() {
     return (
         <div className="bg-gray-50">
             {/* Two-column layout */}
-            <main className="flex h-[calc(100vh-4rem)]">
+            <Container as="main" className="flex">
                 {/* Left - Live preview */}
-                <div className="flex-1 overflow-y-auto bg-white border-r border-gray-200 p-8">
+                <div className="flex-1 bg-white border-r border-gray-200 p-8">
                     <div className="max-w-3xl mx-auto">
                         <div className="mb-6">
                             <p className="text-sm text-gray-500 mb-2">
@@ -188,7 +189,7 @@ function UploadShotPage() {
                 </div>
 
                 {/* Right - Controls */}
-                <div className="w-96 overflow-y-auto bg-gray-50 p-6">
+                <div className="w-96 sticky top-22 bg-gray-50 p-6 self-start">
                     <h2 className="text-lg font-semibold text-gray-900 mb-6">Shot details</h2>
 
                     {/* Category */}
@@ -367,7 +368,7 @@ function UploadShotPage() {
                         </div>
                     )}
                 </div>
-            </main>
+            </Container>
         </div>
     );
 }
