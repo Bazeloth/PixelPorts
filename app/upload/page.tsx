@@ -155,6 +155,15 @@ function UploadShotPage() {
 
                             {/* Content blocks */}
                             <div className="space-y-8">
+                                {uploadActions.blocks.map((block) => (
+                                    <PreviewBlock
+                                        key={block.id}
+                                        block={block}
+                                        onRemoveAction={() => removeBlock(block.id)}
+                                        updateBlockDataAction={(u) => updateBlockData(block.id, u)}
+                                    />
+                                ))}
+
                                 {uploadActions.blocks.length === 0 ? (
                                     <div
                                         id="add-block-prompt"
@@ -171,15 +180,6 @@ function UploadShotPage() {
                                         </p>
                                     </div>
                                 ) : null}
-
-                                {uploadActions.blocks.map((block) => (
-                                    <PreviewBlock
-                                        key={block.id}
-                                        block={block}
-                                        onRemoveAction={() => removeBlock(block.id)}
-                                        updateBlockDataAction={(u) => updateBlockData(block.id, u)}
-                                    />
-                                ))}
                             </div>
                         </div>
                     </div>
