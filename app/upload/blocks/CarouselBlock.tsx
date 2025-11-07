@@ -40,7 +40,6 @@ export default function CarouselBlock({
                 updateBlockDataAction((d) => ({ ...d, mainImage: undefined, mainImageBytes: 0 }));
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedIndex, thumbs]);
 
     const addThumbAt = (index: number, src: string, size: number) => {
