@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Icon from '@/app/Icon';
 import { Image as ImageIcon, Plus, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
@@ -29,6 +29,20 @@ export default function CarouselBlock({
             ...(typeof size === 'number' ? { mainImageBytes: size } : {}),
         }));
 
+    // Keep main image always derived from the selected thumbnail
+    useEffect(() => {
+        if (thumbs.length > 0 && thumbs[selectedIndex]) {
+            if (block.data.mainImage !== thumbs[selectedIndex]) {
+                setMainImage(thumbs[selectedIndex], thumbSizes[selectedIndex]);
+            }
+        } else {
+            if (block.data.mainImage) {
+                updateBlockDataAction((d) => ({ ...d, mainImage: undefined, mainImageBytes: 0 }));
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedIndex, thumbs]);
+
     const addThumbAt = (index: number, src: string, size: number) => {
         updateBlockDataAction((d) => {
             const thumbnails: string[] = [...(d.thumbnails || [])];
@@ -45,24 +59,55 @@ export default function CarouselBlock({
         const prevSize = thumbSizes[index] || 0;
         tryReplaceBytes(prevSize, 0);
 
-        updateBlockDataAction((d) => {
-            const thumbnails = [...(d.thumbnails || [])];
-            const thumbnailSizes = [...(d.thumbnailSizes || [])];
-            thumbnails.splice(index, 1);
-            thumbnailSizes.splice(index, 1);
-            return { ...d, thumbnails, thumbnailSizes };
-        });
+        // Compute post-removal arrays first
+        const newThumbs = [...thumbs];
+        const newSizes = [...thumbSizes];
+        newThumbs.splice(index, 1);
+        newSizes.splice(index, 1);
 
-        // Adjust selected index if needed
-        if (selectedIndex >= thumbs.length - 1 && thumbs.length > 1) {
-            setSelectedIndex(thumbs.length - 2);
+        // Persist changes
+        updateBlockDataAction((d) => ({
+            ...d,
+            thumbnails: newThumbs,
+            thumbnailSizes: newSizes,
+        }));
+
+        // Determine new selected index (clamp to last highest index)
+        if (newThumbs.length === 0) {
+            setSelectedIndex(0);
+            // Clear main image if no thumbs remain
+            updateBlockDataAction((d) => ({ ...d, mainImage: undefined, mainImageBytes: 0 }));
+            return;
         }
+
+        let newSelected = selectedIndex;
+        if (selectedIndex >= newThumbs.length) {
+            newSelected = newThumbs.length - 1; // clamp to last index
+        } else if (index === selectedIndex) {
+            newSelected = Math.min(index, newThumbs.length - 1); // stay at same spot (now next item)
+        }
+
+        setSelectedIndex(newSelected);
+        setMainImage(newThumbs[newSelected], newSizes[newSelected]);
     };
 
     const onMainFile = (f?: File | null) => {
         if (!f) return;
         const err = validateImageFile(f);
         if (err) return alert(err.message);
+
+        // If no thumbnails exist, uploading a "main" image should create the first thumbnail
+        if (thumbs.length === 0) {
+            const prevThumb = 0;
+            if (!tryReplaceBytes(prevThumb, f.size)) return;
+            handleImageFile(f, (src) => {
+                addThumbAt(0, src, f.size);
+                setSelectedIndex(0);
+            });
+            return;
+        }
+
+        // Fallback: if thumbnails already exist, just replace main image
         const prev = Number(block.data?.mainImageBytes || 0);
         if (!tryReplaceBytes(prev, f.size)) return;
         handleImageFile(f, (src) => setMainImage(src, f.size));
@@ -174,15 +219,12 @@ export default function CarouselBlock({
                 </div>
 
                 {/* Thumbnails */}
-                <div
-                    className="flex gap-2 overflow-x-auto pb-2"
-                    id={`carousel-thumbnails-${block.id}`}
-                >
+                <div className="flex gap-2 pb-2" id={`carousel-thumbnails-${block.id}`}>
                     {thumbs.map((src: string, index: number) => (
                         <div key={index} className="relative group/thumb flex-shrink-0">
                             <button
                                 onClick={() => selectThumb(index)}
-                                className={`w-20 h-20 rounded overflow-hidden transition-all ${
+                                className={`w-20 h-20 rounded overflow-hidden transition-all cursor-pointer ${
                                     index === selectedIndex
                                         ? 'ring-2 ring-purple-600 ring-offset-2'
                                         : 'opacity-60 hover:opacity-100'
@@ -201,7 +243,7 @@ export default function CarouselBlock({
                                     e.stopPropagation();
                                     removeThumb(index);
                                 }}
-                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full items-center justify-center shadow-lg opacity-0 group-hover/thumb:opacity-100 transition-opacity hidden group-hover/thumb:flex hover:bg-red-600"
+                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full items-center justify-center shadow-lg opacity-0 group-hover/thumb:opacity-100 transition-opacity hidden group-hover/thumb:flex hover:bg-red-600 cursor-pointer"
                                 aria-label="Remove image"
                             >
                                 <X className="w-4 h-4" />
