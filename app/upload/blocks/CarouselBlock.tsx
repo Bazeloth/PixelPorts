@@ -111,7 +111,7 @@ export default function CarouselBlock({
                 <div className="relative group">
                     <div
                         id={`carousel-main-${block.id}`}
-                        className={`border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 ${
+                        className={`border-2 border-dashed border-gray-300 rounded-lg ${!block.data.mainImage ? 'p-20' : ''} text-center bg-gray-50 ${
                             !hasImages ? 'p-16 cursor-pointer' : ''
                         }`}
                         onClick={() => !hasImages && mainInputRef.current?.click()}

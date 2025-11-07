@@ -46,7 +46,7 @@ export default function ImageBlock({
             </BlockToolbar>
             {!block.data.image ? (
                 <div
-                    className="border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 cursor-pointer"
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-20 text-center bg-gray-50 cursor-pointer"
                     onClick={() => fileInputRef.current?.click()}
                 >
                     <Icon
