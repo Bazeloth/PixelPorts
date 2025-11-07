@@ -24,7 +24,6 @@ import {
     BlockDataMap,
     BlockType,
     blockTypes,
-    HeadingData,
     UpdateBlockDataAction,
 } from '@/lib/constants/blockTypes';
 import HeadingBlock from '@/app/upload/blocks/HeadingBlock';

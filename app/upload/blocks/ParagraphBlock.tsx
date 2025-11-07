@@ -1,12 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-    Block,
-    BlockComponentProps,
-    ParagraphData,
-    UpdateBlockDataAction,
-} from '@/lib/constants/blockTypes';
+import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import EditableBlock from '@/app/upload/EditableBlock';
 

@@ -3,12 +3,7 @@
 import React, { useRef } from 'react';
 import Icon from '@/app/Icon';
 import { Image as ImageIcon } from 'lucide-react';
-import {
-    Block,
-    BlockComponentProps,
-    ImageData,
-    UpdateBlockDataAction,
-} from '@/lib/constants/blockTypes';
+import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import { BlockToolbar, ToolbarChangeButton, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
