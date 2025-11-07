@@ -3,7 +3,7 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react';
 import Icon from '@/app/Icon';
 import { Plus } from 'lucide-react';
-import { BeforeAfterData, Block, UpdateBlockDataAction } from '@/lib/constants/blockTypes';
+import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
@@ -14,11 +14,7 @@ export default function BeforeAfterBlock({
     block,
     onRemoveAction,
     updateBlockDataAction,
-}: {
-    block: Block<'before-after'>;
-    onRemoveAction: () => void;
-    updateBlockDataAction: UpdateBlockDataAction<BeforeAfterData>;
-}) {
+}: BlockComponentProps<'before-after'>) {
     const beforeInputRef = useRef<HTMLInputElement>(null);
     const afterInputRef = useRef<HTMLInputElement>(null);
     const { tryReplaceBytes } = useUploadActions();

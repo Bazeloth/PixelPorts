@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import Icon from '@/app/Icon';
 import { Image as ImageIcon, Plus, ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { Block, CarouselData, UpdateBlockDataAction } from '@/lib/constants/blockTypes';
+import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
@@ -14,11 +14,7 @@ export default function CarouselBlock({
     block,
     onRemoveAction,
     updateBlockDataAction,
-}: {
-    block: Block<'carousel'>;
-    onRemoveAction: () => void;
-    updateBlockDataAction: UpdateBlockDataAction<CarouselData>;
-}) {
+}: BlockComponentProps<'carousel'>) {
     const mainInputRef = useRef<HTMLInputElement>(null);
     const { tryReplaceBytes } = useUploadActions();
 

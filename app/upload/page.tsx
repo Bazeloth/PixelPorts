@@ -85,7 +85,9 @@ function UploadShotPage() {
     ) => {
         uploadActions.setBlocks((prev) =>
             prev.map((b) =>
-                b.id === id ? { ...b, data: updater(b.data as BlockDataMap[typeof b.type]) } : b
+                b.id === id
+                    ? { ...b, data: updater(b.data as BlockDataMap[typeof b.type]) as any }
+                    : b
             )
         );
     };
@@ -181,7 +183,9 @@ function UploadShotPage() {
                                         key={block.id}
                                         block={block}
                                         onRemoveAction={() => removeBlock(block.id)}
-                                        updateBlockDataAction={(u) => updateBlockData(block.id, u)}
+                                        updateBlockDataActionFor={(_) => (u) =>
+                                            updateBlockData(block.id, u)
+                                        }
                                     />
                                 ))}
 
@@ -393,24 +397,20 @@ function SidebarButton({
     );
 }
 
-type PreviewBlockProps<T extends BlockType> = {
-    block: Block<T>;
+type PreviewBlockProps = {
+    block: Block;
     onRemoveAction: () => void;
-    updateBlockDataAction: UpdateBlockDataAction<BlockDataMap[T]>;
+    updateBlockDataActionFor: <T extends BlockType>(t: T) => UpdateBlockDataAction<BlockDataMap[T]>;
 };
 
-function PreviewBlock<T extends BlockType>({
-    block,
-    onRemoveAction,
-    updateBlockDataAction,
-}: PreviewBlockProps<T>) {
+function PreviewBlock({ block, onRemoveAction, updateBlockDataActionFor }: PreviewBlockProps) {
     switch (block.type) {
         case 'heading':
             return (
                 <HeadingBlock
-                    block={block as Block<'heading'>}
+                    block={block}
                     onRemoveAction={onRemoveAction}
-                    updateBlockDataAction={updateBlockDataAction}
+                    updateBlockDataAction={updateBlockDataActionFor(block.type)}
                 />
             );
         case 'paragraph':
@@ -418,7 +418,7 @@ function PreviewBlock<T extends BlockType>({
                 <ParagraphBlock
                     block={block}
                     onRemoveAction={onRemoveAction}
-                    updateBlockDataAction={updateBlockDataAction}
+                    updateBlockDataAction={updateBlockDataActionFor(block.type)}
                 />
             );
         case 'image':
@@ -426,7 +426,7 @@ function PreviewBlock<T extends BlockType>({
                 <ImageBlock
                     block={block}
                     onRemoveAction={onRemoveAction}
-                    updateBlockDataAction={updateBlockDataAction}
+                    updateBlockDataAction={updateBlockDataActionFor(block.type)}
                 />
             );
         case 'carousel':
@@ -434,7 +434,7 @@ function PreviewBlock<T extends BlockType>({
                 <CarouselBlock
                     block={block}
                     onRemoveAction={onRemoveAction}
-                    updateBlockDataAction={updateBlockDataAction}
+                    updateBlockDataAction={updateBlockDataActionFor(block.type)}
                 />
             );
         case 'grid':
@@ -442,7 +442,7 @@ function PreviewBlock<T extends BlockType>({
                 <GridBlock
                     block={block}
                     onRemoveAction={onRemoveAction}
-                    updateBlockDataAction={updateBlockDataAction}
+                    updateBlockDataAction={updateBlockDataActionFor(block.type)}
                 />
             );
         case 'before-after':
@@ -450,7 +450,7 @@ function PreviewBlock<T extends BlockType>({
                 <BeforeAfterBlock
                     block={block}
                     onRemoveAction={onRemoveAction}
-                    updateBlockDataAction={updateBlockDataAction}
+                    updateBlockDataAction={updateBlockDataActionFor(block.type)}
                 />
             );
         default:

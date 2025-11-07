@@ -35,10 +35,20 @@ export type BlockDataMap = {
     'before-after': BeforeAfterData;
 };
 
-export type Block<T extends BlockType = BlockType> = {
+export type BlockOf<T extends BlockType> = {
     id: string;
     type: T;
     data: BlockDataMap[T];
 };
 
+export type Block = {
+    [K in BlockType]: BlockOf<K>;
+}[BlockType];
+
 export type UpdateBlockDataAction<D> = (updater: (data: D) => D) => void;
+
+export type BlockComponentProps<T extends BlockType> = {
+    block: BlockOf<T>;
+    onRemoveAction: () => void;
+    updateBlockDataAction: UpdateBlockDataAction<BlockDataMap[T]>;
+};

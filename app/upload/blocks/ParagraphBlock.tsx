@@ -1,7 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Block, ParagraphData, UpdateBlockDataAction } from '@/lib/constants/blockTypes';
+import {
+    Block,
+    BlockComponentProps,
+    ParagraphData,
+    UpdateBlockDataAction,
+} from '@/lib/constants/blockTypes';
 import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import EditableBlock from '@/app/upload/EditableBlock';
 
@@ -9,11 +14,7 @@ export default function ParagraphBlock({
     block,
     onRemoveAction,
     updateBlockDataAction,
-}: {
-    block: Block<'paragraph'>;
-    onRemoveAction: () => void;
-    updateBlockDataAction: UpdateBlockDataAction<ParagraphData>;
-}) {
+}: BlockComponentProps<'paragraph'>) {
     return (
         <EditableBlock>
             <BlockToolbar>

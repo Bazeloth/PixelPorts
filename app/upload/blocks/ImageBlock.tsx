@@ -3,7 +3,12 @@
 import React, { useRef } from 'react';
 import Icon from '@/app/Icon';
 import { Image as ImageIcon } from 'lucide-react';
-import { Block, ImageData, UpdateBlockDataAction } from '@/lib/constants/blockTypes';
+import {
+    Block,
+    BlockComponentProps,
+    ImageData,
+    UpdateBlockDataAction,
+} from '@/lib/constants/blockTypes';
 import { BlockToolbar, ToolbarChangeButton, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
@@ -14,11 +19,7 @@ export default function ImageBlock({
     block,
     onRemoveAction,
     updateBlockDataAction,
-}: {
-    block: Block<'image'>;
-    onRemoveAction: () => void;
-    updateBlockDataAction: UpdateBlockDataAction<ImageData>;
-}) {
+}: BlockComponentProps<'image'>) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { tryReplaceBytes } = useUploadActions();
 
