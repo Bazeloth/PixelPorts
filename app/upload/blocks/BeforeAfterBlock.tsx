@@ -157,12 +157,16 @@ export default function BeforeAfterBlock({
                         ref={containerRef}
                         className="relative rounded-lg overflow-hidden aspect-[16/9] bg-black/5"
                     >
-                        <img src={after || ''} alt="After" className="w-full h-full object-cover" />
+                        <img
+                            src={after || ''}
+                            alt="After"
+                            className="w-full h-full object-cover select-none"
+                        />
                         <img
                             ref={beforeImgRef}
                             src={before || ''}
                             alt="Before"
-                            className="absolute top-0 left-0 w-full h-full object-cover"
+                            className="absolute top-0 left-0 w-full h-full object-cover select-none"
                             style={{ clipPath: 'inset(0 50% 0 0)' }}
                         />
                         <div
