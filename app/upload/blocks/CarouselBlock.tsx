@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Icon from '@/app/Icon';
-import { Image as ImageIcon, Plus } from 'lucide-react';
+import { Image as ImageIcon, Plus, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Block } from '@/lib/constants/blockTypes';
 import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
@@ -22,13 +22,18 @@ export default function CarouselBlock({
     const mainInputRef = useRef<HTMLInputElement>(null);
     const { tryReplaceBytes } = useUploadActions();
 
+    const thumbs: string[] = block.data?.thumbnails || [];
+    const thumbSizes: number[] = block.data?.thumbnailSizes || [];
+    const [selectedIndex, setSelectedIndex] = useState(0);
+
     const setMainImage = (src: string, size?: number) =>
         updateBlockDataAction((d) => ({
             ...d,
             mainImage: src,
             ...(typeof size === 'number' ? { mainImageBytes: size } : {}),
         }));
-    const addThumbAt = (index: number, src: string, size: number) =>
+
+    const addThumbAt = (index: number, src: string, size: number) => {
         updateBlockDataAction((d) => {
             const thumbnails: string[] = [...(d.thumbnails || [])];
             const thumbnailSizes: number[] = [...(d.thumbnailSizes || [])];
@@ -36,6 +41,27 @@ export default function CarouselBlock({
             thumbnailSizes[index] = size;
             return { ...d, thumbnails, thumbnailSizes };
         });
+
+        setMainImage(src, size);
+    };
+
+    const removeThumb = (index: number) => {
+        const prevSize = thumbSizes[index] || 0;
+        tryReplaceBytes(prevSize, 0);
+
+        updateBlockDataAction((d) => {
+            const thumbnails = [...(d.thumbnails || [])];
+            const thumbnailSizes = [...(d.thumbnailSizes || [])];
+            thumbnails.splice(index, 1);
+            thumbnailSizes.splice(index, 1);
+            return { ...d, thumbnails, thumbnailSizes };
+        });
+
+        // Adjust selected index if needed
+        if (selectedIndex >= thumbs.length - 1 && thumbs.length > 1) {
+            setSelectedIndex(thumbs.length - 2);
+        }
+    };
 
     const onMainFile = (f?: File | null) => {
         if (!f) return;
@@ -45,6 +71,7 @@ export default function CarouselBlock({
         if (!tryReplaceBytes(prev, f.size)) return;
         handleImageFile(f, (src) => setMainImage(src, f.size));
     };
+
     const onThumbFile = (index: number, f?: File | null) => {
         if (!f) return;
         const err = validateImageFile(f);
@@ -54,7 +81,29 @@ export default function CarouselBlock({
         handleImageFile(f, (src) => addThumbAt(index, src, f.size));
     };
 
-    const thumbs: string[] = block.data?.thumbnails || [];
+    const selectThumb = (index: number) => {
+        setSelectedIndex(index);
+        setMainImage(thumbs[index], thumbSizes[index]);
+    };
+
+    const goToPrevious = () => {
+        if (selectedIndex > 0) {
+            const newIndex = selectedIndex - 1;
+            setSelectedIndex(newIndex);
+            setMainImage(thumbs[newIndex], thumbSizes[newIndex]);
+        }
+    };
+
+    const goToNext = () => {
+        if (selectedIndex < thumbs.length - 1) {
+            const newIndex = selectedIndex + 1;
+            setSelectedIndex(newIndex);
+            setMainImage(thumbs[newIndex], thumbSizes[newIndex]);
+        }
+    };
+
+    const hasImages = thumbs.length > 0;
+    const showNavigation = hasImages && thumbs.length > 1;
 
     return (
         <EditableBlock>
@@ -63,20 +112,23 @@ export default function CarouselBlock({
             </BlockToolbar>
             <div className="space-y-4">
                 {/* Main image */}
-                <div className="relative">
+                <div className="relative group">
                     <div
                         id={`carousel-main-${block.id}`}
-                        className="border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 cursor-pointer"
-                        onClick={() => mainInputRef.current?.click()}
+                        className={`border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 ${
+                            !hasImages ? 'p-16 cursor-pointer' : ''
+                        }`}
+                        onClick={() => !hasImages && mainInputRef.current?.click()}
                     >
                         {block.data.mainImage ? (
                             <img
                                 src={block.data.mainImage}
                                 alt="Main"
-                                className="w-full rounded-lg"
+                                className="w-full rounded-lg transition-all duration-300"
+                                style={{ height: 'auto' }}
                             />
                         ) : (
-                            <>
+                            <div>
                                 <Icon
                                     icon={ImageIcon}
                                     size={48}
@@ -84,9 +136,38 @@ export default function CarouselBlock({
                                     ariaLabel="Upload main image"
                                 />
                                 <p className="text-gray-600">Click to upload image</p>
-                            </>
+                            </div>
                         )}
                     </div>
+
+                    {/* Navigation Arrows */}
+                    {showNavigation && selectedIndex > 0 && (
+                        <button
+                            onClick={goToPrevious}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all opacity-0 group-hover:opacity-100"
+                            aria-label="Previous image"
+                        >
+                            <ChevronLeft className="w-6 h-6 text-gray-800" />
+                        </button>
+                    )}
+
+                    {showNavigation && selectedIndex < thumbs.length - 1 && (
+                        <button
+                            onClick={goToNext}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all opacity-0 group-hover:opacity-100"
+                            aria-label="Next image"
+                        >
+                            <ChevronRight className="w-6 h-6 text-gray-800" />
+                        </button>
+                    )}
+
+                    {/* Image Counter */}
+                    {showNavigation && (
+                        <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+                            {selectedIndex + 1} / {thumbs.length}
+                        </div>
+                    )}
+
                     <input
                         ref={mainInputRef}
                         type="file"
@@ -102,23 +183,42 @@ export default function CarouselBlock({
                     id={`carousel-thumbnails-${block.id}`}
                 >
                     {thumbs.map((src: string, index: number) => (
-                        <div
-                            key={index}
-                            className="flex-shrink-0 w-20 h-20 rounded overflow-hidden"
-                        >
-                            <img
-                                src={src}
-                                className="w-full h-full object-cover rounded cursor-pointer"
-                                onClick={() => setMainImage(src)}
-                                alt={`Thumb ${index + 1}`}
-                            />
+                        <div key={index} className="relative group/thumb flex-shrink-0">
+                            <button
+                                onClick={() => selectThumb(index)}
+                                className={`w-20 h-20 rounded overflow-hidden transition-all ${
+                                    index === selectedIndex
+                                        ? 'ring-2 ring-purple-600 ring-offset-2'
+                                        : 'opacity-60 hover:opacity-100'
+                                }`}
+                            >
+                                <img
+                                    src={src}
+                                    className="w-full h-full object-cover"
+                                    alt={`Thumbnail ${index + 1}`}
+                                />
+                            </button>
+
+                            {/* Delete button on hover */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeThumb(index);
+                                }}
+                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full items-center justify-center shadow-lg opacity-0 group-hover/thumb:opacity-100 transition-opacity hidden group-hover/thumb:flex hover:bg-red-600"
+                                aria-label="Remove image"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
                         </div>
                     ))}
                     {thumbs.length < 10 && (
                         <CarouselThumbPicker onPick={(file) => onThumbFile(thumbs.length, file)} />
                     )}
                 </div>
-                <p className="text-xs text-gray-500 text-center">Add up to 10 thumbnail images</p>
+                <p className="text-xs text-gray-500 text-center">
+                    {hasImages ? `${thumbs.length} / 10 images` : 'Add up to 10 thumbnail images'}
+                </p>
             </div>
         </EditableBlock>
     );

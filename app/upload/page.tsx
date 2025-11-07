@@ -281,11 +281,6 @@ function UploadShotPage() {
                                 icon={ImageIcon}
                             />
                             <SidebarButton
-                                blockType="carousel"
-                                onClick={() => uploadActions.addBlock('carousel')}
-                                icon={ImageIcon}
-                            />
-                            <SidebarButton
                                 blockType={'carousel'}
                                 onClick={() => uploadActions.addBlock('carousel')}
                                 description={'1 main + 9 thumbnails'}
