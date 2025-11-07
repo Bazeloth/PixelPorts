@@ -87,8 +87,8 @@ export default function BeforeAfterBlock({
                             Before
                         </label>
                         <div
-                            className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 aspect-square flex items-center justify-center cursor-pointer hover:border-purple-600"
-                            onClick={() => beforeInputRef.current?.click()}
+                            className={`border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 aspect-square flex items-center justify-center ${!before ? 'p-20 cursor-pointer hover:border-purple-600' : ''}`}
+                            onClick={() => !before && beforeInputRef.current?.click()}
                         >
                             {before ? (
                                 <img
@@ -121,8 +121,8 @@ export default function BeforeAfterBlock({
                             After
                         </label>
                         <div
-                            className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 aspect-square flex items-center justify-center cursor-pointer hover:border-purple-600"
-                            onClick={() => afterInputRef.current?.click()}
+                            className={`border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 aspect-square flex items-center justify-center ${!after ? 'p-20 cursor-pointer hover:border-purple-600' : ''}`}
+                            onClick={() => !after && afterInputRef.current?.click()}
                         >
                             {after ? (
                                 <img
