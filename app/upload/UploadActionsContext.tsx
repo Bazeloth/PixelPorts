@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
-import { BlockType } from '@/lib/constants/blockTypes';
+import { Block, BlockType } from '@/lib/constants/blockTypes';
 import { MAX_TOTAL_BYTES, MAX_TOTAL_BYTES_MB } from '@/app/upload/uploadPolicy';
 
 export type UploadActions = {
@@ -16,7 +16,7 @@ export type UploadActions = {
     blocks: any[];
     blockCount: number;
     addBlock: (type: BlockType) => void;
-    setBlocks: React.Dispatch<React.SetStateAction<any[]>>;
+    setBlocks: React.Dispatch<React.SetStateAction<Block[]>>;
     thumbnailSrc: string | null;
     setThumbnail: (src: string, bytes: number) => void;
     // Upload size tracking
@@ -43,7 +43,7 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
-    const [blocks, setBlocks] = useState<any[]>([]);
+    const [blocks, setBlocks] = useState<Block[]>([]);
     const [thumbnailSrc, setThumbnailSrc] = useState<string | null>(null);
     const [thumbnailBytes, setThumbnailBytes] = useState<number>(0);
 

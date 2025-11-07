@@ -19,7 +19,14 @@ import {
 } from '@/app/upload/UploadActionsContext';
 import { ACCEPT_IMAGE_TYPES, MAX_TOTAL_BYTES } from '@/app/upload/uploadPolicy';
 import { validateImageFile } from '@/app/upload/uploadUtils';
-import { Block, BlockType, blockTypes } from '@/lib/constants/blockTypes';
+import {
+    Block,
+    BlockDataMap,
+    BlockType,
+    blockTypes,
+    HeadingData,
+    UpdateBlockDataAction,
+} from '@/lib/constants/blockTypes';
 import HeadingBlock from '@/app/upload/blocks/HeadingBlock';
 import ParagraphBlock from '@/app/upload/blocks/ParagraphBlock';
 import ImageBlock from '@/app/upload/blocks/ImageBlock';
@@ -72,11 +79,16 @@ function UploadShotPage() {
         uploadActions.setBlocks((prev) => prev.filter((b) => b.id !== id));
     }, []);
 
-    const updateBlockData = useCallback((id: string, updater: (data: any) => any) => {
+    const updateBlockData = <T extends BlockType>(
+        id: string,
+        updater: (data: BlockDataMap[T]) => BlockDataMap[T]
+    ) => {
         uploadActions.setBlocks((prev) =>
-            prev.map((b) => (b.id === id ? { ...b, data: updater({ ...(b.data || {}) }) } : b))
+            prev.map((b) =>
+                b.id === id ? { ...b, data: updater(b.data as BlockDataMap[typeof b.type]) } : b
+            )
         );
-    }, []);
+    };
 
     return (
         <div className="bg-gray-50">
@@ -381,20 +393,22 @@ function SidebarButton({
     );
 }
 
-function PreviewBlock({
+type PreviewBlockProps<T extends BlockType> = {
+    block: Block<T>;
+    onRemoveAction: () => void;
+    updateBlockDataAction: UpdateBlockDataAction<BlockDataMap[T]>;
+};
+
+function PreviewBlock<T extends BlockType>({
     block,
     onRemoveAction,
     updateBlockDataAction,
-}: {
-    block: Block;
-    onRemoveAction: () => void;
-    updateBlockDataAction: (updater: (data: any) => any) => void;
-}) {
+}: PreviewBlockProps<T>) {
     switch (block.type) {
         case 'heading':
             return (
                 <HeadingBlock
-                    block={block}
+                    block={block as Block<'heading'>}
                     onRemoveAction={onRemoveAction}
                     updateBlockDataAction={updateBlockDataAction}
                 />

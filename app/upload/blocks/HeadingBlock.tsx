@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Block } from '@/lib/constants/blockTypes';
+import { Block, HeadingData, UpdateBlockDataAction } from '@/lib/constants/blockTypes';
 import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import EditableBlock from '@/app/upload/EditableBlock';
 
@@ -10,9 +10,9 @@ export default function HeadingBlock({
     onRemoveAction,
     updateBlockDataAction,
 }: {
-    block: Block;
+    block: Block<'heading'>;
     onRemoveAction: () => void;
-    updateBlockDataAction: (updater: (data: any) => any) => void;
+    updateBlockDataAction: UpdateBlockDataAction<HeadingData>;
 }) {
     return (
         <EditableBlock>

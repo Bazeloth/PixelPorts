@@ -3,7 +3,7 @@
 import React from 'react';
 import Icon from '@/app/Icon';
 import { Plus } from 'lucide-react';
-import { Block } from '@/lib/constants/blockTypes';
+import { Block, GridData, UpdateBlockDataAction } from '@/lib/constants/blockTypes';
 import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
@@ -15,9 +15,9 @@ export default function GridBlock({
     onRemoveAction,
     updateBlockDataAction,
 }: {
-    block: Block;
+    block: Block<'grid'>;
     onRemoveAction: () => void;
-    updateBlockDataAction: (updater: (data: any) => any) => void;
+    updateBlockDataAction: UpdateBlockDataAction<GridData>;
 }) {
     const { tryReplaceBytes } = useUploadActions();
 
