@@ -13,15 +13,13 @@ export type UploadActions = {
     setDescription: React.Dispatch<React.SetStateAction<string>>;
     category: string;
     setCategory: React.Dispatch<React.SetStateAction<string>>;
-    blocks: any[];
+    blocks: Block[];
     blockCount: number;
     addBlock: (type: BlockType) => void;
     setBlocks: React.Dispatch<React.SetStateAction<Block[]>>;
     thumbnailSrc: string | null;
     setThumbnail: (src: string, bytes: number) => void;
-    // Upload size tracking
     totalBytes: number;
-    tryAddBytes: (bytes: number) => boolean;
     tryReplaceBytes: (oldBytes: number, newBytes: number) => boolean;
     releaseBytes: (bytes: number) => void;
 };
@@ -61,18 +59,6 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             return [...prevBlocks, { id, type, data: {} }];
         });
     }, []);
-
-    const tryAddBytes = useCallback(
-        (bytes: number) => {
-            if (totalBytes + bytes > MAX_TOTAL_BYTES) {
-                alert(`Total upload size exceeds ${MAX_TOTAL_BYTES_MB} MB.`);
-                return false;
-            }
-            setTotalBytes((prev) => prev + bytes);
-            return true;
-        },
-        [totalBytes, setTotalBytes]
-    );
 
     const tryReplaceBytes = useCallback(
         (oldBytes: number, newBytes: number) => {
@@ -155,7 +141,6 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             thumbnailSrc,
             setThumbnail,
             totalBytes,
-            tryAddBytes,
             tryReplaceBytes,
             releaseBytes,
         }),
@@ -175,7 +160,6 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             thumbnailSrc,
             setThumbnail,
             totalBytes,
-            tryAddBytes,
             tryReplaceBytes,
             releaseBytes,
         ]

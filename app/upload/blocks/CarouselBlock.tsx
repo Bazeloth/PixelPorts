@@ -119,7 +119,13 @@ export default function CarouselBlock({
         if (err) return alert(err.message);
         const prev = Number(block.data?.thumbnailSizes?.[index] || 0);
         if (!tryReplaceBytes(prev, f.size)) return;
-        handleImageFile(f, (src) => addThumbAt(index, src, f.size));
+        handleImageFile(f, (src) => {
+            addThumbAt(index, src, f.size);
+            // If appending a brand new thumbnail at the end, auto-select it so it's shown as the main image
+            if (index === thumbs.length) {
+                setSelectedIndex(index);
+            }
+        });
     };
 
     const selectThumb = (index: number) => {
