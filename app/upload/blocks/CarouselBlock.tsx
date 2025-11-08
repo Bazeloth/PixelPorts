@@ -22,11 +22,11 @@ export default function CarouselBlock({
     const thumbSizes: number[] = block.data?.thumbnailSizes || [];
     const [selectedIndex, setSelectedIndex] = useState(0);
 
-    const setMainImage = (src: string, size?: number) =>
+    const setMainImage = (src: string, size?: number, countBytes: boolean = false) =>
         updateBlockDataAction((d) => ({
             ...d,
             mainImage: src,
-            ...(typeof size === 'number' ? { mainImageBytes: size } : {}),
+            ...(countBytes && typeof size === 'number' ? { mainImageBytes: size } : { mainImageBytes: 0 }),
         }));
 
     // Keep main image always derived from the selected thumbnail
@@ -106,10 +106,11 @@ export default function CarouselBlock({
             return;
         }
 
-        // Fallback: if thumbnails already exist, just replace main image
-        const prev = Number(block.data?.mainImageBytes || 0);
+        // If thumbnails already exist, replace the currently selected thumbnail
+        const idx = selectedIndex;
+        const prev = Number(block.data?.thumbnailSizes?.[idx] || 0);
         if (!tryReplaceBytes(prev, f.size)) return;
-        handleImageFile(f, (src) => setMainImage(src, f.size));
+        handleImageFile(f, (src) => addThumbAt(idx, src, f.size));
     };
 
     const onThumbFile = (index: number, f?: File | null) => {
