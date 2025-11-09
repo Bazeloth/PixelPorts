@@ -34,6 +34,7 @@ import GridBlock from '@/app/upload/blocks/GridBlock';
 import BeforeAfterBlock from '@/app/upload/blocks/BeforeAfterBlock';
 import { Container } from '@/app/Container';
 import { BlockToolbar } from '@/app/upload/BlockToolbar';
+import { releaseBytesForBlock } from '@/app/upload/blockCleanup';
 
 function UploadShotPage() {
     const uploadActions = useUploadActions();
@@ -59,24 +60,17 @@ function UploadShotPage() {
         reader.readAsDataURL(file);
     }, []);
 
-    const removeBlock = useCallback((id: string) => {
-        // release any bytes this block holds before removing
-        const blk = uploadActions.blocks.find((b) => b.id === id);
-        if (blk) {
-            const d = blk.data || {};
-            let bytes = 0;
-            bytes += Number(d.imageBytes || 0);
-            bytes += Number(d.mainImageBytes || 0);
-            if (Array.isArray(d.thumbnailSizes))
-                bytes += d.thumbnailSizes.reduce((a: number, v: number) => a + (Number(v) || 0), 0);
-            if (Array.isArray(d.imageSizes))
-                bytes += d.imageSizes.reduce((a: number, v: number) => a + (Number(v) || 0), 0);
-            bytes += Number(d.beforeBytes || 0);
-            bytes += Number(d.afterBytes || 0);
-            if (bytes) uploadActions.releaseBytes(bytes);
-        }
-        uploadActions.setBlocks((prev) => prev.filter((b) => b.id !== id));
-    }, []);
+    const removeBlock = useCallback(
+        (id: string) => {
+            const blk = uploadActions.blocks.find((b) => b.id === id);
+            if (blk) {
+                // Centralized cleanup: release bytes for this block before removing
+                releaseBytesForBlock(blk, uploadActions);
+            }
+            uploadActions.setBlocks((prev) => prev.filter((b) => b.id !== id));
+        },
+        [uploadActions.blocks]
+    );
 
     const updateBlockData = <T extends BlockType>(
         id: string,
