@@ -33,7 +33,7 @@ import CarouselBlock from '@/app/upload/blocks/CarouselBlock';
 import GridBlock from '@/app/upload/blocks/GridBlock';
 import BeforeAfterBlock from '@/app/upload/blocks/BeforeAfterBlock';
 import { Container } from '@/app/Container';
-import { BlockToolbar, ToolbarClearButton } from '@/app/upload/BlockToolbar';
+import { BlockToolbar } from '@/app/upload/BlockToolbar';
 
 function UploadShotPage() {
     const uploadActions = useUploadActions();
@@ -140,7 +140,7 @@ function UploadShotPage() {
                                 ) : (
                                     <>
                                         <BlockToolbar className="flex gap-2">
-                                            <ToolbarClearButton
+                                            <BlockToolbar.ToolbarClearButton
                                                 onClickAction={() => {
                                                     uploadActions.setThumbnail('', 0);
                                                 }}

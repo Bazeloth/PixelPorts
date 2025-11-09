@@ -38,18 +38,30 @@ function ToolbarButton({
     );
 }
 
-export function ToolbarChangeButton({ onClickAction }: { onClickAction: () => void }) {
+BlockToolbar.ToolbarChangeButton = function ToolbarChangeButton({
+    onClickAction,
+}: {
+    onClickAction: () => void;
+}) {
     return <ToolbarButton onClickAction={onClickAction}>Change</ToolbarButton>;
-}
+};
 
-export function ToolbarClearButton({ onClickAction }: { onClickAction: () => void }) {
+BlockToolbar.ToolbarClearButton = function ToolbarClearButton({
+    onClickAction,
+}: {
+    onClickAction: () => void;
+}) {
     return <ToolbarButton onClickAction={onClickAction}>Clear</ToolbarButton>;
-}
+};
 
-export function ToolbarRemoveButton({ onClickAction }: { onClickAction: () => void }) {
+BlockToolbar.ToolbarRemoveButton = function ToolbarRemoveButton({
+    onClickAction,
+}: {
+    onClickAction: () => void;
+}) {
     return (
         <ToolbarButton onClickAction={() => onClickAction()} isDestructive={true}>
             Remove
         </ToolbarButton>
     );
-}
+};

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
-import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
+import { BlockToolbar } from '@/app/upload/BlockToolbar';
 import EditableBlock from '@/app/upload/EditableBlock';
 
 export default function ParagraphBlock({
@@ -13,7 +13,7 @@ export default function ParagraphBlock({
     return (
         <EditableBlock>
             <BlockToolbar>
-                <ToolbarRemoveButton onClickAction={onRemoveAction} />
+                <BlockToolbar.ToolbarRemoveButton onClickAction={onRemoveAction} />
             </BlockToolbar>
             <textarea
                 rows={4}

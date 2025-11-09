@@ -4,7 +4,7 @@ import React from 'react';
 import Icon from '@/app/Icon';
 import { Plus } from 'lucide-react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
-import { BlockToolbar, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
+import { BlockToolbar } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
@@ -39,7 +39,7 @@ export default function GridBlock({
     return (
         <EditableBlock>
             <BlockToolbar>
-                <ToolbarRemoveButton onClickAction={onRemoveAction} />
+                <BlockToolbar.ToolbarRemoveButton onClickAction={onRemoveAction} />
             </BlockToolbar>
             <div className="grid grid-cols-2 gap-4">
                 {[0, 1, 2, 3].map((i) => (

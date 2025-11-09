@@ -4,7 +4,7 @@ import React, { useRef } from 'react';
 import Icon from '@/app/Icon';
 import { Image as ImageIcon } from 'lucide-react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
-import { BlockToolbar, ToolbarChangeButton, ToolbarRemoveButton } from '@/app/upload/BlockToolbar';
+import { BlockToolbar } from '@/app/upload/BlockToolbar';
 import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
@@ -36,13 +36,13 @@ export default function ImageBlock({
         <EditableBlock>
             <BlockToolbar className="flex gap-2">
                 {block.data.image ? (
-                    <ToolbarChangeButton
+                    <BlockToolbar.ToolbarChangeButton
                         onClickAction={() => {
                             fileInputRef.current?.click();
                         }}
                     />
                 ) : null}
-                <ToolbarRemoveButton onClickAction={onRemoveAction} />
+                <BlockToolbar.ToolbarRemoveButton onClickAction={onRemoveAction} />
             </BlockToolbar>
             {!block.data.image ? (
                 <div
