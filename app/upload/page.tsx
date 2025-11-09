@@ -97,8 +97,7 @@ function UploadShotPage() {
                                 Live preview - Click to edit
                             </p>
                             <p className="text-xs text-gray-400">
-                                Images will be centered and display at their natural size (max 900px
-                                wide)
+                                Images display at their original size, up to 900px wide wide
                             </p>
                         </div>
 
