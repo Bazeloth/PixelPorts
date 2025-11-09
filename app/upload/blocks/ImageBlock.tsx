@@ -37,12 +37,12 @@ export default function ImageBlock({
             <BlockToolbar className="flex gap-2">
                 {block.data.image ? (
                     <ToolbarChangeButton
-                        onChangeAction={() => {
+                        onClickAction={() => {
                             fileInputRef.current?.click();
                         }}
                     />
                 ) : null}
-                <ToolbarRemoveButton onRemoveAction={onRemoveAction} />
+                <ToolbarRemoveButton onClickAction={onRemoveAction} />
             </BlockToolbar>
             {!block.data.image ? (
                 <div

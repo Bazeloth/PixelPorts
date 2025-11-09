@@ -39,7 +39,7 @@ export default function GridBlock({
     return (
         <EditableBlock>
             <BlockToolbar>
-                <ToolbarRemoveButton onRemoveAction={onRemoveAction} />
+                <ToolbarRemoveButton onClickAction={onRemoveAction} />
             </BlockToolbar>
             <div className="grid grid-cols-2 gap-4">
                 {[0, 1, 2, 3].map((i) => (

@@ -38,17 +38,17 @@ function ToolbarButton({
     );
 }
 
-export function ToolbarChangeButton({ onChangeAction }: { onChangeAction: () => void }) {
-    return <ToolbarButton onClickAction={onChangeAction}>Change</ToolbarButton>;
+export function ToolbarChangeButton({ onClickAction }: { onClickAction: () => void }) {
+    return <ToolbarButton onClickAction={onClickAction}>Change</ToolbarButton>;
 }
 
-export function ToolbarClearButton({ onClearAction }: { onClearAction: () => void }) {
-    return <ToolbarButton onClickAction={onClearAction}>Clear</ToolbarButton>;
+export function ToolbarClearButton({ onClickAction }: { onClickAction: () => void }) {
+    return <ToolbarButton onClickAction={onClickAction}>Clear</ToolbarButton>;
 }
 
-export function ToolbarRemoveButton({ onRemoveAction }: { onRemoveAction: () => void }) {
+export function ToolbarRemoveButton({ onClickAction }: { onClickAction: () => void }) {
     return (
-        <ToolbarButton onClickAction={() => onRemoveAction()} isDestructive={true}>
+        <ToolbarButton onClickAction={() => onClickAction()} isDestructive={true}>
             Remove
         </ToolbarButton>
     );

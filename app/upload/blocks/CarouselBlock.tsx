@@ -26,7 +26,9 @@ export default function CarouselBlock({
         updateBlockDataAction((d) => ({
             ...d,
             mainImage: src,
-            ...(countBytes && typeof size === 'number' ? { mainImageBytes: size } : { mainImageBytes: 0 }),
+            ...(countBytes && typeof size === 'number'
+                ? { mainImageBytes: size }
+                : { mainImageBytes: 0 }),
         }));
 
     // Keep main image always derived from the selected thumbnail
@@ -155,7 +157,7 @@ export default function CarouselBlock({
     return (
         <EditableBlock>
             <BlockToolbar>
-                <ToolbarRemoveButton onRemoveAction={onRemoveAction} />
+                <ToolbarRemoveButton onClickAction={onRemoveAction} />
             </BlockToolbar>
             <div className="space-y-4">
                 {/* Main image */}

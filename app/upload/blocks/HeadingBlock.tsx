@@ -13,7 +13,7 @@ export default function HeadingBlock({
     return (
         <EditableBlock>
             <BlockToolbar>
-                <ToolbarRemoveButton onRemoveAction={onRemoveAction} />
+                <ToolbarRemoveButton onClickAction={onRemoveAction} />
             </BlockToolbar>
             <input
                 type="text"

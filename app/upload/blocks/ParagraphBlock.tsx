@@ -13,7 +13,7 @@ export default function ParagraphBlock({
     return (
         <EditableBlock>
             <BlockToolbar>
-                <ToolbarRemoveButton onRemoveAction={onRemoveAction} />
+                <ToolbarRemoveButton onClickAction={onRemoveAction} />
             </BlockToolbar>
             <textarea
                 rows={4}

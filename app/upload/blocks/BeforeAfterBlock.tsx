@@ -78,7 +78,7 @@ export default function BeforeAfterBlock({
     return (
         <EditableBlock>
             <BlockToolbar>
-                <ToolbarRemoveButton onRemoveAction={onRemoveAction} />
+                <ToolbarRemoveButton onClickAction={onRemoveAction} />
             </BlockToolbar>
             <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-4 mb-2">

@@ -141,7 +141,7 @@ function UploadShotPage() {
                                     <>
                                         <BlockToolbar className="flex gap-2">
                                             <ToolbarClearButton
-                                                onClearAction={() => {
+                                                onClickAction={() => {
                                                     uploadActions.setThumbnail('', 0);
                                                 }}
                                             />
