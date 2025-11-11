@@ -35,6 +35,7 @@ import BeforeAfterBlock from '@/app/upload/blocks/BeforeAfterBlock';
 import { Container } from '@/app/Container';
 import { BlockToolbar } from '@/app/upload/BlockToolbar';
 import { releaseBytesForBlock } from '@/app/upload/blockCleanup';
+import { logger } from '@/lib/utils/console';
 
 function UploadShotPage() {
     const uploadActions = useUploadActions();
@@ -44,24 +45,27 @@ function UploadShotPage() {
         thumbnailInputRef.current?.click();
     };
 
-    const handleThumbnailUpload = useCallback(async (file?: File | null) => {
-        if (!file) return;
+    const handleThumbnailUpload = useCallback(
+        async (file?: File | null) => {
+            if (!file) return;
 
-        const err = await validateImageFileClient(file, uploadActions.totalBytes);
-        if (err) {
-            alert(err.message);
-            return;
-        }
+            const err = await validateImageFileClient(file, uploadActions.totalBytes);
+            if (err) {
+                alert(err.message);
+                return;
+            }
 
-        // Stash original for publish under reserved key
-        uploadActions.addFileToBlock('__thumbnail__', file);
+            // Stash original for publish under reserved key
+            uploadActions.addFileToBlock('__thumbnail__', file);
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            uploadActions.setThumbnail(String(e.target?.result || ''), file.size);
-        };
-        reader.readAsDataURL(file);
-    }, [uploadActions]);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadActions.setThumbnail(String(e.target?.result || ''), file.size);
+            };
+            reader.readAsDataURL(file);
+        },
+        [uploadActions]
+    );
 
     const removeBlock = useCallback(
         (id: string) => {
@@ -141,7 +145,9 @@ function UploadShotPage() {
                                             <BlockToolbar.ToolbarClearButton
                                                 onClickAction={() => {
                                                     uploadActions.setThumbnail('', 0);
-                                                    uploadActions.removeFilesForBlock('__thumbnail__');
+                                                    uploadActions.removeFilesForBlock(
+                                                        '__thumbnail__'
+                                                    );
                                                 }}
                                             />
                                         </BlockToolbar>
@@ -356,11 +362,7 @@ function UploadShotPage() {
 }
 
 export default function UploadPage() {
-    return (
-        <UploadActionsProvider>
-            <UploadShotPage />
-        </UploadActionsProvider>
-    );
+    return <UploadShotPage />;
 }
 
 function labelFor(t: BlockType) {

@@ -3,6 +3,7 @@
 import { PropsWithChildren, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MixpanelProvider from '@/app/MixpanelProvider';
+import { UploadActionsProvider } from './upload/UploadActionsContext';
 
 export default function Providers({ children }: PropsWithChildren) {
     const [queryClient] = useState(
@@ -20,8 +21,10 @@ export default function Providers({ children }: PropsWithChildren) {
     );
 
     return (
-        <MixpanelProvider>
-            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-        </MixpanelProvider>
+        <UploadActionsProvider>
+            <MixpanelProvider>
+                <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+            </MixpanelProvider>
+        </UploadActionsProvider>
     );
 }

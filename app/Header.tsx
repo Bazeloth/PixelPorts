@@ -68,9 +68,7 @@ export default async function Header() {
                         </div>
                     </div>
 
-                    <UploadActionsProvider>
-                        <HeaderRightSwitch user={user} />
-                    </UploadActionsProvider>
+                    <HeaderRightSwitch user={user} />
                 </div>
             </Container>
         </header>
