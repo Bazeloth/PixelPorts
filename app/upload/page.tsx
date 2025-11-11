@@ -18,7 +18,7 @@ import {
     useUploadActions,
 } from '@/app/upload/UploadActionsContext';
 import { ACCEPT_IMAGE_TYPES, MAX_TOTAL_BYTES } from '@/app/upload/uploadPolicy';
-import { validateImageFile } from '@/app/upload/uploadUtils';
+import { validateImageFileClient } from '@/lib/fileValidation';
 import {
     Block,
     BlockDataMap,
@@ -44,21 +44,24 @@ function UploadShotPage() {
         thumbnailInputRef.current?.click();
     };
 
-    const handleThumbnailUpload = useCallback((file?: File | null) => {
+    const handleThumbnailUpload = useCallback(async (file?: File | null) => {
         if (!file) return;
 
-        const err = validateImageFile(file);
+        const err = await validateImageFileClient(file, uploadActions.totalBytes);
         if (err) {
             alert(err.message);
             return;
         }
+
+        // Stash original for publish under reserved key
+        uploadActions.addFileToBlock('__thumbnail__', file);
 
         const reader = new FileReader();
         reader.onload = (e) => {
             uploadActions.setThumbnail(String(e.target?.result || ''), file.size);
         };
         reader.readAsDataURL(file);
-    }, []);
+    }, [uploadActions]);
 
     const removeBlock = useCallback(
         (id: string) => {
@@ -66,6 +69,8 @@ function UploadShotPage() {
             if (blk) {
                 // Centralized cleanup: release bytes for this block before removing
                 releaseBytesForBlock(blk, uploadActions);
+                // Also drop originals queued for this block
+                uploadActions.removeFilesForBlock(id);
             }
             uploadActions.setBlocks((prev) => prev.filter((b) => b.id !== id));
         },
@@ -136,6 +141,7 @@ function UploadShotPage() {
                                             <BlockToolbar.ToolbarClearButton
                                                 onClickAction={() => {
                                                     uploadActions.setThumbnail('', 0);
+                                                    uploadActions.removeFilesForBlock('__thumbnail__');
                                                 }}
                                             />
                                         </BlockToolbar>

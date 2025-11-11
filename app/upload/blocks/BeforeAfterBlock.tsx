@@ -5,10 +5,11 @@ import Icon from '@/app/Icon';
 import { Plus } from 'lucide-react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import { BlockToolbar } from '@/app/upload/BlockToolbar';
-import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
+import { handleImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
 import EditableBlock from '@/app/upload/EditableBlock';
+import { validateImageFileClient } from '@/lib/fileValidation';
 
 export default function BeforeAfterBlock({
     block,
@@ -17,27 +18,35 @@ export default function BeforeAfterBlock({
 }: BlockComponentProps<'before-after'>) {
     const beforeInputRef = useRef<HTMLInputElement>(null);
     const afterInputRef = useRef<HTMLInputElement>(null);
-    const { tryReplaceBytes } = useUploadActions();
+    const { tryReplaceBytes, totalBytes, addFileToBlock } = useUploadActions() as any;
 
     const setBefore = (src: string, size: number) =>
         updateBlockDataAction((d) => ({ ...d, beforeImage: src, beforeBytes: size }));
     const setAfter = (src: string, size: number) =>
         updateBlockDataAction((d) => ({ ...d, afterImage: src, afterBytes: size }));
 
-    const onBeforeFile = (f?: File | null) => {
+    const onBeforeFile = async (f?: File | null) => {
         if (!f) return;
-        const err = validateImageFile(f);
+        const err = await validateImageFileClient(f, totalBytes);
         if (err) return alert(err.message);
         const prev = Number(block.data?.beforeBytes || 0);
         if (!tryReplaceBytes(prev, f.size)) return;
+
+        // store original for publish
+        addFileToBlock(block.id, f);
+
         handleImageFile(f, (src) => setBefore(src, f.size));
     };
-    const onAfterFile = (f?: File | null) => {
+    const onAfterFile = async (f?: File | null) => {
         if (!f) return;
-        const err = validateImageFile(f);
+        const err = await validateImageFileClient(f, totalBytes);
         if (err) return alert(err.message);
         const prev = Number(block.data?.afterBytes || 0);
         if (!tryReplaceBytes(prev, f.size)) return;
+
+        // store original for publish
+        addFileToBlock(block.id, f);
+
         handleImageFile(f, (src) => setAfter(src, f.size));
     };
 

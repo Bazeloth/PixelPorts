@@ -5,17 +5,18 @@ import Icon from '@/app/Icon';
 import { Plus } from 'lucide-react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import { BlockToolbar } from '@/app/upload/BlockToolbar';
-import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
+import { handleImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
 import EditableBlock from '@/app/upload/EditableBlock';
+import { validateImageFileClient } from '@/lib/fileValidation';
 
 export default function GridBlock({
     block,
     onRemoveAction,
     updateBlockDataAction,
 }: BlockComponentProps<'grid'>) {
-    const { tryReplaceBytes } = useUploadActions();
+    const { tryReplaceBytes, totalBytes, addFileToBlock } = useUploadActions() as any;
 
     const setGridAt = (index: number, src: string, size: number) =>
         updateBlockDataAction((d) => {
@@ -26,12 +27,16 @@ export default function GridBlock({
             return { ...d, images, imageSizes };
         });
 
-    const onGridFile = (index: number, f?: File | null) => {
+    const onGridFile = async (index: number, f?: File | null) => {
         if (!f) return;
-        const err = validateImageFile(f);
+        const err = await validateImageFileClient(f, totalBytes);
         if (err) return alert(err.message);
         const prev = Number(block.data?.imageSizes?.[index] || 0);
         if (!tryReplaceBytes(prev, f.size)) return;
+
+        // Store original for publish
+        addFileToBlock(block.id, f);
+
         handleImageFile(f, (src) => setGridAt(index, src, f.size));
     };
     const images: string[] = block.data?.images || [];

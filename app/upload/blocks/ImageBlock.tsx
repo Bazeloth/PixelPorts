@@ -5,10 +5,11 @@ import Icon from '@/app/Icon';
 import { Image as ImageIcon } from 'lucide-react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import { BlockToolbar } from '@/app/upload/BlockToolbar';
-import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
+import { handleImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
 import EditableBlock from '@/app/upload/EditableBlock';
+import { validateImageFileClient } from '@/lib/fileValidation';
 
 export default function ImageBlock({
     block,
@@ -16,17 +17,21 @@ export default function ImageBlock({
     updateBlockDataAction,
 }: BlockComponentProps<'image'>) {
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const { tryReplaceBytes } = useUploadActions();
+    const { tryReplaceBytes, totalBytes, addFileToBlock } = useUploadActions() as any;
 
-    const onFile = (f?: File | null) => {
+    const onFile = async (f?: File | null) => {
         if (!f) return;
-        const err = validateImageFile(f);
+        const err = await validateImageFileClient(f, totalBytes);
         if (err) {
             alert(err.message);
             return;
         }
         const prev = Number(block.data?.imageBytes || 0);
         if (!tryReplaceBytes(prev, f.size)) return;
+
+        // Store original for server publish
+        addFileToBlock(block.id, f);
+
         handleImageFile(f, (src) =>
             updateBlockDataAction((d) => ({ ...d, image: src, imageBytes: f.size }))
         );

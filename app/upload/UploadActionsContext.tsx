@@ -22,6 +22,9 @@ export type UploadActions = {
     totalBytes: number;
     tryReplaceBytes: (oldBytes: number, newBytes: number) => boolean;
     releaseBytes: (bytes: number) => void;
+    filesMap: Map<string, File[]>;
+    addFileToBlock: (blockId: string, file: File) => void;
+    removeFilesForBlock: (blockId: string) => void;
 };
 
 const UploadActionsContext = createContext<UploadActions | null>(null);
@@ -44,8 +47,8 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
     const [blocks, setBlocks] = useState<Block[]>([]);
     const [thumbnailSrc, setThumbnailSrc] = useState<string | null>(null);
     const [thumbnailBytes, setThumbnailBytes] = useState<number>(0);
-
     const [totalBytes, setTotalBytes] = useState<number>(0);
+    const [filesMap, setFilesMap] = useState<Map<string, File[]>>(new Map());
 
     const blockCount = blocks.length;
 
@@ -118,11 +121,94 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
         alert('Draft saved!');
     }, [validate, title, category, description, blocks, thumbnailSrc]);
 
-    const publishShot = useCallback(() => {
+    const publishShot = useCallback(async () => {
         if (!validate()) return;
-        // publish logic
-        alert('Shot published!');
-    }, [validate, title, category, description, blocks, thumbnailSrc]);
+
+        try {
+            // Prepare files and mapping in a stable order
+            const files: File[] = [];
+            const mapping: { blockId: string; kind: 'image'; caption?: string }[] = [];
+
+            // Include thumbnail first if present
+            const thumbFiles = filesMap.get('__thumbnail__') || [];
+            for (const f of thumbFiles) {
+                files.push(f);
+                mapping.push({ blockId: '__thumbnail__', kind: 'image' });
+            }
+
+            // Then walk blocks in visible order
+            for (const b of blocks) {
+                // Collect any originals queued for this block
+                const arr = filesMap.get(b.id) || [];
+                if (!arr.length) continue;
+                for (const f of arr) {
+                    files.push(f);
+                    const caption = (b as any)?.data?.caption as string | undefined;
+                    mapping.push({ blockId: b.id, kind: 'image', caption });
+                }
+            }
+
+            if (files.length === 0) {
+                alert('Please add at least one image before publishing.');
+                return;
+            }
+
+            // Create client-side shot id if you don't already have one
+            const shotId = crypto.randomUUID();
+
+            const form = new FormData();
+            for (const f of files) form.append('files', f, f.name);
+            form.append(
+                'meta',
+                JSON.stringify({
+                    // userId will be derived server-side from the authenticated session
+                    shotId,
+                    files: mapping,
+                    title,
+                    description,
+                    category,
+                    blocks: blocks.map((b, idx) => ({
+                        id: b.id,
+                        type: b.type,
+                        position: idx, // stable order as shown in the editor
+                        content: (b as any)?.data?.content ?? undefined,
+                        title: (b as any)?.data?.title ?? undefined,
+                        subtitle: (b as any)?.data?.subtitle ?? undefined,
+                    })),
+                })
+            );
+
+            const res = await fetch('/api/shots/publish', { method: 'POST', body: form });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                throw new Error(data?.error || 'Failed to publish');
+            }
+
+            console.log('Publish results', data);
+            alert('Shot images uploaded successfully.');
+            // TODO: create the shot record and redirect to shot page if desired
+        } catch (e: any) {
+            console.error(e);
+            alert(e?.message || 'Failed to publish');
+        }
+    }, [validate, title, category, description, blocks, thumbnailSrc, filesMap]);
+
+    const addFileToBlock = useCallback((blockId: string, file: File) => {
+        setFilesMap((prev) => {
+            const next = new Map(prev);
+            const arr = next.get(blockId) ?? [];
+            next.set(blockId, [...arr, file]);
+            return next;
+        });
+    }, []);
+
+    const removeFilesForBlock = useCallback((blockId: string) => {
+        setFilesMap((prev) => {
+            const next = new Map(prev);
+            next.delete(blockId);
+            return next;
+        });
+    }, []);
 
     const value = useMemo(
         () => ({
@@ -143,6 +229,9 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             totalBytes,
             tryReplaceBytes,
             releaseBytes,
+            filesMap,
+            addFileToBlock,
+            removeFilesForBlock,
         }),
         [
             saveDraft,
@@ -162,6 +251,9 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             totalBytes,
             tryReplaceBytes,
             releaseBytes,
+            filesMap,
+            addFileToBlock,
+            removeFilesForBlock,
         ]
     );
 

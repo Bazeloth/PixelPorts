@@ -5,10 +5,11 @@ import Icon from '@/app/Icon';
 import { Image as ImageIcon, Plus, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import { BlockToolbar } from '@/app/upload/BlockToolbar';
-import { handleImageFile, validateImageFile } from '@/app/upload/uploadUtils';
+import { handleImageFile } from '@/app/upload/uploadUtils';
 import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
 import EditableBlock from '@/app/upload/EditableBlock';
+import { validateImageFileClient } from '@/lib/fileValidation';
 
 export default function CarouselBlock({
     block,
@@ -16,7 +17,7 @@ export default function CarouselBlock({
     updateBlockDataAction,
 }: BlockComponentProps<'carousel'>) {
     const mainInputRef = useRef<HTMLInputElement>(null);
-    const { tryReplaceBytes } = useUploadActions();
+    const { tryReplaceBytes, totalBytes, addFileToBlock } = useUploadActions() as any;
 
     const thumbs: string[] = block.data?.thumbnails || [];
     const thumbSizes: number[] = block.data?.thumbnailSizes || [];
@@ -92,15 +93,19 @@ export default function CarouselBlock({
         setMainImage(newThumbs[newSelected], newSizes[newSelected]);
     };
 
-    const onMainFile = (f?: File | null) => {
+    const onMainFile = async (f?: File | null) => {
         if (!f) return;
-        const err = validateImageFile(f);
+        const err = await validateImageFileClient(f, totalBytes);
         if (err) return alert(err.message);
 
         // If no thumbnails exist, uploading a "main" image should create the first thumbnail
         if (thumbs.length === 0) {
             const prevThumb = 0;
             if (!tryReplaceBytes(prevThumb, f.size)) return;
+
+            // Store original for publish
+            addFileToBlock(block.id, f);
+
             handleImageFile(f, (src) => {
                 addThumbAt(0, src, f.size);
                 setSelectedIndex(0);
@@ -112,15 +117,23 @@ export default function CarouselBlock({
         const idx = selectedIndex;
         const prev = Number(block.data?.thumbnailSizes?.[idx] || 0);
         if (!tryReplaceBytes(prev, f.size)) return;
+
+        // Store original
+        addFileToBlock(block.id, f);
+
         handleImageFile(f, (src) => addThumbAt(idx, src, f.size));
     };
 
-    const onThumbFile = (index: number, f?: File | null) => {
+    const onThumbFile = async (index: number, f?: File | null) => {
         if (!f) return;
-        const err = validateImageFile(f);
+        const err = await validateImageFileClient(f, totalBytes);
         if (err) return alert(err.message);
         const prev = Number(block.data?.thumbnailSizes?.[index] || 0);
         if (!tryReplaceBytes(prev, f.size)) return;
+
+        // Store original for publish
+        addFileToBlock(block.id, f);
+
         handleImageFile(f, (src) => {
             addThumbAt(index, src, f.size);
             // If appending a brand new thumbnail at the end, auto-select it so it's shown as the main image
