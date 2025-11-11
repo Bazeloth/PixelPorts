@@ -7,6 +7,9 @@ export async function GET(request: NextRequest) {
     const code = searchParams.get('code');
     const next = searchParams.get('next') || '/';
 
+    logger.Info('auth code', searchParams.get('code'));
+    logger.Info('auth next', searchParams.get('next'));
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 

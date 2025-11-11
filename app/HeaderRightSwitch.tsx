@@ -10,6 +10,8 @@ import ClickAwayCloseDetails from '@/app/ClickAwayCloseDetails';
 import { User } from '@/lib/supabase/getUserAndProfile';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
 
+export const dynamic = 'force-dynamic';
+
 function UploadHeaderActions({ onSave, onPublish }: { onSave: () => void; onPublish: () => void }) {
     return (
         <div className="flex items-center gap-4">
