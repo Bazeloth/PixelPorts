@@ -4,6 +4,7 @@ import { connection } from 'next/server';
 import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
 import HeaderRightSwitch from '@/app/HeaderRightSwitch';
 import { UploadActionsProvider } from '@/app/upload/UploadActionsContext';
+import LogoLink from '@/app/LogoLink';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +18,7 @@ export default async function Header() {
                 <div className="py-3 flex items-center justify-between">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
-                            <Link href="/" aria-label="PixelPorts - Go to homepage">
+                            <LogoLink>
                                 <svg
                                     className="h-14 w-auto md:h-16"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +65,7 @@ export default async function Header() {
                                         </g>
                                     </g>
                                 </svg>
-                            </Link>
+                            </LogoLink>
                         </div>
                     </div>
 

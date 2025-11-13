@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Plus } from 'lucide-react';
@@ -36,16 +36,68 @@ function UploadHeaderActions({ onSave, onPublish }: { onSave: () => void; onPubl
     );
 }
 
+function CompleteProfileHeaderActions() {
+    const [showModal, setShowModal] = useState(false);
+
+    return (
+        <div className="flex items-center space-x-4">
+            <button
+                type="button"
+                onClick={() => setShowModal(true)}
+                className="px-5 py-2.5 text-sm font-medium text-gray-700 hover:text-gray-900"
+            >
+                Cancel
+            </button>
+
+            {showModal && (
+                <div className="fixed inset-0 z-[60]">
+                    <div className="absolute inset-0 bg-black/30" aria-hidden="true" onClick={() => setShowModal(false)} />
+                    <div className="absolute inset-0 flex items-center justify-center p-4">
+                        <div className="w-full max-w-md rounded-xl bg-white shadow-xl border border-gray-200">
+                            <div className="p-6">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-2">Are you sure?</h3>
+                                <p className="text-sm text-gray-600">
+                                    Your profile isn't complete yet. You can finish it anytime by logging back in.
+                                </p>
+                            </div>
+                            <div className="px-6 pb-6 pt-2 flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                                    onClick={() => setShowModal(false)}
+                                >
+                                    Continue editing
+                                </button>
+                                <button
+                                    type="button"
+                                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
+                                    onClick={() => {
+                                        window.location.href = '/logout';
+                                    }}
+                                >
+                                    Yes, cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
 function UserHeaderActions({ user }: { user: User }) {
     return (
         <div className="flex items-center space-x-4">
-            <Link
-                href="/signup/complete-profile"
-                className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
-                aria-label="Upload a new shot"
-            >
-                <Icon icon={Plus} size="sm" ariaLabel="Upload" className="mr-1" /> Upload
-            </Link>
+            {user.profile ? (
+                <Link
+                    href="/upload"
+                    className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                    aria-label="Upload a new shot"
+                >
+                    <Icon icon={Plus} size="sm" ariaLabel="Upload" className="mr-1" /> Upload
+                </Link>
+            ) : null}
 
             <ClickAwayCloseDetails>
                 <details className="relative" data-close-on-click-away>
@@ -104,10 +156,15 @@ function GuestHeaderActions() {
 
 export default function HeaderRightSwitch({ user }: { user: User | null }) {
     const pathname = usePathname();
+    const isCompleteProfile = pathname === '/signup/complete-profile';
     const resolvedPage =
         pathname === '/upload' || pathname?.startsWith('/upload/') ? 'upload' : undefined;
 
     const { saveDraft: onSave, publishShot: onPublish } = useUploadActions();
+
+    if (isCompleteProfile) {
+        return <CompleteProfileHeaderActions />;
+    }
 
     if (resolvedPage === 'upload' && user) {
         return <UploadHeaderActions onSave={onSave} onPublish={onPublish} />;

@@ -1,18 +1,12 @@
 import { createSupabaseClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
 import { Container } from '@/app/Container';
 import Box from '@/app/Box';
 import CompleteProfileClient from './CompleteProfileClient';
 
 export default async function CompleteProfilePage() {
-    const supabase = await createSupabaseClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-        redirect('/');
-    }
+    // Allow access to this page whether logged in or not, as header behavior is needed for logged-out users
+    // If logged out, the form will not be actionable, but the user can choose to cancel via the header.
+    await createSupabaseClient();
 
     return (
         <Container className="py-12">

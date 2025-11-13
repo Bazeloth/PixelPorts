@@ -4,6 +4,7 @@ import { createSupabaseClient } from '@/lib/supabase/server';
 import { isValidEmail } from '@/lib/utils/email';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
 
 export type SignInResult = { success: true } | { success: false; error: string };
 
@@ -30,6 +31,13 @@ export async function signInWithPassword(formData: FormData): Promise<SignInResu
 
     // Ensure the app reflects the new auth state immediately
     revalidatePath('/', 'layout');
+
+    // After sign-in, check if the user has a profile; if not, send to complete-profile
+    const user = await getUserAndProfile();
+
+    if (user && !user.profile) {
+        redirect('/signup/complete-profile');
+    }
 
     // Full redirect to refresh server components like Header
     redirect('/');
