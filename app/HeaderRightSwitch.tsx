@@ -40,42 +40,49 @@ function CompleteProfileHeaderActions() {
     const [showModal, setShowModal] = useState(false);
 
     return (
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
             <button
                 type="button"
                 onClick={() => setShowModal(true)}
-                className="px-5 py-2.5 text-sm font-medium text-gray-700 hover:text-gray-900"
+                className="py-2.5 text-sm font-medium text-gray-700 hover:text-gray-900 cursor-pointer"
             >
-                Cancel
+                Sign out
             </button>
 
             {showModal && (
                 <div className="fixed inset-0 z-[60]">
-                    <div className="absolute inset-0 bg-black/30" aria-hidden="true" onClick={() => setShowModal(false)} />
+                    <div
+                        className="absolute inset-0 bg-black/30"
+                        aria-hidden="true"
+                        onClick={() => setShowModal(false)}
+                    />
                     <div className="absolute inset-0 flex items-center justify-center p-4">
                         <div className="w-full max-w-md rounded-xl bg-white shadow-xl border border-gray-200">
                             <div className="p-6">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-2">Are you sure?</h3>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                                    Are you sure?
+                                </h3>
                                 <p className="text-sm text-gray-600">
-                                    Your profile isn't complete yet. You can finish it anytime by logging back in.
+                                    Your profile isn't complete yet. You can finish it anytime by
+                                    logging back in.
                                 </p>
                             </div>
                             <div className="px-6 pb-6 pt-2 flex justify-end gap-3">
                                 <button
                                     type="button"
-                                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 cursor-pointer"
                                     onClick={() => setShowModal(false)}
                                 >
                                     Continue editing
                                 </button>
                                 <button
                                     type="button"
-                                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
+                                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 cursor-pointer"
                                     onClick={() => {
                                         window.location.href = '/logout';
                                     }}
                                 >
-                                    Yes, cancel
+                                    Yes, sign out
                                 </button>
                             </div>
                         </div>
