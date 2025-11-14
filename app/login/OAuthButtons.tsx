@@ -43,7 +43,6 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-
 function OAuthButton({ provider }: { provider: Provider }) {
     const styles = providerStyles(provider)!;
 
@@ -53,7 +52,7 @@ function OAuthButton({ provider }: { provider: Provider }) {
         const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`;
 
         const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: provider as any,
+            provider: provider,
             options: { redirectTo },
         });
 
