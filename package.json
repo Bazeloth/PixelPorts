@@ -6,10 +6,22 @@
         "dev": "next dev --turbopack -p 3000",
         "build": "next build --turbopack",
         "start": "next start -p 3001",
+
         "format": "prettier --write .",
         "format:check": "prettier --check .",
+
         "test:ui": "playwright test",
-        "test:ui:update": "playwright test --update-snapshots"
+        "test:ui:update": "playwright test --update-snapshots",
+
+        "supabase:start": "supabase start",
+        "supabase:stop": "supabase stop",
+
+        "createsnapshot": "tsx scripts/restore.ts",
+        "snapshot:create": "tsx scripts/snapshot.ts",
+        "restoresnapshot": "tsx scripts/restore.ts",
+        "snapshot:restore": "tsx scripts/restore.ts",
+        "snapshots": "tsx scripts/list-snapshots.ts",
+        "verify-setup": "tsx scripts/verify-setup.ts"
     },
     "dependencies": {
         "@supabase/ssr": "^0.7.0",
@@ -34,6 +46,10 @@
         "@types/react-dom": "^19",
         "prettier": "^3.3.3",
         "tailwindcss": "^4",
-        "typescript": "^5"
+        "typescript": "^5",
+        "@types/fs-extra": "^11.0.4",
+        "execa": "^8.0.1",
+        "fs-extra": "^11.2.0",
+        "tsx": "^4.7.0"
     }
 }

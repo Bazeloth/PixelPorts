@@ -49,3 +49,6 @@ tests/**/*-snapshots/**
 # Also ignore common screenshot/snapshot folders if present
 tests/**/__screenshots__/**
 tests/**/__snapshots__/**
+
+# Supabase snapshots
+/supabase/snapshots/**
