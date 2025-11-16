@@ -9,6 +9,23 @@ import { createSupabaseClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/console';
 import UserAvatar from '@/app/UserAvatar';
 
+const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'];
+const ALLOWED_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'webp', 'gif', 'avif']);
+const MIME_TO_EXT: Record<string, string> = {
+    'image/png': 'png',
+    'image/jpeg': 'jpg',
+    'image/webp': 'webp',
+    'image/gif': 'gif',
+    'image/avif': 'avif',
+};
+const MAX_AVATAR_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+// Single source of truth for the file input accept attribute derived from the constants above
+const ACCEPT_FILE_TYPES = [
+    ...Array.from(ALLOWED_EXTENSIONS, (ext) => `.${ext}`),
+    ...ALLOWED_MIME_TYPES,
+].join(',');
+
 type Props = {
     defaultFullName?: string;
     defaultUsername?: string;
@@ -30,6 +47,7 @@ export default function CompleteProfileClient({
     const [choice, setChoice] = useState<AvatarChoice>(googlePictureUrl ? 'google' : 'none');
     const [previewUrl, setPreviewUrl] = useState<string>(googlePictureUrl || '');
     const [uploadedFileExt, setUploadedFileExt] = useState<string>('');
+    const [avatarError, setAvatarError] = useState<string>('');
 
     useEffect(() => {
         if (state && 'success' in state && state.success) {
@@ -42,7 +60,9 @@ export default function CompleteProfileClient({
         (async () => {
             try {
                 const supabase = await createSupabaseClient();
-                const { data: { user } } = await supabase.auth.getUser();
+                const {
+                    data: { user },
+                } = await supabase.auth.getUser();
                 if (user?.id) setCurrentUserId(user.id);
             } catch {
                 // ignore
@@ -57,33 +77,64 @@ export default function CompleteProfileClient({
         const file = e.target.files?.[0];
         if (!file) return;
 
+        // Validate size
+        if (file.size > MAX_AVATAR_FILE_SIZE) {
+            setAvatarError(
+                `Image is too large. Maximum size is ${Math.round(MAX_AVATAR_FILE_SIZE / (1024 * 1024))}MB.`
+            );
+            return;
+        }
+
+        // Validate MIME and extension
+        const mimeOk = ALLOWED_MIME_TYPES.includes(
+            file.type as (typeof ALLOWED_MIME_TYPES)[number]
+        );
+        const nameExt = (file.name.split('.').pop() || '').toLowerCase();
+        const extOk = nameExt ? ALLOWED_EXTENSIONS.has(nameExt) : false;
+        if (!mimeOk && !extOk) {
+            setAvatarError('Unsupported image format. Allowed: PNG, JPG, JPEG, WEBP, GIF, AVIF.');
+            return;
+        }
+
+        // Prefer extension derived from MIME, fallback to filename ext
+        const chosenExt = MIME_TO_EXT[file.type] || (extOk ? nameExt : 'jpg');
+
         const supabase = await createSupabaseClient();
         const {
             data: { user },
         } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) {
+            setAvatarError('You must be signed in to upload an avatar.');
+            return;
+        }
 
-        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-        const path = `${user.id}.${ext}`;
+        const path = `${user.id}.${chosenExt}`;
 
         const { error: uploadError } = await supabase.storage
             .from('avatars')
-            .upload(path, file, { cacheControl: '3600', upsert: true, contentType: file.type });
+            .upload(path, file, {
+                cacheControl: '3600',
+                upsert: true,
+                contentType: file.type || `image/${chosenExt}`,
+            });
         if (uploadError) {
             logger.Error('Failed to upload avatar: ', uploadError.message || 'unknown error');
+            setAvatarError(uploadError.message || 'Failed to upload image. Please try again.');
             return;
         }
 
         const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
         setChoice('uploaded');
         setPreviewUrl(pub.publicUrl);
-        setUploadedFileExt(ext);
+        setUploadedFileExt(chosenExt);
+        setAvatarError('');
     }
 
     function clearPhoto() {
         setChoice('none');
         setPreviewUrl('');
         setUploadedFileExt('');
+        setAvatarError('');
     }
 
     return (
@@ -181,7 +232,7 @@ export default function CompleteProfileClient({
                                 <label className="px-3 py-1 border rounded cursor-pointer">
                                     <input
                                         type="file"
-                                        accept="image/*"
+                                        accept={ACCEPT_FILE_TYPES}
                                         className="hidden"
                                         onChange={handleUploadFile}
                                     />
@@ -195,6 +246,11 @@ export default function CompleteProfileClient({
                                     >
                                         Clear photo
                                     </button>
+                                )}
+                                {avatarError && (
+                                    <p className="w-full text-xs text-red-600 mt-1">
+                                        {avatarError}
+                                    </p>
                                 )}
                             </div>
                         </div>
