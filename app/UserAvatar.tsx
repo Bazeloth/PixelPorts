@@ -1,27 +1,54 @@
 import Image from 'next/image';
 
-export type AvatarProps = {
-    /** User ID (used for gradient seed and avatar URL construction) */
-    userId: string;
-    /** User's full name (for initials) */
+// Mutually exclusive props:
+// - UrlMode: provide imageUrl (no userId/avatarFileExt)
+// - StorageMode: provide userId + avatarFileExt (no imageUrl)
+// - PlaceholderMode: provide userId only (no imageUrl, no avatarFileExt)
+export type UrlMode = {
+    imageUrl: string;
     displayName?: string;
-    /** Avatar file extension if uploaded (e.g., 'png', 'jpg', 'webp') */
-    avatarFileExt?: string | null;
-    /** Size in pixels */
     size?: number;
-    /** Additional CSS classes */
     className?: string;
 };
 
-export default function UserAvatar({
-    userId,
-    displayName,
-    avatarFileExt,
-    size = 32,
-    className = '',
-}: AvatarProps) {
+export type StorageMode = {
+    userId: string;
+    avatarFileExt: string; // required when using storage mode
+    displayName?: string;
+    size?: number;
+    className?: string;
+};
+
+export type PlaceholderMode = {
+    userId: string;
+    displayName?: string;
+    size?: number;
+    className?: string;
+};
+
+export type AvatarProps = UrlMode | StorageMode | PlaceholderMode;
+
+export default function UserAvatar(props: AvatarProps) {
+    const { size = 32, className = '' } = props as any;
+
+    // Case 0: If a direct imageUrl is provided (e.g., Google photo, local preview), render it directly
+    if ('imageUrl' in props && props.imageUrl) {
+        const { imageUrl, displayName } = props as UrlMode;
+        // Use native <img> for arbitrary remote URLs to avoid Next/Image domain restrictions
+        return (
+            <img
+                src={imageUrl}
+                alt={displayName ? `${displayName}'s avatar` : 'User avatar'}
+                height={size}
+                width={size}
+                className={`rounded-full object-cover ${className}`}
+            />
+        );
+    }
+
     // Case 1: User has uploaded a profile picture
-    if (avatarFileExt) {
+    if ('avatarFileExt' in props && props.avatarFileExt) {
+        const { userId, avatarFileExt, displayName } = props as StorageMode;
         // Use shared utility to construct the public URL without requiring a Supabase client
         const { buildAvatarUrlFromEnv, FALLBACK_AVATAR_URL } = require('@/lib/utils/avatar');
         const avatarUrl = buildAvatarUrlFromEnv(userId, avatarFileExt) || FALLBACK_AVATAR_URL;
@@ -37,7 +64,8 @@ export default function UserAvatar({
         );
     }
 
-    // Generate gradient from userId
+    // Placeholder: gradient/initials from userId
+    const { userId, displayName } = props as PlaceholderMode;
     const gradient = generateGradientFromString(userId);
 
     // Case 2: User has a name (show initials on gradient)

@@ -6,6 +6,8 @@ import { UsernameControl } from '@/app/signup/complete-profile/UsernameControl';
 import { createUserProfile } from '@/app/actions/user';
 import { useRouter } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase/client';
+import { logger } from '@/lib/utils/console';
+import UserAvatar from '@/app/UserAvatar';
 
 type Props = {
     defaultFullName?: string;
@@ -22,6 +24,7 @@ export default function CompleteProfileClient({
     const router = useRouter();
 
     const [name, setName] = useState(defaultFullName);
+    const [currentUserId, setCurrentUserId] = useState<string>('');
 
     type AvatarChoice = 'none' | 'google' | 'uploaded';
     const [choice, setChoice] = useState<AvatarChoice>(googlePictureUrl ? 'google' : 'none');
@@ -34,32 +37,42 @@ export default function CompleteProfileClient({
         }
     }, [state, router]);
 
+    // Fetch current user ID for UserAvatar gradient seeding
+    useEffect(() => {
+        (async () => {
+            try {
+                const supabase = await createSupabaseClient();
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user?.id) setCurrentUserId(user.id);
+            } catch {
+                // ignore
+            }
+        })();
+    }, []);
+
     const values = (state && 'values' in state ? state.values : undefined) ?? {};
     const errors = (state && 'errors' in state ? state.errors : undefined) ?? {};
-
-    const initials = useMemo(() => {
-        const n = (values.name ?? name ?? '').trim();
-        if (!n) return '';
-        const parts = n.split(/\s+/);
-        return (parts[0][0] + (parts[parts.length - 1]?.[0] || '')).toUpperCase();
-    }, [values.name, name]);
 
     async function handleUploadFile(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
         if (!file) return;
 
         const supabase = await createSupabaseClient();
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
         if (!user) return;
 
         const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-        const path = `${user.id}/avatar.${ext}`;
+        const path = `${user.id}.${ext}`;
 
-        const { error: uploadError } = await supabase
-            .storage
+        const { error: uploadError } = await supabase.storage
             .from('avatars')
             .upload(path, file, { cacheControl: '3600', upsert: true, contentType: file.type });
-        if (uploadError) return;
+        if (uploadError) {
+            logger.Error('Failed to upload avatar: ', uploadError.message || 'unknown error');
+            return;
+        }
 
         const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
         setChoice('uploaded');
@@ -73,13 +86,6 @@ export default function CompleteProfileClient({
         setUploadedFileExt('');
     }
 
-    function useGooglePhoto() {
-        if (!googlePictureUrl) return;
-        setChoice('google');
-        setPreviewUrl(googlePictureUrl);
-        setUploadedFileExt('');
-    }
-
     return (
         <form
             action={async (fd: FormData) => {
@@ -90,7 +96,9 @@ export default function CompleteProfileClient({
                     fd.set('avatar_file_ext', uploadedFileExt);
                 } else if (choice === 'google' && googlePictureUrl) {
                     try {
-                        const res = await fetch(`/api/profiles/fetch-and-store-avatar?src=${encodeURIComponent(googlePictureUrl)}`);
+                        const res = await fetch(
+                            `/api/profiles/fetch-and-store-avatar?src=${encodeURIComponent(googlePictureUrl)}`
+                        );
                         if (res.ok) {
                             const { fileExt } = await res.json();
                             if (fileExt) fd.set('avatar_file_ext', fileExt);
@@ -98,7 +106,7 @@ export default function CompleteProfileClient({
                     } catch {}
                 }
 
-                await formAction(fd);
+                formAction(fd);
             }}
         >
             <div className="space-y-6">
@@ -130,52 +138,80 @@ export default function CompleteProfileClient({
                         serverError={errors.username}
                     />
 
-                    <FieldLabel label="Avatar" sublabel="Optional. Prefilled from Google if available. You can clear or replace it." />
+                    <FieldLabel
+                        label="Avatar"
+                        sublabel="Optional. Prefilled from Google if available. You can clear or replace it."
+                    />
                     <div className="space-y-3">
                         <div className="flex items-center gap-4">
-                            {previewUrl ? (
-                                <img src={previewUrl} alt="Avatar preview" className="w-16 h-16 rounded-full object-cover border" />
-                            ) : (
-                                <div
-                                    className="w-16 h-16 rounded-full flex items-center justify-center text-white font-semibold border"
-                                    style={{
-                                        background: 'linear-gradient(135deg, hsl(265,75%,60%), hsl(285,75%,60%))',
-                                        fontSize: 16 * 0.6,
-                                    }}
-                                    aria-label="Avatar preview"
-                                >
-                                    {(() => {
-                                        const n = (values.name ?? name ?? '').trim();
-                                        if (!n) return 'PP';
-                                        const parts = n.split(/\s+/);
-                                        return (parts[0][0] + (parts[parts.length - 1]?.[0] || '')).toUpperCase();
-                                    })()}
-                                </div>
-                            )}
+                            {(() => {
+                                const displayName = (values.name ?? name ?? '') || undefined;
+                                if (choice === 'uploaded' && uploadedFileExt) {
+                                    return (
+                                        <UserAvatar
+                                            userId={currentUserId || 'temp'}
+                                            avatarFileExt={uploadedFileExt}
+                                            displayName={displayName}
+                                            size={64}
+                                            className="border"
+                                        />
+                                    );
+                                }
+                                if (previewUrl) {
+                                    return (
+                                        <UserAvatar
+                                            imageUrl={previewUrl}
+                                            displayName={displayName}
+                                            size={64}
+                                            className="border"
+                                        />
+                                    );
+                                }
+                                return (
+                                    <UserAvatar
+                                        userId={currentUserId || 'temp'}
+                                        displayName={displayName}
+                                        size={64}
+                                        className="border"
+                                    />
+                                );
+                            })()}
 
                             <div className="flex flex-wrap gap-2">
                                 <label className="px-3 py-1 border rounded cursor-pointer">
-                                    <input type="file" accept="image/*" className="hidden" onChange={handleUploadFile} />
-                                    Upload photo
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleUploadFile}
+                                    />
+                                    {previewUrl ? 'Change photo' : 'Upload photo'}
                                 </label>
-                                {googlePictureUrl && choice !== 'google' && (
-                                    <button type="button" className="px-3 py-1 border rounded" onClick={useGooglePhoto}>
-                                        Use Google photo
-                                    </button>
-                                )}
                                 {previewUrl && (
-                                    <button type="button" className="px-3 py-1 border rounded" onClick={clearPhoto}>
+                                    <button
+                                        type="button"
+                                        className="px-3 py-1 border rounded"
+                                        onClick={clearPhoto}
+                                    >
                                         Clear photo
                                     </button>
                                 )}
                             </div>
                         </div>
-                        <input type="hidden" name="avatar_file_ext" value={choice === 'uploaded' ? uploadedFileExt : ''} />
+                        <input
+                            type="hidden"
+                            name="avatar_file_ext"
+                            value={choice === 'uploaded' ? uploadedFileExt : ''}
+                        />
                     </div>
 
                     <div className="col-span-2">
-                        <button type="submit" className="px-4 py-2 rounded bg-indigo-600 text-white disabled:opacity-50" disabled={isPending}>
-                            {isPending ? 'Saving…' : 'Sign Up'}
+                        <button
+                            type="submit"
+                            className="px-4 py-2 rounded bg-indigo-600 text-white disabled:opacity-50"
+                            disabled={isPending}
+                        >
+                            {isPending ? 'Saving…' : 'Continue'}
                         </button>
                     </div>
                 </div>

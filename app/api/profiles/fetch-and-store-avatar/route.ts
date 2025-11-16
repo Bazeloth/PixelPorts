@@ -29,7 +29,7 @@ export async function GET(req: Request) {
                 ? 'gif'
                 : 'jpg';
 
-        const path = `${user.id}/avatar.${ext}`;
+        const path = `${user.id}.${ext}`;
 
         const { error: uploadError } = await supabase.storage
             .from(StorageBucket.Avatars)

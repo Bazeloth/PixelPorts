@@ -109,13 +109,29 @@ function UserHeaderActions({ user }: { user: User }) {
             <ClickAwayCloseDetails>
                 <details className="relative" data-close-on-click-away>
                     <summary className="list-none cursor-pointer">
-                        <UserAvatar
-                            userId={user.id}
-                            displayName={user.profile?.name ?? undefined}
-                            avatarFileExt={user.profile?.avatar_file_ext ?? undefined}
-                            size={36}
-                            className="ring-1 ring-neutral-200 hover:ring-neutral-300 transition"
-                        />
+                        {(() => {
+                            const ext = user.profile?.avatar_file_ext ?? undefined;
+                            const displayName = user.profile?.name ?? undefined;
+                            if (ext) {
+                                return (
+                                    <UserAvatar
+                                        userId={user.id}
+                                        avatarFileExt={ext}
+                                        displayName={displayName}
+                                        size={36}
+                                        className="ring-1 ring-neutral-200 hover:ring-neutral-300 transition"
+                                    />
+                                );
+                            }
+                            return (
+                                <UserAvatar
+                                    userId={user.id}
+                                    displayName={displayName}
+                                    size={36}
+                                    className="ring-1 ring-neutral-200 hover:ring-neutral-300 transition"
+                                />
+                            );
+                        })()}
                     </summary>
                     <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-neutral-200 py-2 z-50">
                         <Link
