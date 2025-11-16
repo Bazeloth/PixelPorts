@@ -101,7 +101,13 @@ export async function createUserProfile(
     }
 
     const supabase = await createSupabaseClient();
-    const { error } = await supabase.from('userprofiles').insert([{ name, username }]);
+
+    const avatarFileExt = typeof formData.get('avatar_file_ext') === 'string' ? String(formData.get('avatar_file_ext')) : '';
+
+    const row: Record<string, any> = { name, username };
+    if (avatarFileExt) row.avatar_file_ext = avatarFileExt;
+
+    const { error } = await supabase.from('userprofiles').insert([row]);
 
     if (error) {
         logger.Error('Unable to create profile', error);

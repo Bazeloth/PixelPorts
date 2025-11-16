@@ -3,10 +3,24 @@ import { Container } from '@/app/Container';
 import Box from '@/app/Box';
 import CompleteProfileClient from './CompleteProfileClient';
 
+function suggestUsernameFrom(seed: string) {
+    const base = (seed.split('@')[0] || seed)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    return base || 'user';
+}
+
 export default async function CompleteProfilePage() {
-    // Allow access to this page whether logged in or not, as header behavior is needed for logged-out users
-    // If logged out, the form will not be actionable, but the user can choose to cancel via the header.
-    await createSupabaseClient();
+    const supabase = await createSupabaseClient();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    const fullName = (user?.user_metadata?.full_name ?? user?.user_metadata?.name ?? '').trim();
+    const email = user?.email || '';
+    const suggestedUsername = suggestUsernameFrom(fullName || email);
+    const googlePictureUrl = user?.user_metadata?.picture || '';
 
     return (
         <Container className="py-12">
@@ -17,7 +31,11 @@ export default async function CompleteProfilePage() {
                 </p>
             </div>
             <Box>
-                <CompleteProfileClient />
+                <CompleteProfileClient
+                    defaultFullName={fullName}
+                    defaultUsername={suggestedUsername}
+                    googlePictureUrl={googlePictureUrl}
+                />
             </Box>
         </Container>
     );
