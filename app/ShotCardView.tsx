@@ -1,14 +1,23 @@
 import Image from 'next/image';
+import UserAvatar from '@/app/UserAvatar';
 
 export type ShotCardProps = {
     title: string;
     description: string;
     tags: string[];
-    designer: { name: string; src: string };
+    designer: { name: string; userId: string; avatarFileExt: string };
     image: { src: string; alt: string };
 };
 
 export function ShotCardView({ title, description, tags, designer, image }: ShotCardProps) {
+    const avatarProps = designer.avatarFileExt
+        ? {
+              userId: designer.userId,
+              avatarFileExt: designer.avatarFileExt,
+              displayName: designer.name,
+          }
+        : { userId: designer.userId, displayName: designer.name }; // placeholder
+
     return (
         <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition duration-200 overflow-hidden group cursor-pointer flex flex-col">
             <div className="bg-gradient-to-br from-blue-400 to-blue-600 relative overflow-hidden w-full aspect-[4/3]">
@@ -37,13 +46,7 @@ export function ShotCardView({ title, description, tags, designer, image }: Shot
                 </div>
                 <div className="flex items-center justify-between border-t border-slate-100 pt-2">
                     <div className="flex items-center">
-                        <Image
-                            src={designer.src}
-                            alt={designer.name}
-                            width={24}
-                            height={24}
-                            className="rounded-full mr-2 w-6 h-6 object-cover"
-                        />
+                        <UserAvatar {...avatarProps} />
                         <span className="text-sm text-gray-700">{designer.name}</span>
                     </div>
                     <div className="flex items-center text-gray-400">

@@ -1,4 +1,3 @@
-import ShotCard from '@/app/ShotCard';
 import {
     fetchShotCardsPage,
     findFirstImageSource,
@@ -18,7 +17,7 @@ export default async function ShotsGrid({
     const supabase = await createSupabaseClient();
 
     const cards = items.map((shot) => {
-        const imageSrc =
+        const imageSrc = // todo: should be an explicit image
             findFirstImageSource(supabase, shot.blocks) ??
             'https://images.unsplash.com/photo-1586717799252-bd134ad00e26?auto=format&fit=crop&w=1200&q=60';
 
@@ -29,11 +28,8 @@ export default async function ShotsGrid({
             tags: [] as string[],
             designer: {
                 name: shot.author.name,
-                src: getAvatarUrl({
-                    supabase,
-                    userId: shot.author.id,
-                    avatarFileExt: shot.author.avatar_file_ext,
-                }),
+                userId: shot.author.id,
+                avatarFileExt: String(shot.author.avatar_file_ext),
             },
             image: {
                 src: imageSrc,
@@ -48,7 +44,7 @@ export default async function ShotsGrid({
                 {cards.map((c) => (
                     <li key={c.key}>
                         {/* Keep link structure simple for now; integrate slugs later */}
-                        <ShotCard
+                        <ShotCardView
                             title={c.title}
                             description={c.description}
                             tags={c.tags}
@@ -73,3 +69,4 @@ export default async function ShotsGrid({
 // This pattern uses the RSC allowance to reference a client component symbol below.
 import LoadMore from './LoadMore';
 import { getAvatarUrl } from '@/lib/utils/avatar';
+import { ShotCardView } from '@/app/ShotCardView';

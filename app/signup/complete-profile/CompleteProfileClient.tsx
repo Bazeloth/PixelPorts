@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useMemo, useState } from 'react';
+import { startTransition, useActionState, useEffect, useMemo, useState } from 'react';
 import { FieldLabel } from '@/app/signup/complete-profile/FieldLabel';
 import { UsernameControl } from '@/app/signup/complete-profile/UsernameControl';
 import { createUserProfile } from '@/app/actions/user';
@@ -8,15 +8,14 @@ import { useRouter } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/console';
 import UserAvatar from '@/app/UserAvatar';
+import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
 
-const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif'];
-const ALLOWED_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'webp', 'gif', 'avif']);
+const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+const ALLOWED_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'webp']);
 const MIME_TO_EXT: Record<string, string> = {
     'image/png': 'png',
     'image/jpeg': 'jpg',
     'image/webp': 'webp',
-    'image/gif': 'gif',
-    'image/avif': 'avif',
 };
 const MAX_AVATAR_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -58,15 +57,13 @@ export default function CompleteProfileClient({
     // Fetch current user ID for UserAvatar gradient seeding
     useEffect(() => {
         (async () => {
-            try {
-                const supabase = await createSupabaseClient();
-                const {
-                    data: { user },
-                } = await supabase.auth.getUser();
-                if (user?.id) setCurrentUserId(user.id);
-            } catch {
-                // ignore
+            const user = await getUserAndProfile();
+            if (user?.id) {
+                setCurrentUserId(user.id);
+                return;
             }
+
+            window.location.href = '/signin';
         })();
     }, []);
 
@@ -110,13 +107,11 @@ export default function CompleteProfileClient({
 
         const path = `${user.id}.${chosenExt}`;
 
-        const { error: uploadError } = await supabase.storage
-            .from('avatars')
-            .upload(path, file, {
-                cacheControl: '3600',
-                upsert: true,
-                contentType: file.type || `image/${chosenExt}`,
-            });
+        const { error: uploadError } = await supabase.storage.from('avatars').upload(path, file, {
+            cacheControl: '3600',
+            upsert: true,
+            contentType: file.type || `image/${chosenExt}`,
+        });
         if (uploadError) {
             logger.Error('Failed to upload avatar: ', uploadError.message || 'unknown error');
             setAvatarError(uploadError.message || 'Failed to upload image. Please try again.');
@@ -157,7 +152,9 @@ export default function CompleteProfileClient({
                     } catch {}
                 }
 
-                formAction(fd);
+                startTransition(() => {
+                    formAction(fd);
+                });
             }}
         >
             <div className="space-y-6">
@@ -200,7 +197,7 @@ export default function CompleteProfileClient({
                                 if (choice === 'uploaded' && uploadedFileExt) {
                                     return (
                                         <UserAvatar
-                                            userId={currentUserId || 'temp'}
+                                            userId={currentUserId}
                                             avatarFileExt={uploadedFileExt}
                                             displayName={displayName}
                                             size={64}
@@ -220,7 +217,7 @@ export default function CompleteProfileClient({
                                 }
                                 return (
                                     <UserAvatar
-                                        userId={currentUserId || 'temp'}
+                                        userId={currentUserId}
                                         displayName={displayName}
                                         size={64}
                                         className="border"

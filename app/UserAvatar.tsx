@@ -13,7 +13,7 @@ export type UrlMode = {
 
 export type StorageMode = {
     userId: string;
-    avatarFileExt: string; // required when using storage mode
+    avatarFileExt: string;
     displayName?: string;
     size?: number;
     className?: string;

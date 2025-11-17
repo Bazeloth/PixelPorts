@@ -8,7 +8,7 @@ export type ClientShotCardProps = {
     title: string;
     description: string;
     tags: string[];
-    designer: { name: string; src: string };
+    designer: { name: string; userId: string; avatarFileExt: string };
     image: { src: string; alt: string };
 };
 

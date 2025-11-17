@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
                     src: getAvatarUrl({
                         supabase,
                         userId: shot.author.id,
-                        avatarFileExt: shot.author.avatar_file_ext,
+                        avatarFileExt: String(shot.author.avatar_file_ext),
                     }),
                 },
                 image: {
