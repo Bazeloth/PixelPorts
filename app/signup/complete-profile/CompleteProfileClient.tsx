@@ -69,6 +69,7 @@ export default function CompleteProfileClient({
 
     const values = (state && 'values' in state ? state.values : undefined) ?? {};
     const errors = (state && 'errors' in state ? state.errors : undefined) ?? {};
+    const message = state && 'message' in state ? state.message : undefined;
 
     async function handleUploadFile(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
@@ -158,6 +159,11 @@ export default function CompleteProfileClient({
             }}
         >
             <div className="space-y-6">
+                {message ? (
+                    <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                        {message}
+                    </div>
+                ) : null}
                 <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">
                     Basic Information
                 </h3>
