@@ -58,7 +58,7 @@ export async function createUserProfile(
     // Validate username with existing util
     const res = validateUsername(usernameInput);
 
-    // Early return on invalid username (this narrows the union for res afterwards)
+    // Early return on invalid username
     if (!res.ok) {
         return {
             errors: {
@@ -102,15 +102,53 @@ export async function createUserProfile(
 
     const supabase = await createSupabaseClient();
 
-    const avatarFileExt = typeof formData.get('avatar_file_ext') === 'string' ? String(formData.get('avatar_file_ext')) : '';
+    // Ensure we have an authenticated user to satisfy RLS policies
+    const {
+        data: { user },
+        error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+        logger.Error('Unable to resolve authenticated user for profile creation', authError);
+        return {
+            errors: {},
+            message: 'You must be signed in to create a profile.',
+            values: { name, username },
+        };
+    }
+
+    // Read and validate avatar file extension from formData
+    let avatarFileExt =
+        typeof formData.get('avatar_file_ext') === 'string'
+            ? String(formData.get('avatar_file_ext'))
+            : '';
+
+    // Normalize: lowercase and strip a leading dot if present
+    avatarFileExt = avatarFileExt.trim().toLowerCase().replace(/^\./, '');
+
+    // Allow-list of supported extensions (kept in sync with client)
+    const allowedAvatarExt = new Set(['png', 'jpg', 'jpeg', 'webp']);
+
+    // If invalid, drop the value (do not store untrusted data)
+    if (avatarFileExt && !allowedAvatarExt.has(avatarFileExt)) {
+        logger.Warn?.(
+            'Dropping unsupported avatar_file_ext provided by client:',
+            avatarFileExt
+        );
+        avatarFileExt = '';
+    }
 
     const row: Record<string, any> = { name, username };
-    if (avatarFileExt) row.avatar_file_ext = avatarFileExt;
+    if (avatarFileExt) {
+        row.avatar_file_ext = avatarFileExt;
+    }
 
-    const { error } = await supabase.from('userprofiles').insert([row]);
+    const { error: insertError } = await supabase
+        .from('userprofiles')
+        .insert([{ id: user.id, ...row }]);
 
-    if (error) {
-        logger.Error('Unable to create profile', error);
+    if (insertError) {
+        logger.Error('Unable to create profile', insertError);
         return {
             errors: {},
             message: 'Unable to create profile. Please try again later.',

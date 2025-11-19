@@ -90,7 +90,9 @@ export default function CompleteProfileClient({
         const nameExt = (file.name.split('.').pop() || '').toLowerCase();
         const extOk = nameExt ? ALLOWED_EXTENSIONS.has(nameExt) : false;
         if (!mimeOk && !extOk) {
-            setAvatarError('Unsupported image format. Allowed: PNG, JPG, JPEG, WEBP, GIF, AVIF.');
+            setAvatarError(
+                `Unsupported image format. Allowed: ${Array.from(ALLOWED_EXTENSIONS, (ext) => `.${ext}`).join(',')}.`
+            );
             return;
         }
 

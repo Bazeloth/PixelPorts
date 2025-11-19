@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { checkUsernameAvailability } from '@/app/actions/user';
 import useDebounce from '@/lib/hooks/useDebounce';
-import { logger } from '@/lib/utils/console';
 import { validateUsername } from '@/lib/utils/username';
 
 export function useUsernameField(serverError?: string[]) {
@@ -33,7 +32,6 @@ export function useUsernameField(serverError?: string[]) {
 
         // Then check availability on server
         setIsChecking(true);
-        logger.Info('Username search triggered for:', debouncedUsername);
 
         checkUsernameAvailability(debouncedUsername).then((r) => {
             setIsChecking(false);
