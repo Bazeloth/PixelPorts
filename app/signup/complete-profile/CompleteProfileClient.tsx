@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useActionState, useEffect, useMemo, useState } from 'react';
+import { startTransition, useActionState, useEffect, useState } from 'react';
 import { FieldLabel } from '@/app/signup/complete-profile/FieldLabel';
 import { UsernameControl } from '@/app/signup/complete-profile/UsernameControl';
 import { createUserProfile } from '@/app/actions/user';
@@ -9,20 +9,21 @@ import { createSupabaseClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/console';
 import UserAvatar from '@/app/UserAvatar';
 import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createProfileSchema } from '@/lib/schemas/profile';
+import { ALLOWED_AVATAR_MIME, ALLOWED_AVATAR_EXTENSIONS, MAX_AVATAR_FILE_SIZE } from '@/lib/constants/avatar';
 
-const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
-const ALLOWED_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'webp']);
 const MIME_TO_EXT: Record<string, string> = {
     'image/png': 'png',
     'image/jpeg': 'jpg',
     'image/webp': 'webp',
 };
-const MAX_AVATAR_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 // Single source of truth for the file input accept attribute derived from the constants above
 const ACCEPT_FILE_TYPES = [
-    ...Array.from(ALLOWED_EXTENSIONS, (ext) => `.${ext}`),
-    ...ALLOWED_MIME_TYPES,
+    ...ALLOWED_AVATAR_EXTENSIONS.map((ext) => `.${ext}`),
+    ...ALLOWED_AVATAR_MIME,
 ].join(',');
 
 type Props = {
@@ -39,7 +40,6 @@ export default function CompleteProfileClient({
     const [state, formAction, isPending] = useActionState(createUserProfile, null);
     const router = useRouter();
 
-    const [name, setName] = useState(defaultFullName);
     const [currentUserId, setCurrentUserId] = useState<string>('');
 
     type AvatarChoice = 'none' | 'google' | 'uploaded';
@@ -47,6 +47,23 @@ export default function CompleteProfileClient({
     const [previewUrl, setPreviewUrl] = useState<string>(googlePictureUrl || '');
     const [uploadedFileExt, setUploadedFileExt] = useState<string>('');
     const [avatarError, setAvatarError] = useState<string>('');
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors: formErrors },
+        watch,
+        setValue,
+    } = useForm<{ name: string; username: string; avatar_file_ext?: string }>({
+        resolver: zodResolver(createProfileSchema),
+        defaultValues: {
+            name: defaultFullName,
+            username: defaultUsername,
+            avatar_file_ext: '',
+        },
+        mode: 'onChange',
+        reValidateMode: 'onChange',
+    });
 
     useEffect(() => {
         if (state && 'success' in state && state.success) {
@@ -68,7 +85,7 @@ export default function CompleteProfileClient({
     }, []);
 
     const values = (state && 'values' in state ? state.values : undefined) ?? {};
-    const errors = (state && 'errors' in state ? state.errors : undefined) ?? {};
+    const serverErrors = (state && 'errors' in state ? state.errors : undefined) ?? {};
     const message = state && 'message' in state ? state.message : undefined;
 
     async function handleUploadFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -84,14 +101,14 @@ export default function CompleteProfileClient({
         }
 
         // Validate MIME and extension
-        const mimeOk = ALLOWED_MIME_TYPES.includes(
-            file.type as (typeof ALLOWED_MIME_TYPES)[number]
+        const mimeOk = ALLOWED_AVATAR_MIME.includes(
+            file.type as (typeof ALLOWED_AVATAR_MIME)[number]
         );
         const nameExt = (file.name.split('.').pop() || '').toLowerCase();
-        const extOk = nameExt ? ALLOWED_EXTENSIONS.has(nameExt) : false;
+        const extOk = nameExt ? (ALLOWED_AVATAR_EXTENSIONS as readonly string[]).includes(nameExt) : false;
         if (!mimeOk && !extOk) {
             setAvatarError(
-                `Unsupported image format. Allowed: ${Array.from(ALLOWED_EXTENSIONS, (ext) => `.${ext}`).join(',')}.`
+                `Unsupported image format. Allowed: ${ALLOWED_AVATAR_EXTENSIONS.map((ext) => `.${ext}`).join(',')}.`
             );
             return;
         }
@@ -126,6 +143,7 @@ export default function CompleteProfileClient({
         setPreviewUrl(pub.publicUrl);
         setUploadedFileExt(chosenExt);
         setAvatarError('');
+        setValue('avatar_file_ext', chosenExt);
     }
 
     function clearPhoto() {
@@ -133,33 +151,37 @@ export default function CompleteProfileClient({
         setPreviewUrl('');
         setUploadedFileExt('');
         setAvatarError('');
+        setValue('avatar_file_ext', '');
     }
 
-    return (
-        <form
-            action={async (fd: FormData) => {
-                if (!fd.get('name') && name) fd.set('name', name);
-                if (!fd.get('username') && defaultUsername) fd.set('username', defaultUsername);
+    const onValid = async (data: { name: string; username: string; avatar_file_ext?: string }) => {
+        const fd = new FormData();
+        fd.set('name', data.name);
+        fd.set('username', data.username);
 
-                if (choice === 'uploaded' && uploadedFileExt) {
-                    fd.set('avatar_file_ext', uploadedFileExt);
-                } else if (choice === 'google' && googlePictureUrl) {
-                    try {
-                        const res = await fetch(
-                            `/api/profiles/fetch-and-store-avatar?src=${encodeURIComponent(googlePictureUrl)}`
-                        );
-                        if (res.ok) {
-                            const { fileExt } = await res.json();
-                            if (fileExt) fd.set('avatar_file_ext', fileExt);
-                        }
-                    } catch {}
+        if (choice === 'uploaded' && uploadedFileExt) {
+            fd.set('avatar_file_ext', uploadedFileExt);
+        } else if (choice === 'google' && googlePictureUrl) {
+            try {
+                const res = await fetch(
+                    `/api/profiles/fetch-and-store-avatar?src=${encodeURIComponent(googlePictureUrl)}`
+                );
+                if (res.ok) {
+                    const { fileExt } = await res.json();
+                    if (fileExt) fd.set('avatar_file_ext', fileExt);
                 }
+            } catch {}
+        }
 
-                startTransition(() => {
-                    formAction(fd);
-                });
-            }}
-        >
+        startTransition(() => {
+            formAction(fd);
+        });
+    };
+
+    const watchedUsername = watch('username') ?? '';
+
+    return (
+        <form onSubmit={handleSubmit(onValid)}>
             <div className="space-y-6">
                 <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">
                     Basic Information
@@ -169,24 +191,26 @@ export default function CompleteProfileClient({
                     <div>
                         <input
                             type="text"
-                            name="name"
-                            defaultValue={values.name ?? name ?? ''}
-                            onChange={(e) => setName(e.target.value)}
+                            {...register('name')}
+                            defaultValue={values.name ?? defaultFullName ?? ''}
                             className="w-full rounded-md border border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                             placeholder="e.g., Alex Johnson"
                             autoComplete="name"
                             maxLength={60}
                             required
                         />
-                        {errors.name?.length ? (
-                            <p className="text-xs text-red-500 mt-1">{errors.name[0]}</p>
+                        {formErrors.name?.message ? (
+                            <p className="text-xs text-red-500 mt-1">{String(formErrors.name.message)}</p>
+                        ) : serverErrors.name?.length ? (
+                            <p className="text-xs text-red-500 mt-1">{serverErrors.name[0]}</p>
                         ) : null}
                     </div>
 
                     <FieldLabel label="Username" sublabel="A unique name for your profile." />
                     <UsernameControl
-                        defaultValue={values.username ?? defaultUsername ?? ''}
-                        serverError={errors.username}
+                        value={watchedUsername || values.username || defaultUsername || ''}
+                        register={register('username')}
+                        serverError={serverErrors.username}
                     />
 
                     <FieldLabel
@@ -196,7 +220,7 @@ export default function CompleteProfileClient({
                     <div className="space-y-3">
                         <div className="flex items-center gap-4">
                             {(() => {
-                                const displayName = (values.name ?? name ?? '') || undefined;
+                                const displayName = (watch('name') ?? values.name ?? defaultFullName ?? '') || undefined;
                                 if (choice === 'uploaded' && uploadedFileExt) {
                                     return (
                                         <UserAvatar
@@ -254,11 +278,7 @@ export default function CompleteProfileClient({
                                 )}
                             </div>
                         </div>
-                        <input
-                            type="hidden"
-                            name="avatar_file_ext"
-                            value={choice === 'uploaded' ? uploadedFileExt : ''}
-                        />
+                        <input type="hidden" {...register('avatar_file_ext')} />
                     </div>
 
                     <div className="col-span-2">

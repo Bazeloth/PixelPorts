@@ -3,21 +3,24 @@
 import { useEffect } from 'react';
 import { useUsernameField } from '@/lib/hooks/useUsernameField';
 import { USERNAME_CONSTRAINTS } from '@/lib/constants/username';
+import { UseFormRegisterReturn } from 'react-hook-form';
 
 export function UsernameControl({
-    defaultValue,
+    value,
+    register,
     serverError,
 }: {
-    defaultValue?: string;
+    value: string;
+    register: UseFormRegisterReturn;
     serverError?: string[];
 }) {
-    const username = useUsernameField(serverError);
+    const username = useUsernameField(value, serverError);
 
     useEffect(() => {
-        if (defaultValue !== (username.value ?? '')) {
-            username.onChange({ target: { value: defaultValue } } as any);
-        }
-    }, []);
+        // Clear client error when value changes via external means
+        username.clearClientError();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value]);
 
     const border = username.isUnavailable
         ? 'border-red-300 focus-within:ring-red-500 focus-within:border-red-500'
@@ -31,12 +34,9 @@ export function UsernameControl({
                 </span>
                 <input
                     type="text"
-                    name={username.name}
                     className="flex-1 rounded-r-md border-0 py-2 px-3 text-gray-900 placeholder-gray-400 focus:outline-none text-sm"
                     placeholder="username"
-                    value={username.value ?? ''}
-                    onChange={username.onChange}
-                    disabled={username.isChecking}
+                    {...register}
                     minLength={USERNAME_CONSTRAINTS.minLength}
                     maxLength={USERNAME_CONSTRAINTS.maxLength}
                     pattern={USERNAME_CONSTRAINTS.pattern.source}

@@ -1,4 +1,8 @@
+'use client';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { getAvatarUrl } from '@/lib/utils/avatar';
+import { createSupabaseClient } from '@/lib/supabase/client';
 
 // Mutually exclusive props:
 // - UrlMode: provide imageUrl (no userId/avatarFileExt)
@@ -49,18 +53,71 @@ export default function UserAvatar(props: AvatarProps) {
     // Case 1: User has uploaded a profile picture
     if ('avatarFileExt' in props && props.avatarFileExt) {
         const { userId, avatarFileExt, displayName } = props as StorageMode;
-        // Use shared utility to construct the public URL without requiring a Supabase client
-        const { buildAvatarUrlFromEnv, FALLBACK_AVATAR_URL } = require('@/lib/utils/avatar');
-        const avatarUrl = buildAvatarUrlFromEnv(userId, avatarFileExt) || FALLBACK_AVATAR_URL;
+        const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
 
+        useEffect(() => {
+            let cancelled = false;
+            (async () => {
+                try {
+                    const supabase = await createSupabaseClient();
+                    const url = getAvatarUrl({ supabase, userId, avatarFileExt });
+                    if (!cancelled) setResolvedUrl(url || null);
+                } catch {
+                    if (!cancelled) setResolvedUrl(null);
+                }
+            })();
+            return () => {
+                cancelled = true;
+            };
+        }, [userId, avatarFileExt]);
+
+        if (resolvedUrl) {
+            return (
+                <Image
+                    src={resolvedUrl}
+                    alt={displayName ? `${displayName}'s avatar` : 'User avatar'}
+                    height={size}
+                    width={size}
+                    className={`rounded-full object-cover ${className}`}
+                />
+            );
+        }
+
+        // Fallback to gradient/initials while loading or on error
+        const gradient = generateGradientFromString(userId);
+        if (displayName && displayName.trim()) {
+            const initials = getInitials(displayName);
+            return (
+                <div
+                    className={`rounded-full flex items-center justify-center font-semibold text-white ${className}`}
+                    style={{ width: size, height: size, background: gradient, fontSize: size * 0.4 }}
+                    aria-label={`${displayName}'s avatar`}
+                >
+                    {initials}
+                </div>
+            );
+        }
         return (
-            <Image
-                src={avatarUrl}
-                alt={displayName ? `${displayName}'s avatar` : 'User avatar'}
-                height={size}
-                width={size}
-                className={`rounded-full object-cover ${className}`}
-            />
+            <div
+                className={`rounded-full flex items-center justify-center ${className}`}
+                style={{ width: size, height: size, background: gradient }}
+                aria-label="User avatar"
+            >
+                <svg
+                    className="text-white"
+                    style={{ width: size * 0.5, height: size * 0.5 }}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                    />
+                </svg>
+            </div>
         );
     }
 

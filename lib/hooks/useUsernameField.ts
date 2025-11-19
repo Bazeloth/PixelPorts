@@ -5,13 +5,14 @@ import { checkUsernameAvailability } from '@/app/actions/user';
 import useDebounce from '@/lib/hooks/useDebounce';
 import { validateUsername } from '@/lib/utils/username';
 
-export function useUsernameField(serverError?: string[]) {
-    const [username, setUsername] = useState('');
+// Hook dedicated to validating and checking availability for a given username value.
+// It does not own the input state, so it works seamlessly with React Hook Form or any controlled input.
+export function useUsernameField(value: string, serverError?: string[]) {
     const [clientError, setClientError] = useState<string | null>(null);
     const [isChecking, setIsChecking] = useState(false);
     const [available, setAvailable] = useState<boolean | null>(null);
 
-    const debouncedUsername = useDebounce(username, 500);
+    const debouncedUsername = useDebounce(value, 500);
 
     useEffect(() => {
         setAvailable(null);
@@ -50,15 +51,10 @@ export function useUsernameField(serverError?: string[]) {
     const usernameIsUnavailable = !isChecking && (available === false || !!error);
 
     return {
-        name: 'username',
-        value: username,
         error,
         isChecking,
         isAvailable: usernameIsAvailable,
         isUnavailable: usernameIsUnavailable,
-        onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-            setUsername(e.target.value);
-            setClientError(null);
-        },
+        clearClientError: () => setClientError(null),
     };
 }
