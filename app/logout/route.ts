@@ -1,14 +1,17 @@
 'use server';
 
-import { createSupabaseClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { createSupabaseClientForRoute } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { logger } from '@/lib/utils/console';
-import { redirect } from 'next/navigation';
 
-export async function GET(request: Request) {
-    const supabase = await createSupabaseClient();
+export async function GET(request: NextRequest) {
+    // Redirect to home (or wherever) after sign-out
+    let response = NextResponse.redirect(new URL('/', request.url));
+
     try {
         logger.Info('Signing out via GET /logout');
+        const supabase = await createSupabaseClientForRoute(request, response);
         await supabase.auth.signOut();
     } catch (e: any) {
         logger.Error('Could not sign out via GET /logout', e);
@@ -17,14 +20,6 @@ export async function GET(request: Request) {
     // Revalidate the root layout so header reflects auth change
     revalidatePath('/', 'layout');
 
-    // Build an absolute URL for redirect
-    const origin = (() => {
-        if (request.url) {
-            return new URL(request.url).origin;
-        }
-
-        return process.env.NEXT_PUBLIC_SITE_URL!;
-    })();
-
-    return redirect(origin);
+    // Return the same response we mutated so Set-Cookie headers are applied
+    return response;
 }
