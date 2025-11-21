@@ -13,7 +13,7 @@ const useProxy =
     process.env.NEXT_PUBLIC_MIXPANEL_PROXY === '1' ||
     String(process.env.NEXT_PUBLIC_MIXPANEL_PROXY).toLowerCase() === 'true';
 const apiHost = useProxy
-    ? '/api/mp'
+    ? '/api/mixpanel'
     : process.env.NEXT_PUBLIC_MIXPANEL_API_HOST || 'https://api-eu.mixpanel.com';
 const isDev = process.env.NODE_ENV !== 'production';
 

@@ -108,22 +108,3 @@ function normalizeSupabaseSignUpError(msg: string) {
     }
     return 'Sign up failed. Please try again.';
 }
-
-export type OAuthProvider = 'google';
-
-export async function signInWithOAuth(provider: OAuthProvider) {
-    const supabase = await createSupabaseClient();
-    const next = '/signup/complete-profile';
-    const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`;
-
-    // Using supabase-js on the server to start the OAuth flow.
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: provider as any,
-        options: { redirectTo },
-    });
-
-    if (error) {
-        return { success: false as const, error: error.message };
-    }
-    return { success: true as const, url: data?.url };
-}
