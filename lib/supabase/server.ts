@@ -69,20 +69,19 @@ function getSupabaseClient({
     key: string;
     cookieStore: ReadonlyRequestCookies;
 }) {
-    // In Server Components, cookies() is read-only and cannot be mutated.
-    // In Server Actions, cookies() is mutable. Detect capability at runtime and no-op otherwise.
-    const canMutateCookies = (cookieStore as any) && typeof (cookieStore as any).set === 'function';
-
     return createServerClient(url, key, {
         cookies: {
             getAll() {
                 return cookieStore.getAll();
             },
             setAll(cookiesToSet) {
-                if (!canMutateCookies) return; // Avoid Next.js "Cookies can only be modified..." error in RSC
-                cookiesToSet.forEach(({ name, value, options }) => {
-                    (cookieStore as any).set(name, value, options as any);
-                });
+                try {
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        (cookieStore as any).set(name, value, options as any);
+                    });
+                } catch (e: any) {
+                    console.error('Failed to set cookies', e);
+                }
             },
         },
     });
