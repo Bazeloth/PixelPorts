@@ -52,3 +52,6 @@ tests/**/__snapshots__/**
 
 # Supabase snapshots
 /supabase/snapshots/**
+
+# Sentry Config File
+.env.sentry-build-plugin
