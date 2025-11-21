@@ -9,12 +9,6 @@ let loading = false;
 let loadFailed = false;
 
 const token = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
-const useProxy =
-    process.env.NEXT_PUBLIC_MIXPANEL_PROXY === '1' ||
-    String(process.env.NEXT_PUBLIC_MIXPANEL_PROXY).toLowerCase() === 'true';
-const apiHost = useProxy
-    ? '/api/mixpanel'
-    : process.env.NEXT_PUBLIC_MIXPANEL_API_HOST || 'https://api-eu.mixpanel.com';
 const isDev = process.env.NODE_ENV !== 'production';
 
 // ============================================
@@ -48,7 +42,7 @@ async function loadMixpanel() {
 
         // Initialize
         mixpanel.init(token, {
-            api_host: apiHost,
+            api_host: '/api/mixpanel',
 
             // DISABLE autocapture - be explicit about what you track
             autocapture: false,
@@ -207,7 +201,8 @@ function detectSource(referrer: string): string {
         const domain = new URL(referrer).hostname.toLowerCase();
 
         if (domain.includes('reddit.com')) return 'reddit';
-        if (domain.includes('twitter.com') || domain.includes('t.co')) return 'twitter';
+        if (domain.includes('twitter.com') || domain.includes('t.co') || domain.includes('x.com'))
+            return 'twitter';
         if (domain.includes('linkedin.com')) return 'linkedin';
         if (domain.includes('google.com')) return 'google';
         if (domain.includes('facebook.com')) return 'facebook';
