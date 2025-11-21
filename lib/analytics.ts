@@ -184,7 +184,7 @@ function getTrafficSource() {
         if (referrer && !utmSource) {
             source.referrer = referrer;
             source.referrer_domain = new URL(referrer).hostname;
-            source.utm_source = detectSource(referrer);
+            source.referrer_source = detectSource(referrer);
         }
 
         return source;
