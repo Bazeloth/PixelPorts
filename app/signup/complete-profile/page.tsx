@@ -1,7 +1,8 @@
-import { createSupabaseClient } from '@/lib/supabase/server';
 import { Container } from '@/app/Container';
 import Box from '@/app/Box';
 import CompleteProfileClient from './CompleteProfileClient';
+import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
+import { redirect } from 'next/navigation';
 
 function suggestUsernameFrom(seed: string) {
     const base = (seed.split('@')[0] || seed)
@@ -11,16 +12,23 @@ function suggestUsernameFrom(seed: string) {
     return base || 'user';
 }
 
-export default async function CompleteProfilePage() {
-    const supabase = await createSupabaseClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+export default async function CompleteProfilePage({
+    searchParams,
+}: {
+    searchParams: { next?: string };
+}) {
+    const user = await getUserAndProfile();
+    if (!user) {
+        redirect('/signin');
+    } else if (user.profile) {
+        const next = searchParams.next || '/';
+        redirect(next);
+    }
 
-    const fullName = (user?.user_metadata?.full_name ?? user?.user_metadata?.name ?? '').trim();
+    const fullName = (user.metadata?.full_name ?? user.metadata?.name ?? '').trim();
     const email = user?.email || '';
     const suggestedUsername = suggestUsernameFrom(fullName || email);
-    const googlePictureUrl = user?.user_metadata?.picture || '';
+    const googlePictureUrl = user?.metadata?.picture || '';
 
     return (
         <Container className="py-12">

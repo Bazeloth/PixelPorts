@@ -3,9 +3,10 @@
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/console';
 
-export type User = {
+export type PixelPortsUser = {
     id: string;
     email: string;
+    metadata: Record<string, any>;
     profile: {
         name: string | null;
         avatar_file_ext: string | null;
@@ -13,7 +14,7 @@ export type User = {
     } | null;
 };
 
-export const getUserAndProfile = async (): Promise<User | null> => {
+export const getUserAndProfile = async (): Promise<PixelPortsUser | null> => {
     const supabase = await createSupabaseClient();
     const {
         data: { user },
@@ -34,6 +35,7 @@ export const getUserAndProfile = async (): Promise<User | null> => {
     return {
         id: user.id,
         email: user.email!,
+        metadata: user.user_metadata,
         profile: data
             ? {
                   name: data.name ?? null,

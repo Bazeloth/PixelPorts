@@ -7,7 +7,7 @@ import { Plus } from 'lucide-react';
 import Icon from '@/app/Icon';
 import UserAvatar from '@/app/UserAvatar';
 import ClickAwayCloseDetails from '@/app/ClickAwayCloseDetails';
-import { User } from '@/lib/supabase/getUserAndProfile';
+import { PixelPortsUser } from '@/lib/supabase/getUserAndProfile';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
 
 export const dynamic = 'force-dynamic';
@@ -93,7 +93,7 @@ function CompleteProfileHeaderActions() {
     );
 }
 
-function UserHeaderActions({ user }: { user: User }) {
+function UserHeaderActions({ user }: { user: PixelPortsUser }) {
     return (
         <div className="flex items-center space-x-4">
             {user.profile ? (
@@ -177,7 +177,7 @@ function GuestHeaderActions() {
     );
 }
 
-export default function HeaderRightSwitch({ user }: { user: User | null }) {
+export default function HeaderRightSwitch({ user }: { user: PixelPortsUser | null }) {
     const pathname = usePathname();
     const isCompleteProfile = pathname === '/signup/complete-profile';
     const resolvedPage =
