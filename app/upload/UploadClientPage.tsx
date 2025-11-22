@@ -9,6 +9,8 @@ import {
     Text,
     LayoutGrid,
     ArrowLeftRight,
+    Quote as QuoteIcon,
+    Italic as ItalicIcon,
     X,
     LucideIcon,
 } from 'lucide-react';
@@ -27,6 +29,8 @@ import {
 } from '@/lib/constants/blockTypes';
 import HeadingBlock from '@/app/upload/blocks/HeadingBlock';
 import ParagraphBlock from '@/app/upload/blocks/ParagraphBlock';
+import CaptionBlock from '@/app/upload/blocks/CaptionBlock';
+import QuoteBlock from '@/app/upload/blocks/QuoteBlock';
 import ImageBlock from '@/app/upload/blocks/ImageBlock';
 import CarouselBlock from '@/app/upload/blocks/CarouselBlock';
 import GridBlock from '@/app/upload/blocks/GridBlock';
@@ -294,6 +298,16 @@ function UploadShotPage() {
                                 icon={Text}
                             />
                             <SidebarButton
+                                blockType="quote"
+                                onClick={() => uploadActions.addBlock('quote')}
+                                icon={QuoteIcon}
+                            />
+                            <SidebarButton
+                                blockType="caption"
+                                onClick={() => uploadActions.addBlock('caption')}
+                                icon={ItalicIcon}
+                            />
+                            <SidebarButton
                                 blockType="image"
                                 onClick={() => uploadActions.addBlock('image')}
                                 icon={ImageIcon}
@@ -422,6 +436,22 @@ function PreviewBlock({ block, onRemoveAction, updateBlockDataActionFor }: Previ
         case 'image':
             return (
                 <ImageBlock
+                    block={block}
+                    onRemoveAction={onRemoveAction}
+                    updateBlockDataAction={updateBlockDataActionFor(block.type)}
+                />
+            );
+        case 'quote':
+            return (
+                <QuoteBlock
+                    block={block}
+                    onRemoveAction={onRemoveAction}
+                    updateBlockDataAction={updateBlockDataActionFor(block.type)}
+                />
+            );
+        case 'caption':
+            return (
+                <CaptionBlock
                     block={block}
                     onRemoveAction={onRemoveAction}
                     updateBlockDataAction={updateBlockDataActionFor(block.type)}
