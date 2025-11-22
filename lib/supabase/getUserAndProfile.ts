@@ -20,8 +20,6 @@ export const getUserAndProfile = async (): Promise<PixelPortsUser | null> => {
         data: { user },
     } = await supabase.auth.getUser();
 
-    logger.Info('user', user);
-
     if (!user) return null;
 
     const { data } = await supabase
@@ -29,8 +27,6 @@ export const getUserAndProfile = async (): Promise<PixelPortsUser | null> => {
         .select('name, avatar_file_ext, username')
         .eq('id', user.id)
         .maybeSingle();
-
-    logger.Info('user data', data);
 
     return {
         id: user.id,
