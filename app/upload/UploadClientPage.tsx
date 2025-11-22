@@ -94,11 +94,10 @@ function UploadShotPage() {
     };
 
     return (
-        <div className="bg-gray-50">
-            {/* Two-column layout */}
-            <Container as="main" className="flex">
+        <main>
+            <Container className="flex min-h-[calc(100vh-88px-1px)]">
                 {/* Left - Live preview */}
-                <div className="flex-1 bg-white border-r border-gray-200 p-8">
+                <div className="flex-1 bg-white border-r border-gray-200 p-8 overflow-y-auto">
                     <div className="max-w-3xl mx-auto">
                         <div className="mb-6">
                             <p className="text-sm text-gray-500 mb-2">
@@ -204,9 +203,7 @@ function UploadShotPage() {
                                             ariaLabel="Add"
                                         />
                                         <p className="text-gray-400">
-                                            {uploadActions.blocks.length === 0
-                                                ? 'Add content blocks from the right panel'
-                                                : 'Add more content blocks from the right panel'}
+                                            Add content blocks from the right panel
                                         </p>
                                     </div>
                                 ) : null}
@@ -216,157 +213,161 @@ function UploadShotPage() {
                 </div>
 
                 {/* Right - Controls */}
-                <div className="w-96 sticky top-22 bg-gray-50 pl-6 pt-6 self-start">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-6">Shot details</h2>
+                <div className="w-96 bg-gray-50 overflow-y-auto">
+                    <div className="sticky top-0 p-6">
+                        <h2 className="text-lg font-semibold text-gray-900 mb-6">Shot details</h2>
 
-                    {/* Category */}
-                    <div className="mb-6">
-                        <label
-                            htmlFor="category-input"
-                            className="block text-sm font-semibold text-gray-900 mb-2"
-                        >
-                            Category <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                            id="category-input"
-                            value={uploadActions.category}
-                            onChange={(e) => uploadActions.setCategory(e.target.value)}
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-600 bg-white"
-                        >
-                            <option value="">Select a category</option>
-                            <option value="ui-ux">UI/UX</option>
-                            <option value="web">Web Design</option>
-                            <option value="mobile">Mobile App</option>
-                            <option value="branding">Branding</option>
-                            <option value="illustration">Illustration</option>
-                            <option value="graphic-design">Graphic Design</option>
-                            <option value="product-design">Product Design</option>
-                        </select>
-                    </div>
-
-                    <div className="border-t border-gray-300 my-6" />
-
-                    {/* Total upload size UI */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
-                        <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-700">Total upload size</span>
-                            <span className="font-semibold text-gray-900">
-                                <span id="total-size">
-                                    {(uploadActions.totalBytes / (1024 * 1024)).toFixed(1)}
-                                </span>{' '}
-                                / {Math.floor(MAX_TOTAL_BYTES / (1024 * 1024))} MB
-                            </span>
+                        {/* Category */}
+                        <div className="mb-6">
+                            <label
+                                htmlFor="category-input"
+                                className="block text-sm font-semibold text-gray-900 mb-2"
+                            >
+                                Category <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                id="category-input"
+                                value={uploadActions.category}
+                                onChange={(e) => uploadActions.setCategory(e.target.value)}
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-600 bg-white"
+                            >
+                                <option value="">Select a category</option>
+                                <option value="ui-ux">UI/UX</option>
+                                <option value="web">Web Design</option>
+                                <option value="mobile">Mobile App</option>
+                                <option value="branding">Branding</option>
+                                <option value="illustration">Illustration</option>
+                                <option value="graphic-design">Graphic Design</option>
+                                <option value="product-design">Product Design</option>
+                            </select>
                         </div>
-                        <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                            <div
-                                id="size-progress"
-                                className="bg-blue-600 h-1.5 rounded-full"
-                                style={{
-                                    width: `${Math.min(100, Math.round((uploadActions.totalBytes / MAX_TOTAL_BYTES) * 100))}%`,
-                                }}
-                            />
+
+                        <div className="border-t border-gray-300 my-6" />
+
+                        {/* Total upload size UI */}
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
+                            <div className="flex items-center justify-between text-sm">
+                                <span className="text-gray-700">Total upload size</span>
+                                <span className="font-semibold text-gray-900">
+                                    <span id="total-size">
+                                        {(uploadActions.totalBytes / (1024 * 1024)).toFixed(1)}
+                                    </span>{' '}
+                                    / {Math.floor(MAX_TOTAL_BYTES / (1024 * 1024))} MB
+                                </span>
+                            </div>
+                            <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
+                                <div
+                                    id="size-progress"
+                                    className="bg-blue-600 h-1.5 rounded-full"
+                                    style={{
+                                        width: `${Math.min(100, Math.round((uploadActions.totalBytes / MAX_TOTAL_BYTES) * 100))}%`,
+                                    }}
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="border-t border-gray-300 my-6" />
+                        <div className="border-t border-gray-300 my-6" />
 
-                    {/* Add Content Blocks */}
-                    <div className="mb-6">
-                        <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-sm font-semibold text-gray-900">Content blocks</h3>
-                            <span className="text-xs text-gray-500">
-                                <span id="block-count">{uploadActions.blockCount}</span>/
-                                {MAX_BLOCKS}
-                            </span>
-                        </div>
-                        <p className="text-xs text-gray-600 mb-4">
-                            Add blocks to showcase your process and thinking
-                        </p>
-
-                        <div className="space-y-2">
-                            <SidebarButton
-                                blockType="heading"
-                                onClick={() => uploadActions.addBlock('heading')}
-                                icon={Heading1}
-                            />
-                            <SidebarButton
-                                blockType="paragraph"
-                                onClick={() => uploadActions.addBlock('paragraph')}
-                                icon={Text}
-                            />
-                            <SidebarButton
-                                blockType="quote"
-                                onClick={() => uploadActions.addBlock('quote')}
-                                icon={QuoteIcon}
-                            />
-                            <SidebarButton
-                                blockType="caption"
-                                onClick={() => uploadActions.addBlock('caption')}
-                                icon={ItalicIcon}
-                            />
-                            <SidebarButton
-                                blockType="image"
-                                onClick={() => uploadActions.addBlock('image')}
-                                icon={ImageIcon}
-                            />
-                            <SidebarButton
-                                blockType={'carousel'}
-                                onClick={() => uploadActions.addBlock('carousel')}
-                                description={'10 images'}
-                                icon={ImageIcon}
-                            />
-                            <SidebarButton
-                                blockType={'grid'}
-                                onClick={() => uploadActions.addBlock('grid')}
-                                description={'2-4 images'}
-                                icon={LayoutGrid}
-                            />
-                            <SidebarButton
-                                blockType={'before-after'}
-                                onClick={() => uploadActions.addBlock('before-after')}
-                                description={'Slider comparison'}
-                                icon={ArrowLeftRight}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Active blocks */}
-                    {uploadActions.blocks.length > 0 && (
-                        <div id="blocks-list">
-                            <div className="border-t border-gray-300 pt-4 mb-3">
-                                <h3 className="text-sm font-semibold text-gray-900 mb-3">
-                                    Active blocks
+                        {/* Add Content Blocks */}
+                        <div className="mb-6">
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-sm font-semibold text-gray-900">
+                                    Content blocks
                                 </h3>
+                                <span className="text-xs text-gray-500">
+                                    <span id="block-count">{uploadActions.blockCount}</span>/
+                                    {MAX_BLOCKS}
+                                </span>
                             </div>
-                            <div id="blocks-container" className="space-y-2">
-                                {uploadActions.blocks.map((b) => (
-                                    <div
-                                        key={b.id}
-                                        className="bg-white border border-gray-300 rounded-lg p-3 flex items-center justify-between"
-                                    >
-                                        <span className="text-sm font-medium text-gray-700">
-                                            {labelFor(b.type)}
-                                        </span>
-                                        <button
-                                            onClick={() => removeBlock(b.id)}
-                                            className="text-gray-400 hover:text-red-600 cursor-pointer"
-                                            aria-label="Delete block"
-                                        >
-                                            <Icon
-                                                icon={X}
-                                                size={16}
-                                                className="w-4 h-4"
-                                                ariaLabel="Delete block"
-                                            />
-                                        </button>
-                                    </div>
-                                ))}
+                            <p className="text-xs text-gray-600 mb-4">
+                                Add blocks to showcase your process and thinking
+                            </p>
+
+                            <div className="space-y-2">
+                                <SidebarButton
+                                    blockType="heading"
+                                    onClick={() => uploadActions.addBlock('heading')}
+                                    icon={Heading1}
+                                />
+                                <SidebarButton
+                                    blockType="paragraph"
+                                    onClick={() => uploadActions.addBlock('paragraph')}
+                                    icon={Text}
+                                />
+                                <SidebarButton
+                                    blockType="quote"
+                                    onClick={() => uploadActions.addBlock('quote')}
+                                    icon={QuoteIcon}
+                                />
+                                <SidebarButton
+                                    blockType="caption"
+                                    onClick={() => uploadActions.addBlock('caption')}
+                                    icon={ItalicIcon}
+                                />
+                                <SidebarButton
+                                    blockType="image"
+                                    onClick={() => uploadActions.addBlock('image')}
+                                    icon={ImageIcon}
+                                />
+                                <SidebarButton
+                                    blockType={'carousel'}
+                                    onClick={() => uploadActions.addBlock('carousel')}
+                                    description={'10 images'}
+                                    icon={ImageIcon}
+                                />
+                                <SidebarButton
+                                    blockType={'grid'}
+                                    onClick={() => uploadActions.addBlock('grid')}
+                                    description={'2-4 images'}
+                                    icon={LayoutGrid}
+                                />
+                                <SidebarButton
+                                    blockType={'before-after'}
+                                    onClick={() => uploadActions.addBlock('before-after')}
+                                    description={'Slider comparison'}
+                                    icon={ArrowLeftRight}
+                                />
                             </div>
                         </div>
-                    )}
+
+                        {/* Active blocks */}
+                        {uploadActions.blocks.length > 0 && (
+                            <div id="blocks-list">
+                                <div className="border-t border-gray-300 pt-4 mb-3">
+                                    <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                                        Active blocks
+                                    </h3>
+                                </div>
+                                <div id="blocks-container" className="space-y-2">
+                                    {uploadActions.blocks.map((b) => (
+                                        <div
+                                            key={b.id}
+                                            className="bg-white border border-gray-300 rounded-lg p-3 flex items-center justify-between"
+                                        >
+                                            <span className="text-sm font-medium text-gray-700">
+                                                {labelFor(b.type)}
+                                            </span>
+                                            <button
+                                                onClick={() => removeBlock(b.id)}
+                                                className="text-gray-400 hover:text-red-600 cursor-pointer"
+                                                aria-label="Delete block"
+                                            >
+                                                <Icon
+                                                    icon={X}
+                                                    size={16}
+                                                    className="w-4 h-4"
+                                                    ariaLabel="Delete block"
+                                                />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </Container>
-        </div>
+        </main>
     );
 }
 

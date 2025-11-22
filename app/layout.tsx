@@ -38,7 +38,7 @@ export default async function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className="font-sans bg-gray-50 antialiased">
+            <body className="font-sans antialiased">
                 <Providers>
                     <Header />
                     {children}

@@ -10,7 +10,7 @@ export default async function Home() {
     const user = await getUserAndProfile();
 
     return (
-        <>
+        <main className="bg-gray-50">
             {!user && (
                 <section>
                     <Container className="mx-auto px-8 py-32 lg:py-40 grid lg:grid-cols-2 gap-20 items-center">
@@ -217,6 +217,6 @@ export default async function Home() {
                     </div>
                 </Container>
             </footer>
-        </>
+        </main>
     );
 }
