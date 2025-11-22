@@ -12,7 +12,11 @@ import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createProfileSchema } from '@/lib/schemas/profile';
-import { ALLOWED_AVATAR_MIME, ALLOWED_AVATAR_EXTENSIONS, MAX_AVATAR_FILE_SIZE } from '@/lib/constants/avatar';
+import {
+    ALLOWED_AVATAR_MIME,
+    ALLOWED_AVATAR_EXTENSIONS,
+    MAX_AVATAR_FILE_SIZE,
+} from '@/lib/constants/avatar';
 
 const MIME_TO_EXT: Record<string, string> = {
     'image/png': 'png',
@@ -80,7 +84,7 @@ export default function CompleteProfileClient({
                 return;
             }
 
-            window.location.href = '/signin';
+            window.location.href = '/login';
         })();
     }, []);
 
@@ -105,7 +109,9 @@ export default function CompleteProfileClient({
             file.type as (typeof ALLOWED_AVATAR_MIME)[number]
         );
         const nameExt = (file.name.split('.').pop() || '').toLowerCase();
-        const extOk = nameExt ? (ALLOWED_AVATAR_EXTENSIONS as readonly string[]).includes(nameExt) : false;
+        const extOk = nameExt
+            ? (ALLOWED_AVATAR_EXTENSIONS as readonly string[]).includes(nameExt)
+            : false;
         if (!mimeOk && !extOk) {
             setAvatarError(
                 `Unsupported image format. Allowed: ${ALLOWED_AVATAR_EXTENSIONS.map((ext) => `.${ext}`).join(',')}.`
@@ -200,7 +206,9 @@ export default function CompleteProfileClient({
                             required
                         />
                         {formErrors.name?.message ? (
-                            <p className="text-xs text-red-500 mt-1">{String(formErrors.name.message)}</p>
+                            <p className="text-xs text-red-500 mt-1">
+                                {String(formErrors.name.message)}
+                            </p>
                         ) : serverErrors.name?.length ? (
                             <p className="text-xs text-red-500 mt-1">{serverErrors.name[0]}</p>
                         ) : null}
@@ -220,7 +228,9 @@ export default function CompleteProfileClient({
                     <div className="space-y-3">
                         <div className="flex items-center gap-4">
                             {(() => {
-                                const displayName = (watch('name') ?? values.name ?? defaultFullName ?? '') || undefined;
+                                const displayName =
+                                    (watch('name') ?? values.name ?? defaultFullName ?? '') ||
+                                    undefined;
                                 if (choice === 'uploaded' && uploadedFileExt) {
                                     return (
                                         <UserAvatar
