@@ -14,10 +14,7 @@ import {
     X,
     LucideIcon,
 } from 'lucide-react';
-import {
-    MAX_BLOCKS,
-    useUploadActions,
-} from '@/app/upload/UploadActionsContext';
+import { MAX_BLOCKS, useUploadActions } from '@/app/upload/UploadActionsContext';
 import { ACCEPT_IMAGE_TYPES, MAX_TOTAL_BYTES } from '@/app/upload/uploadPolicy';
 import { validateImageFileClient } from '@/lib/fileValidation';
 import {
@@ -400,7 +397,7 @@ function SidebarButton({
             onClick={onClick}
             className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
         >
-            <Icon icon={icon} size="md" className="text-gray-600" ariaLabel={label} />
+            <Icon icon={icon} size="md" className="text-gray-400" ariaLabel={label} />
             <span className="text-sm font-medium text-gray-700">{label}</span>
             {description ? (
                 <span className="text-xs text-gray-500 ml-auto">{description}</span>
