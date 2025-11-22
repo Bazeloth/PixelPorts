@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
+import { clientEnv } from '@/env/client';
 
-const MIXPANEL_API_HOST = process.env.NEXT_PUBLIC_MIXPANEL_API_HOST!;
+const MIXPANEL_API_HOST = clientEnv.NEXT_PUBLIC_MIXPANEL_API_HOST;
 
 function buildTargetUrl(req: NextRequest, pathSegments: string[]) {
     const search = req.nextUrl.search || '';

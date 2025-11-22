@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Header from '@/app/Header';
+import { clientEnv } from '@/env/client';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!;
+const siteUrl = clientEnv.NEXT_PUBLIC_SITE_URL;
 
 export const metadata: Metadata = {
     metadataBase: new URL(siteUrl),

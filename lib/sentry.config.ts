@@ -1,11 +1,12 @@
 import type { NodeOptions, BrowserOptions } from '@sentry/nextjs';
+import { clientEnv } from '@/env/client';
 
 function baseOptions() {
     const env = process.env.NODE_ENV || 'development';
     const isProd = env === 'production';
 
     return {
-        dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+        dsn: clientEnv.NEXT_PUBLIC_SENTRY_DSN as any, // ensure this key is defined in schema when you add it
         environment: env,
         enabled: isProd,
         sampleRate: isProd ? 1.0 : 0.0,

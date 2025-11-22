@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { createSupabaseClient } from '@/lib/supabase/server';
+import { clientEnv } from '@/env/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +15,7 @@ async function resendVerification(
     }
 
     const supabase = await createSupabaseClient();
-    const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`;
+    const redirectTo = `${clientEnv.NEXT_PUBLIC_SITE_URL}/auth/callback`;
 
     const { error } = await supabase.auth.resend({
         type: 'signup',

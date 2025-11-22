@@ -4,11 +4,13 @@
 // Lazy-loaded analytics with graceful failure
 // ============================================
 
+import { clientEnv } from '@/env/client';
+
 let mixpanel: any = null;
 let loading = false;
 let loadFailed = false;
 
-const token = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
+const token = clientEnv.NEXT_PUBLIC_MIXPANEL_TOKEN;
 const isDev = process.env.NODE_ENV !== 'production';
 
 // ============================================

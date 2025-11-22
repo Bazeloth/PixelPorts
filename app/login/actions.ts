@@ -5,6 +5,7 @@ import { isValidEmail } from '@/lib/utils/email';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
+import { clientEnv } from '@/env/client';
 
 export type SignInResult = { success: true } | { success: false; error: string };
 
@@ -76,7 +77,7 @@ export async function signUpWithEmail(formData: FormData): Promise<SignUpResult>
         email,
         password,
         options: {
-            emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+            emailRedirectTo: `${clientEnv.NEXT_PUBLIC_SITE_URL}/auth/callback`,
         },
     });
 

@@ -2,6 +2,7 @@
 
 import { JSX } from 'react';
 import { createSupabaseClient } from '@/lib/supabase/client';
+import { clientEnv } from '@/env/client';
 
 type Provider = 'google';
 
@@ -49,7 +50,7 @@ function OAuthButton({ provider }: { provider: Provider }) {
     const onClick = async () => {
         const supabase = await createSupabaseClient();
         const next = '/signup/complete-profile';
-        const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`;
+        const redirectTo = `${clientEnv.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`;
 
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: provider,
