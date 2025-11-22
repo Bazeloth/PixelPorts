@@ -10,9 +10,19 @@ export default function ParagraphBlock({
     onRemoveAction,
     updateBlockDataAction,
 }: BlockComponentProps<'paragraph'>) {
+    const align = block.data.align || 'left';
+    const textAlignClass =
+        align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : 'text-left';
+
     return (
         <EditableBlock>
-            <BlockToolbar>
+            <BlockToolbar className="flex items-center gap-2">
+                <BlockToolbar.ToolbarAlignButtons
+                    onClickAction={(newAlignment) =>
+                        updateBlockDataAction((d) => ({ ...d, align: newAlignment }))
+                    }
+                    align={align}
+                />
                 <BlockToolbar.ToolbarRemoveButton onClickAction={onRemoveAction} />
             </BlockToolbar>
             <textarea
@@ -20,7 +30,7 @@ export default function ParagraphBlock({
                 placeholder="Click to add paragraph..."
                 value={block.data.text || ''}
                 onChange={(e) => updateBlockDataAction((d) => ({ ...d, text: e.target.value }))}
-                className="w-full text-gray-700 placeholder-gray-300 border-none focus:outline-none focus:ring-0 p-0 bg-transparent resize-none leading-relaxed"
+                className={`w-full text-gray-700 placeholder-gray-300 border-none focus:outline-none focus:ring-0 p-0 bg-transparent resize-none leading-relaxed ${textAlignClass}`}
             />
         </EditableBlock>
     );

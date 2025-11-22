@@ -8,9 +8,10 @@ export const blockTypes = {
 } as const;
 
 export type BlockType = keyof typeof blockTypes;
+export type BlockTypeAlignment = 'left' | 'center' | 'right';
 
-export type HeadingData = { text?: string };
-export type ParagraphData = { text?: string };
+export type HeadingData = { text?: string; align?: BlockTypeAlignment };
+export type ParagraphData = { text?: string; align?: BlockTypeAlignment };
 export type ImageData = { image?: string; imageBytes?: number; caption?: string };
 export type CarouselData = {
     mainImage?: string;
