@@ -2,7 +2,7 @@
 // Reuses existing upload policy constants to keep things DRY
 
 import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
-import { fileTypeFromBlob } from 'file-type';
+import { fileTypeFromBlob } from 'file-type/browser';
 
 export type ValidationError = {
     code:
