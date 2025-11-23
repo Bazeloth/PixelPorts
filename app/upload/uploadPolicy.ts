@@ -10,21 +10,6 @@ const IMAGE_FORMATS = {
         exts: ['png'],
         defaultExt: 'png',
     },
-    webp: {
-        mimes: ['image/webp'],
-        exts: ['webp'],
-        defaultExt: 'webp',
-    },
-    gif: {
-        mimes: ['image/gif'],
-        exts: ['gif'],
-        defaultExt: 'gif',
-    },
-    avif: {
-        mimes: ['image/avif'],
-        exts: ['avif'],
-        defaultExt: 'avif',
-    },
     tiff: {
         mimes: ['image/tiff'],
         exts: ['tif', 'tiff'],
@@ -35,15 +20,10 @@ const IMAGE_FORMATS = {
         exts: ['bmp'],
         defaultExt: 'bmp',
     },
-    svg: {
-        mimes: ['image/svg+xml'],
-        exts: ['svg'],
-        defaultExt: 'svg',
-    },
-    ico: {
-        mimes: ['image/x-icon'],
-        exts: ['ico'],
-        defaultExt: 'ico',
+    webp: {
+        mimes: ['image/webp'],
+        exts: ['webp'],
+        defaultExt: 'webp',
     },
 } as const;
 
@@ -80,7 +60,9 @@ export function extFromMime(mime: string): string {
 }
 
 // Normalize a probed type or file extension (e.g., 'jpg' -> 'jpeg', 'tif' -> 'tiff')
-export function normalizeImageType(typeOrExt: string | undefined | null): OriginalImageFormat | null {
+export function normalizeImageType(
+    typeOrExt: string | undefined | null
+): OriginalImageFormat | null {
     if (!typeOrExt) return null;
     const t = String(typeOrExt).toLowerCase();
     // If it's already a known format key

@@ -15,7 +15,7 @@ import {
     LucideIcon,
 } from 'lucide-react';
 import { MAX_BLOCKS, useUploadActions } from '@/app/upload/UploadActionsContext';
-import { ACCEPT_IMAGE_TYPES, MAX_TOTAL_BYTES } from '@/app/upload/uploadPolicy';
+import { ACCEPT_IMAGE_TYPES, MAX_IMAGE_BYTES_MB, MAX_TOTAL_BYTES } from '@/app/upload/uploadPolicy';
 import { validateImageFileClient } from '@/lib/fileValidation';
 import {
     Block,
@@ -100,30 +100,28 @@ function UploadShotPage() {
                 <div className="flex-1 bg-white border-r border-gray-200 p-8 overflow-y-auto">
                     <div className="max-w-3xl mx-auto">
                         <div className="mb-6">
-                            <p className="text-sm text-gray-500 mb-2">
-                                Live preview - Click to edit
-                            </p>
+                            <p className="text-sm text-gray-500 mb-2">Live preview</p>
                             <p className="text-xs text-gray-400">
                                 Images display at their original size, up to 900px wide wide
                             </p>
                         </div>
 
                         <div className="space-y-8">
-                            {/* Title */}
-                            <div className="editable-block">
-                                <input
-                                    type="text"
-                                    placeholder="Click to add title..."
-                                    value={uploadActions.title}
-                                    onChange={(e) => uploadActions.setTitle(e.target.value)}
-                                    className="w-full text-4xl font-bold text-gray-900 placeholder-gray-300 border-none focus:outline-none focus:ring-0 p-0 bg-transparent"
-                                />
+                            {/* Title (preview only) */}
+                            <div>
+                                {uploadActions.title ? (
+                                    <h1 className="text-4xl font-bold text-gray-900">
+                                        {uploadActions.title}
+                                    </h1>
+                                ) : (
+                                    <p className="text-4xl font-bold text-gray-300">Title</p>
+                                )}
                             </div>
 
-                            {/* Thumbnail Image */}
-                            <div className="editable-block" onClick={triggerThumbnailUpload}>
+                            {/* Thumbnail Image (preview only) */}
+                            <div>
                                 {!uploadActions.thumbnailSrc ? (
-                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-20 text-center bg-gray-50 cursor-pointer">
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-20 text-center bg-gray-50">
                                         <Icon
                                             icon={ImageIcon}
                                             size={64}
@@ -131,52 +129,26 @@ function UploadShotPage() {
                                             ariaLabel="Upload image"
                                         />
                                         <p className="text-gray-600 font-medium">
-                                            Click to upload image
-                                        </p>
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            This will appear in feeds and on your shot page
+                                            Upload a cover image from the right panel
                                         </p>
                                     </div>
                                 ) : (
-                                    <>
-                                        <BlockToolbar className="flex gap-2">
-                                            <BlockToolbar.ToolbarClearButton
-                                                onClickAction={() => {
-                                                    uploadActions.setThumbnail('', 0);
-                                                    uploadActions.removeFilesForBlock(
-                                                        '__thumbnail__'
-                                                    );
-                                                }}
-                                            />
-                                        </BlockToolbar>
-                                        <div>
-                                            <img
-                                                src={uploadActions.thumbnailSrc}
-                                                alt="Shot image"
-                                                className="w-full rounded-lg"
-                                            />
-                                        </div>
-                                    </>
+                                    <img
+                                        src={uploadActions.thumbnailSrc}
+                                        alt="Shot image"
+                                        className="w-full rounded-lg"
+                                    />
                                 )}
-                                <input
-                                    ref={thumbnailInputRef}
-                                    type="file"
-                                    accept={ACCEPT_IMAGE_TYPES}
-                                    className="hidden"
-                                    onChange={(e) => handleThumbnailUpload(e.target.files?.[0])}
-                                />
                             </div>
 
-                            {/* Description */}
-                            <div className="editable-block">
-                                <textarea
-                                    rows={3}
-                                    placeholder="Click to add description (optional)..."
-                                    value={uploadActions.description}
-                                    onChange={(e) => uploadActions.setDescription(e.target.value)}
-                                    className="w-full text-lg text-gray-700 placeholder-gray-300 border-none focus:outline-none focus:ring-0 p-0 bg-transparent resize-none"
-                                />
-                            </div>
+                            {uploadActions.description && (
+                                <div>
+                                    {/* Description (preview only) */}
+                                    <p className="text-lg text-gray-700 whitespace-pre-wrap">
+                                        {uploadActions.description}
+                                    </p>
+                                </div>
+                            )}
 
                             {/* Content blocks */}
                             <div className="space-y-8">
@@ -216,6 +188,88 @@ function UploadShotPage() {
                 <div className="w-96 bg-gray-50 overflow-y-auto">
                     <div className="sticky top-0 p-6">
                         <h2 className="text-lg font-semibold text-gray-900 mb-6">Shot details</h2>
+
+                        {/* Cover image */}
+                        <div className="mb-6">
+                            <label className="block text-sm font-semibold text-gray-900 mb-2">
+                                Cover image <span className="text-red-500">*</span>
+                            </label>
+                            {!uploadActions.thumbnailSrc ? (
+                                <div
+                                    onClick={triggerThumbnailUpload}
+                                    className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-purple-600 bg-white"
+                                >
+                                    <Icon
+                                        icon={ImageIcon}
+                                        size={36}
+                                        className="w-12 h-12 text-gray-400 mx-auto mb-3"
+                                        ariaLabel="Upload cover image"
+                                    />
+                                    <p className="text-sm font-medium text-gray-700 mb-1">
+                                        Click to upload
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                        Up to {MAX_IMAGE_BYTES_MB}MB
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-purple-600 bg-white">
+                                    <img
+                                        src={uploadActions.thumbnailSrc}
+                                        alt="Shot cover image"
+                                        className="w-full rounded-lg mb-2" // todo: show warning about bad ratio for a thumbnail?
+                                    />
+                                    <p className="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                                        Change image
+                                    </p>
+                                </div>
+                            )}
+
+                            <input
+                                ref={thumbnailInputRef}
+                                type="file"
+                                accept={ACCEPT_IMAGE_TYPES}
+                                className="hidden"
+                                onChange={(e) => handleThumbnailUpload(e.target.files?.[0])}
+                            />
+                        </div>
+
+                        {/* Title */}
+                        <div className="mb-6">
+                            <label
+                                htmlFor="title-input"
+                                className="block text-sm font-semibold text-gray-900 mb-2"
+                            >
+                                Title <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                id="title-input"
+                                type="text"
+                                value={uploadActions.title}
+                                onChange={(e) => uploadActions.setTitle(e.target.value)}
+                                placeholder="Enter a title"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-600 bg-white"
+                            />
+                        </div>
+
+                        {/* Description */}
+                        <div className="mb-6">
+                            <label
+                                htmlFor="description-input"
+                                className="block text-sm font-semibold text-gray-900 mb-2"
+                            >
+                                Description
+                                <span className="ml-1 text-gray-500 font-normal">(optional)</span>
+                            </label>
+                            <textarea
+                                id="description-input"
+                                rows={3}
+                                placeholder="Tell us about your design..."
+                                value={uploadActions.description}
+                                onChange={(e) => uploadActions.setDescription(e.target.value)}
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-600 bg-white resize-y"
+                            />
+                        </div>
 
                         {/* Category */}
                         <div className="mb-6">
