@@ -2,7 +2,13 @@
 // Reuses existing upload policy constants to keep things DRY
 
 import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
-import { fileTypeFromBlob } from 'file-type/browser';
+
+// Local aliases to policy values for clearer intent
+const MAX_FILE_SIZE_BYTES = ShotUploadPolicy.MAX_IMAGE_BYTES;
+const MAX_TOTAL_SIZE_BYTES = ShotUploadPolicy.MAX_TOTAL_BYTES;
+const MAX_IMAGE_BYTES_MB = ShotUploadPolicy.MAX_IMAGE_BYTES_MB;
+const MAX_TOTAL_BYTES_MB = ShotUploadPolicy.MAX_TOTAL_BYTES_MB;
+const ALLOWED_IMAGE_MIME_TYPES = ShotUploadPolicy.ALLOWED_IMAGE_MIME_TYPES;
 
 export type ValidationError = {
     code:
@@ -182,41 +188,64 @@ function getExtensionFromName(name: string): string {
 
 export async function validateImageFileClient(
     file: File,
-    currentTotalBytes: number,
-    policy = ShotUploadPolicy
+    currentTotalBytes: number
 ): Promise<ValidationError | null> {
     // Size checks first
-    if (file.size > policy.MAX_IMAGE_BYTES) {
-        return {
-            code: 'file-too-large',
-            message: `File is larger than ${policy.MAX_IMAGE_BYTES_MB}MB.`,
-        };
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+        return { code: 'file-too-large', message: `File is larger than ${MAX_IMAGE_BYTES_MB}MB.` };
     }
-    if (currentTotalBytes + file.size > policy.MAX_TOTAL_BYTES) {
+    if (currentTotalBytes + file.size > MAX_TOTAL_SIZE_BYTES) {
         return {
             code: 'total-too-large',
-            message: `Adding this file exceeds the ${policy.MAX_TOTAL_BYTES_MB}MB total limit for a shot.`,
+            message: `Adding this file exceeds the ${MAX_TOTAL_BYTES_MB}MB total limit for a shot.`,
         };
     }
 
-    // Detect true type from the actual bytes using file-type
-    const detected = await fileTypeFromBlob(file);
-    if (!detected) {
+    // MIME + extension sanity
+    const ext = getExtensionFromName(file.name);
+    const byExt = SUPPORTED_FILE_TYPES.find((t) => t.extension === ext);
+    const byMime = SUPPORTED_FILE_TYPES.find((t) => t.mimeType === (file.type || '').toLowerCase());
+    const declared = byMime || byExt;
+    if (!declared) {
         return {
             code: 'unsupported-type',
-            message: 'Unknown or unsupported file type.',
+            message: 'Unsupported file type. Supported: ' + ALLOWED_IMAGE_MIME_TYPES.join(', '),
         };
     }
 
-    if (!policy.ALLOWED_IMAGE_MIME_TYPES.includes(detected.mime)) {
+    // Read headers/tail
+    const headBytes = await readHead(file, 128);
+    const tailBytes = await readTail(file, 8);
+
+    // Validate signature (magic number)
+    if (declared.signatureValidator) {
+        const ok = declared.signatureValidator(headBytes);
+        if (!ok) {
+            return {
+                code: 'signature-mismatch',
+                message: 'File header does not match its declared image type.',
+            };
+        }
+    }
+
+    // End marker checks where applicable
+    if (declared.endMarkerValidator) {
+        const okEnd = declared.endMarkerValidator(tailBytes);
+        if (!okEnd) {
+            return {
+                code: 'end-marker-missing',
+                message: 'File appears truncated or corrupted (end marker not found).',
+            };
+        }
+    }
+
+    // Cross-check: if both ext and mime present and disagree
+    if (byExt && byMime && byExt.mimeType !== byMime.mimeType) {
         return {
-            code: 'unsupported-type',
-            message:
-                'Unsupported file type. Supported: ' + policy.ALLOWED_IMAGE_MIME_TYPES.join(', '),
+            code: 'signature-mismatch',
+            message: 'File extension and MIME type disagree.',
         };
     }
 
-    // Optional future: cross-check filename extension vs detected.ext via policy.normalizeImageType
-    // For now, success if detected mime is allowed.
     return null;
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'node:crypto';
-import sharp from 'sharp';
+import { imageSize } from 'image-size';
 import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
 import { z } from 'zod';
 import { fileTypeFromBuffer } from 'file-type';
@@ -209,34 +209,21 @@ export async function POST(req: NextRequest) {
                 );
             }
 
-            // Decode and validate with sharp (authoritative decode)
-            let imageMeta: sharp.Metadata;
-            try {
-                imageMeta = await sharp(buf, { failOn: 'truncated' }).metadata();
-            } catch (e) {
+            const dim = imageSize(buf);
+            if (!dim.width || !dim.height || !dim.type) {
                 return NextResponse.json(
-                    { error: 'Image decode failed or file is corrupted.' },
+                    { error: 'Could not parse image metadata.' },
                     { status: 415 }
                 );
             }
-
-            const width = imageMeta.width ?? 0;
-            const height = imageMeta.height ?? 0;
-            if (!width || !height) {
-                return NextResponse.json(
-                    { error: 'Could not decode image dimensions.' },
-                    { status: 415 }
-                );
-            }
-            if (width * height > MAX_PIXEL_AREA) {
+            if (dim.width * dim.height > MAX_PIXEL_AREA) {
                 return NextResponse.json({ error: 'Image dimensions too large' }, { status: 413 });
             }
 
-            const decodedFormat = (imageMeta.format || '').toString();
-            const normalized = ShotUploadPolicy.normalizeImageType(decodedFormat);
+            const normalized = ShotUploadPolicy.normalizeImageType(dim.type);
             if (!normalized) {
                 return NextResponse.json(
-                    { error: `Unsupported or unknown image format: ${decodedFormat}` },
+                    { error: `Unsupported or unknown image format: ${dim.type}` },
                     { status: 415 }
                 );
             }
@@ -257,8 +244,8 @@ export async function POST(req: NextRequest) {
                 position,
                 hash,
                 object_key: objectPath,
-                original_width: width,
-                original_height: height,
+                original_width: dim.width,
+                original_height: dim.height,
                 original_size_bytes: size,
                 original_format: format,
                 original_ext: ext,
@@ -275,8 +262,8 @@ export async function POST(req: NextRequest) {
             const item = {
                 hash,
                 base_url: baseUrl,
-                original_width: width,
-                original_height: height,
+                original_width: dim.width,
+                original_height: dim.height,
                 original_size_bytes: size,
                 original_format: format,
             };
