@@ -6,7 +6,7 @@ import { Image as ImageIcon } from 'lucide-react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import { BlockToolbar } from '@/app/upload/BlockToolbar';
 import { handleImageFile } from '@/app/upload/uploadUtils';
-import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
+import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
 import EditableBlock from '@/app/upload/EditableBlock';
 import { validateImageFileClient } from '@/lib/fileValidation';
@@ -81,7 +81,7 @@ export default function ImageBlock({
             <input
                 ref={fileInputRef}
                 type="file"
-                accept={ACCEPT_IMAGE_TYPES}
+                accept={ShotUploadPolicy.ACCEPT_IMAGE_TYPES}
                 className="hidden"
                 onChange={(e) => onFile(e.target.files?.[0])}
             />

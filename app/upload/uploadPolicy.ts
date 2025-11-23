@@ -1,73 +1,146 @@
-// Single source of truth for supported image formats and their MIME types/extensions
-const IMAGE_FORMATS = {
+// uploadPolicy.ts
+// Centralized, clearly separated upload policies for Shots and Avatars
+// Each policy is self-contained: formats, accept strings, size limits, and helpers
+
+type FormatDef = {
+    mimes: readonly string[];
+    exts: readonly string[];
+    defaultExt: string;
+};
+
+type FormatsMap = Record<string, FormatDef>;
+
+function createImagePolicy<const F extends FormatsMap>(
+    formats: F,
+    options: {
+        maxBytes: number;
+        // Optional total cap; if omitted, equals maxBytes by default (single-file use cases like avatar)
+        totalBytes?: number;
+    }
+) {
+    type FormatKey = keyof F & string;
+
+    const ALLOWED_IMAGE_MIME_TYPES: readonly string[] = Array.from(
+        new Set(Object.values(formats).flatMap((f) => f.mimes))
+    );
+
+    const ACCEPT_IMAGE_TYPES = ALLOWED_IMAGE_MIME_TYPES.join(',');
+
+    const MAX_IMAGE_BYTES = options.maxBytes;
+    const MAX_IMAGE_BYTES_MB = (MAX_IMAGE_BYTES / (1024 * 1024)).toFixed(0);
+
+    const MAX_TOTAL_BYTES = options.totalBytes ?? options.maxBytes;
+    const MAX_TOTAL_BYTES_MB = (MAX_TOTAL_BYTES / (1024 * 1024)).toFixed(0);
+
+    // MIME -> default extension map
+    const MIME_TO_EXT: ReadonlyMap<string, string> = new Map(
+        Object.values(formats).flatMap((f) => f.mimes.map((m) => [m, f.defaultExt] as const))
+    );
+
+    // ext -> canonical format key map
+    const EXT_TO_FORMAT: ReadonlyMap<string, FormatKey> = new Map(
+        Object.entries(formats).flatMap(([format, def]) =>
+            def.exts.map((ext) => [ext, format as FormatKey] as const)
+        )
+    );
+
+    function extFromMime(mime: string): string {
+        const key = (mime || '').toLowerCase();
+        // Fall back to the first defined format's default ext
+        const firstDefault = Object.values(formats)[0]?.defaultExt ?? 'jpg';
+        return MIME_TO_EXT.get(key) ?? firstDefault;
+    }
+
+    function normalizeImageType(typeOrExt: string | undefined | null): FormatKey | null {
+        if (!typeOrExt) return null;
+        const t = String(typeOrExt).toLowerCase();
+        // Direct key hit
+        if ((formats as any)[t]) return t as FormatKey;
+        // Extension hit
+        const byExt = EXT_TO_FORMAT.get(t as any);
+        return byExt ?? null;
+    }
+
+    return {
+        // Types
+        // FormatKey is the canonical union of allowed format names for this policy
+        // e.g., 'jpeg' | 'png' | 'webp'
+        // Values
+        FORMATS: formats,
+        ALLOWED_IMAGE_MIME_TYPES,
+        ACCEPT_IMAGE_TYPES,
+        MAX_IMAGE_BYTES,
+        MAX_IMAGE_BYTES_MB,
+        MAX_TOTAL_BYTES,
+        MAX_TOTAL_BYTES_MB,
+        // Helpers (scoped to this policy)
+        extFromMime,
+        normalizeImageType,
+    } as const;
+}
+
+// ---------------------------
+// Shot settings (existing behavior)
+// ---------------------------
+const SHOT_FORMATS = {
     jpeg: {
-        mimes: ['image/jpeg', 'image/jpg'],
-        exts: ['jpg', 'jpeg'],
+        mimes: ['image/jpeg', 'image/jpg'] as const,
+        exts: ['jpg', 'jpeg'] as const,
         defaultExt: 'jpg',
     },
     png: {
-        mimes: ['image/png'],
-        exts: ['png'],
+        mimes: ['image/png'] as const,
+        exts: ['png'] as const,
         defaultExt: 'png',
     },
     tiff: {
-        mimes: ['image/tiff'],
-        exts: ['tif', 'tiff'],
+        mimes: ['image/tiff'] as const,
+        exts: ['tif', 'tiff'] as const,
         defaultExt: 'tif',
     },
     bmp: {
-        mimes: ['image/bmp'],
-        exts: ['bmp'],
+        mimes: ['image/bmp'] as const,
+        exts: ['bmp'] as const,
         defaultExt: 'bmp',
     },
     webp: {
-        mimes: ['image/webp'],
-        exts: ['webp'],
+        mimes: ['image/webp'] as const,
+        exts: ['webp'] as const,
         defaultExt: 'webp',
     },
 } as const;
 
-export type OriginalImageFormat = keyof typeof IMAGE_FORMATS;
+export const ShotUploadPolicy = createImagePolicy(SHOT_FORMATS, {
+    maxBytes: 10 * 1024 * 1024, // 10 MB per file
+    totalBytes: 100 * 1024 * 1024, // 100 MB total
+});
 
-// Derived allow-list of MIME types and the <input accept> string
-export const ALLOWED_IMAGE_MIME_TYPES: readonly string[] = Array.from(
-    new Set(Object.values(IMAGE_FORMATS).flatMap((f) => f.mimes))
-);
+export type ShotOriginalImageFormat = keyof typeof SHOT_FORMATS;
 
-export const ACCEPT_IMAGE_TYPES = ALLOWED_IMAGE_MIME_TYPES.join(',');
+// ---------------------------
+// Avatar settings (JPG/PNG/WebP), 5MB max
+// ---------------------------
+const AVATAR_FORMATS = {
+    jpeg: {
+        mimes: ['image/jpeg', 'image/jpg'] as const,
+        exts: ['jpg', 'jpeg'] as const,
+        defaultExt: 'jpg',
+    },
+    png: {
+        mimes: ['image/png'] as const,
+        exts: ['png'] as const,
+        defaultExt: 'png',
+    },
+    webp: {
+        mimes: ['image/webp'] as const,
+        exts: ['webp'] as const,
+        defaultExt: 'webp',
+    },
+} as const;
 
-// Size limits
-export const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10 MB per file
-export const MAX_IMAGE_BYTES_MB = (MAX_IMAGE_BYTES / (1024 * 1024)).toFixed(0);
-export const MAX_TOTAL_BYTES = 100 * 1024 * 1024; // 100 MB total
-export const MAX_TOTAL_BYTES_MB = (MAX_TOTAL_BYTES / (1024 * 1024)).toFixed(0);
+export const AvatarUploadPolicy = createImagePolicy(AVATAR_FORMATS, {
+    maxBytes: 5 * 1024 * 1024, // 5 MB per file
+    // No multi-file total cap for avatar; default equals maxBytes
+});
 
-// Map MIME type to file extension using the registry
-const MIME_TO_EXT: ReadonlyMap<string, string> = new Map(
-    Object.values(IMAGE_FORMATS).flatMap((f) => f.mimes.map((m) => [m, f.defaultExt] as const))
-);
-
-// Map known extensions back to our canonical OriginalImageFormat key
-const EXT_TO_FORMAT: ReadonlyMap<string, OriginalImageFormat> = new Map(
-    Object.entries(IMAGE_FORMATS).flatMap(([format, def]) =>
-        def.exts.map((ext) => [ext, format as OriginalImageFormat] as const)
-    )
-);
-
-export function extFromMime(mime: string): string {
-    const key = (mime || '').toLowerCase();
-    return MIME_TO_EXT.get(key) ?? IMAGE_FORMATS.jpeg.defaultExt;
-}
-
-// Normalize a probed type or file extension (e.g., 'jpg' -> 'jpeg', 'tif' -> 'tiff')
-export function normalizeImageType(
-    typeOrExt: string | undefined | null
-): OriginalImageFormat | null {
-    if (!typeOrExt) return null;
-    const t = String(typeOrExt).toLowerCase();
-    // If it's already a known format key
-    if ((IMAGE_FORMATS as any)[t]) return t as OriginalImageFormat;
-    // If it's a known extension, map to canonical format
-    const byExt = EXT_TO_FORMAT.get(t as any);
-    return byExt ?? null;
-}
+export type AvatarOriginalImageFormat = keyof typeof AVATAR_FORMATS;

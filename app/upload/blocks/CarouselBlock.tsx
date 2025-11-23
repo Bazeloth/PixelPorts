@@ -6,7 +6,7 @@ import { Image as ImageIcon, Plus, ChevronLeft, ChevronRight, X } from 'lucide-r
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import { BlockToolbar } from '@/app/upload/BlockToolbar';
 import { handleImageFile } from '@/app/upload/uploadUtils';
-import { ACCEPT_IMAGE_TYPES } from '@/app/upload/uploadPolicy';
+import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
 import { useUploadActions } from '@/app/upload/UploadActionsContext';
 import EditableBlock from '@/app/upload/EditableBlock';
 import { validateImageFileClient } from '@/lib/fileValidation';
@@ -233,7 +233,7 @@ export default function CarouselBlock({
                     <input
                         ref={mainInputRef}
                         type="file"
-                        accept={ACCEPT_IMAGE_TYPES}
+                        accept={ShotUploadPolicy.ACCEPT_IMAGE_TYPES}
                         className="hidden"
                         onChange={(e) => onMainFile(e.target.files?.[0])}
                     />
@@ -299,7 +299,7 @@ function CarouselThumbPicker({ onPick }: { onPick: (file?: File | null) => void 
             <input
                 ref={inputRef}
                 type="file"
-                accept={ACCEPT_IMAGE_TYPES}
+                accept={ShotUploadPolicy.ACCEPT_IMAGE_TYPES}
                 className="hidden"
                 onChange={(e) => onPick(e.target.files?.[0])}
             />

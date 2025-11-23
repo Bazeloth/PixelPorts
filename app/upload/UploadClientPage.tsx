@@ -15,7 +15,7 @@ import {
     LucideIcon,
 } from 'lucide-react';
 import { MAX_BLOCKS, useUploadActions } from '@/app/upload/UploadActionsContext';
-import { ACCEPT_IMAGE_TYPES, MAX_IMAGE_BYTES_MB, MAX_TOTAL_BYTES } from '@/app/upload/uploadPolicy';
+import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
 import { validateImageFileClient } from '@/lib/fileValidation';
 import {
     Block,
@@ -209,7 +209,7 @@ function UploadShotPage() {
                                         Click to upload
                                     </p>
                                     <p className="text-xs text-gray-500">
-                                        Up to {MAX_IMAGE_BYTES_MB}MB
+                                        Up to {ShotUploadPolicy.MAX_IMAGE_BYTES_MB}MB
                                     </p>
                                 </div>
                             ) : (
@@ -228,7 +228,7 @@ function UploadShotPage() {
                             <input
                                 ref={thumbnailInputRef}
                                 type="file"
-                                accept={ACCEPT_IMAGE_TYPES}
+                                accept={ShotUploadPolicy.ACCEPT_IMAGE_TYPES}
                                 className="hidden"
                                 onChange={(e) => handleThumbnailUpload(e.target.files?.[0])}
                             />
@@ -306,7 +306,7 @@ function UploadShotPage() {
                                     <span id="total-size">
                                         {(uploadActions.totalBytes / (1024 * 1024)).toFixed(1)}
                                     </span>{' '}
-                                    / {Math.floor(MAX_TOTAL_BYTES / (1024 * 1024))} MB
+                                    / {Math.floor(ShotUploadPolicy.MAX_TOTAL_BYTES / (1024 * 1024))} MB
                                 </span>
                             </div>
                             <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
@@ -314,7 +314,7 @@ function UploadShotPage() {
                                     id="size-progress"
                                     className="bg-blue-600 h-1.5 rounded-full"
                                     style={{
-                                        width: `${Math.min(100, Math.round((uploadActions.totalBytes / MAX_TOTAL_BYTES) * 100))}%`,
+                                        width: `${Math.min(100, Math.round((uploadActions.totalBytes / ShotUploadPolicy.MAX_TOTAL_BYTES) * 100))}%`,
                                     }}
                                 />
                             </div>

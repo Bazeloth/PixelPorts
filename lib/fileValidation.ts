@@ -1,13 +1,14 @@
 // Client-side image file validation with magic-number checks and size limits
 // Reuses existing upload policy constants to keep things DRY
 
-import {
-    ALLOWED_IMAGE_MIME_TYPES,
-    MAX_IMAGE_BYTES as MAX_FILE_SIZE_BYTES,
-    MAX_TOTAL_BYTES as MAX_TOTAL_SIZE_BYTES,
-    MAX_IMAGE_BYTES_MB,
-    MAX_TOTAL_BYTES_MB,
-} from '@/app/upload/uploadPolicy';
+import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
+
+// Local aliases to policy values for clearer intent
+const MAX_FILE_SIZE_BYTES = ShotUploadPolicy.MAX_IMAGE_BYTES;
+const MAX_TOTAL_SIZE_BYTES = ShotUploadPolicy.MAX_TOTAL_BYTES;
+const MAX_IMAGE_BYTES_MB = ShotUploadPolicy.MAX_IMAGE_BYTES_MB;
+const MAX_TOTAL_BYTES_MB = ShotUploadPolicy.MAX_TOTAL_BYTES_MB;
+const ALLOWED_IMAGE_MIME_TYPES = ShotUploadPolicy.ALLOWED_IMAGE_MIME_TYPES;
 
 export type ValidationError = {
     code:
@@ -177,7 +178,7 @@ export const SUPPORTED_FILE_TYPES: SupportedType[] = [
         mimeType: 'image/x-icon',
         signatureValidator: (b: Uint8Array) => validateIcoSignature(b),
     },
-].filter((t) => ALLOWED_IMAGE_MIME_TYPES.includes(t.mimeType as any));
+].filter((t) => ShotUploadPolicy.ALLOWED_IMAGE_MIME_TYPES.includes(t.mimeType as any));
 
 function getExtensionFromName(name: string): string {
     const idx = name.lastIndexOf('.');

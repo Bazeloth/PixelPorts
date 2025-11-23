@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { imageSize } from 'image-size';
-import {
-    ALLOWED_IMAGE_MIME_TYPES,
-    MAX_IMAGE_BYTES,
-    MAX_TOTAL_BYTES,
-    extFromMime,
-    normalizeImageType,
-} from '@/app/upload/uploadPolicy';
+import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
 import { z } from 'zod';
 import { fileTypeFromBuffer } from 'file-type';
-import type { OriginalImageFormat } from '@/app/upload/uploadPolicy';
+import type { ShotOriginalImageFormat } from '@/app/upload/uploadPolicy';
 import {
     createSupabaseAdminClient,
     createSupabaseClient,
@@ -19,14 +13,18 @@ import {
 
 export const runtime = 'nodejs';
 
-
 function sha256Hex(buf: ArrayBuffer) {
     const h = crypto.createHash('sha256');
     h.update(Buffer.from(buf));
     return h.digest('hex');
 }
 
-async function uploadOriginal(path: string, data: ArrayBuffer, contentType: string, supabaseAdmin: Awaited<ReturnType<typeof createSupabaseAdminClient>>) {
+async function uploadOriginal(
+    path: string,
+    data: ArrayBuffer,
+    contentType: string,
+    supabaseAdmin: Awaited<ReturnType<typeof createSupabaseAdminClient>>
+) {
     const { error } = await supabaseAdmin.storage.from(StorageBucket.Shots).upload(path, data, {
         contentType,
         upsert: false,
@@ -94,7 +92,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const VALID_MIME = new Set<string>(ALLOWED_IMAGE_MIME_TYPES as unknown as string[]);
+        const VALID_MIME = new Set<string>(ShotUploadPolicy.ALLOWED_IMAGE_MIME_TYPES);
 
         const inputs: { file: File; ab: ArrayBuffer; size: number }[] = [];
         for (const entry of form.getAll('files')) {
@@ -110,14 +108,14 @@ export async function POST(req: NextRequest) {
 
         // Server-side size enforcement
         const totalBytes = inputs.reduce((sum, it) => sum + it.size, 0);
-        if (totalBytes > MAX_TOTAL_BYTES) {
+        if (totalBytes > ShotUploadPolicy.MAX_TOTAL_BYTES) {
             return NextResponse.json(
                 { error: 'Total upload size exceeds limit.' },
                 { status: 413 }
             );
         }
         for (const it of inputs) {
-            if (it.size > MAX_IMAGE_BYTES) {
+            if (it.size > ShotUploadPolicy.MAX_IMAGE_BYTES) {
                 return NextResponse.json(
                     { error: 'A file exceeds the per-file size limit.' },
                     { status: 413 }
@@ -183,7 +181,7 @@ export async function POST(req: NextRequest) {
                     original_width: number;
                     original_height: number;
                     original_size_bytes: number;
-                    original_format: OriginalImageFormat;
+                    original_format: ShotOriginalImageFormat;
                 }>;
             }
         > = {};
@@ -222,17 +220,17 @@ export async function POST(req: NextRequest) {
                 return NextResponse.json({ error: 'Image dimensions too large' }, { status: 413 });
             }
 
-            const normalized = normalizeImageType(dim.type);
+            const normalized = ShotUploadPolicy.normalizeImageType(dim.type);
             if (!normalized) {
                 return NextResponse.json(
                     { error: `Unsupported or unknown image format: ${dim.type}` },
                     { status: 415 }
                 );
             }
-            const format: OriginalImageFormat = normalized;
+            const format: ShotOriginalImageFormat = normalized;
 
             const hash = sha256Hex(ab);
-            const ext = ft.ext || extFromMime(ft.mime);
+            const ext = ft.ext || ShotUploadPolicy.extFromMime(ft.mime);
             const objectPath = `${userId}/${shotId}/${hash}-original.${ext}`;
             const baseUrl = await uploadOriginal(objectPath, ab, ft.mime, supabaseAdmin);
 

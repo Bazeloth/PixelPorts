@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
 import { Block, BlockType } from '@/lib/constants/blockTypes';
-import { MAX_TOTAL_BYTES, MAX_TOTAL_BYTES_MB } from '@/app/upload/uploadPolicy';
+import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
 
 export type UploadActions = {
     saveDraft: () => void;
@@ -66,8 +66,8 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
     const tryReplaceBytes = useCallback(
         (oldBytes: number, newBytes: number) => {
             const current = totalBytes - (oldBytes || 0);
-            if (current + newBytes > MAX_TOTAL_BYTES) {
-                alert(`Total upload size exceeds ${MAX_TOTAL_BYTES_MB} MB.`);
+            if (current + newBytes > ShotUploadPolicy.MAX_TOTAL_BYTES) {
+                alert(`Total upload size exceeds ${ShotUploadPolicy.MAX_TOTAL_BYTES_MB} MB.`);
                 return false;
             }
             setTotalBytes(current + newBytes);
@@ -88,8 +88,8 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
         (src: string, bytes: number) => {
             // Calculate what total would be if we replaced existing thumbnail bytes with new bytes
             const currentExcludingThumb = totalBytes - (thumbnailBytes || 0);
-            if (currentExcludingThumb + bytes > MAX_TOTAL_BYTES) {
-                alert(`Total upload size exceeds ${MAX_TOTAL_BYTES_MB} MB.`);
+            if (currentExcludingThumb + bytes > ShotUploadPolicy.MAX_TOTAL_BYTES) {
+                alert(`Total upload size exceeds ${ShotUploadPolicy.MAX_TOTAL_BYTES_MB} MB.`);
                 return;
             }
             setThumbnailSrc(src);
