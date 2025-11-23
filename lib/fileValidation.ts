@@ -3,13 +3,6 @@
 
 import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
 
-// Local aliases to policy values for clearer intent
-const MAX_FILE_SIZE_BYTES = ShotUploadPolicy.MAX_IMAGE_BYTES;
-const MAX_TOTAL_SIZE_BYTES = ShotUploadPolicy.MAX_TOTAL_BYTES;
-const MAX_IMAGE_BYTES_MB = ShotUploadPolicy.MAX_IMAGE_BYTES_MB;
-const MAX_TOTAL_BYTES_MB = ShotUploadPolicy.MAX_TOTAL_BYTES_MB;
-const ALLOWED_IMAGE_MIME_TYPES = ShotUploadPolicy.ALLOWED_IMAGE_MIME_TYPES;
-
 export type ValidationError = {
     code:
         | 'file-too-large'
@@ -191,13 +184,16 @@ export async function validateImageFileClient(
     currentTotalBytes: number
 ): Promise<ValidationError | null> {
     // Size checks first
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-        return { code: 'file-too-large', message: `File is larger than ${MAX_IMAGE_BYTES_MB}MB.` };
+    if (file.size > ShotUploadPolicy.MAX_IMAGE_BYTES) {
+        return {
+            code: 'file-too-large',
+            message: `File is larger than ${ShotUploadPolicy.MAX_IMAGE_BYTES_MB}MB.`,
+        };
     }
-    if (currentTotalBytes + file.size > MAX_TOTAL_SIZE_BYTES) {
+    if (currentTotalBytes + file.size > ShotUploadPolicy.MAX_TOTAL_BYTES) {
         return {
             code: 'total-too-large',
-            message: `Adding this file exceeds the ${MAX_TOTAL_BYTES_MB}MB total limit for a shot.`,
+            message: `Adding this file exceeds the ${ShotUploadPolicy.MAX_TOTAL_BYTES_MB}MB total limit for a shot.`,
         };
     }
 
@@ -209,7 +205,9 @@ export async function validateImageFileClient(
     if (!declared) {
         return {
             code: 'unsupported-type',
-            message: 'Unsupported file type. Supported: ' + ALLOWED_IMAGE_MIME_TYPES.join(', '),
+            message:
+                'Unsupported file type. Supported: ' +
+                ShotUploadPolicy.ALLOWED_IMAGE_MIME_TYPES.join(', '),
         };
     }
 
