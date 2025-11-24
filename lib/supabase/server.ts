@@ -30,6 +30,9 @@ export async function createSupabaseAdminClient() {
     return getSupabaseClient({ url: supabaseUrl, key: serviceKey, cookieStore });
 }
 
+// Shared type for the server-side Supabase client returned by the helpers above
+export type SupabaseServerClient = Awaited<ReturnType<typeof createSupabaseClient>>;
+
 // For Next.js route handlers where you already have a NextRequest and NextResponse
 // and need Supabase to mutate the response cookies (e.g., OAuth callback redirects)
 export async function createSupabaseClientForRoute(request: NextRequest, response: NextResponse) {
