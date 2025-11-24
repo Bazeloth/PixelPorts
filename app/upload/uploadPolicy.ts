@@ -32,6 +32,40 @@ function createImagePolicy<const F extends FormatsMap>(
     const MAX_TOTAL_BYTES = options.totalBytes ?? options.maxBytes;
     const MAX_TOTAL_BYTES_MB = (MAX_TOTAL_BYTES / (1024 * 1024)).toFixed(0);
 
+    // --- Derived, self-documenting decode-safety limits (no magic numbers) ---
+    // Basis: pick a decoded-memory budget B (in MB) for a single image. We assume worst-case RGBA8 (4 bytes/pixel)
+    // Formulas:
+    //   MAX_UNCOMPRESSED_BYTES = B * 1024 * 1024
+    //   MAX_PIXELS            = floor(MAX_UNCOMPRESSED_BYTES / 4)
+    //   MAX_MEGAPIXELS        = floor(MAX_PIXELS / 1_000_000)
+    // Single-dimension caps protect GPU/decoder even before area/bytes checks.
+
+    const DECODE_MEMORY_BUDGET_MB = 256; // B — tune centrally
+    const BYTES_PER_PIXEL = 4; // RGBA8 worst case
+
+    const MAX_UNCOMPRESSED_BYTES = DECODE_MEMORY_BUDGET_MB * 1024 * 1024; // e.g., 268,435,456
+    const MAX_PIXELS = Math.floor(MAX_UNCOMPRESSED_BYTES / BYTES_PER_PIXEL); // ~67,108,864
+    const MAX_MEGAPIXELS = Math.floor(MAX_PIXELS / 1_000_000); // ~67
+
+    // Conservative per-side caps to avoid pathological aspect ratios and match common GPU limits.
+    const MAX_WIDTH = 12000;
+    const MAX_HEIGHT = 12000;
+
+    // Optional compressed→decoded expansion ratio guard. Images usually compress 4–20×; 64× is conservative.
+    const MAX_EXPANSION_RATIO = 64;
+
+    // Animated images policies (not currently used by server route, but exported for future use)
+    const ALLOW_ANIMATED = false;
+    const MAX_FRAMES = 200;
+    const MAX_TOTAL_PIXELS_ACROSS_FRAMES = MAX_PIXELS * 5; // decoders often reuse buffers; use a small multiple
+
+    function estimatedUncompressedBytes(width: number, height: number): number {
+        // Conservative bound using RGBA8; clamp to Number.MAX_SAFE_INTEGER to guard against overflow
+        const pixels = Math.max(0, Math.floor(width) * Math.floor(height));
+        const est = pixels * BYTES_PER_PIXEL;
+        return est > Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : est;
+    }
+
     // MIME -> default extension map
     const MIME_TO_EXT: ReadonlyMap<string, string> = new Map(
         Object.values(formats).flatMap((f) => f.mimes.map((m) => [m, f.defaultExt] as const))
@@ -73,7 +107,20 @@ function createImagePolicy<const F extends FormatsMap>(
         MAX_IMAGE_BYTES_MB,
         MAX_TOTAL_BYTES,
         MAX_TOTAL_BYTES_MB,
+        // Decode-safety derived limits (see formulas above)
+        DECODE_MEMORY_BUDGET_MB,
+        BYTES_PER_PIXEL,
+        MAX_UNCOMPRESSED_BYTES,
+        MAX_PIXELS,
+        MAX_MEGAPIXELS,
+        MAX_WIDTH,
+        MAX_HEIGHT,
+        MAX_EXPANSION_RATIO,
+        ALLOW_ANIMATED,
+        MAX_FRAMES,
+        MAX_TOTAL_PIXELS_ACROSS_FRAMES,
         // Helpers (scoped to this policy)
+        estimatedUncompressedBytes,
         extFromMime,
         normalizeImageType,
     } as const;

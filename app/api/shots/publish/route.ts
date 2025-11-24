@@ -186,8 +186,6 @@ export async function POST(req: NextRequest) {
             }
         > = {};
 
-        const MAX_PIXEL_AREA = 60_000_000; // guard against pathological dimensions (~8k x 8k)
-
         for (let i = 0; i < inputs.length; i++) {
             const { ab, size } = inputs[i];
             const { blockId: clientBlockId } = meta.files[i];
@@ -216,8 +214,21 @@ export async function POST(req: NextRequest) {
                     { status: 415 }
                 );
             }
-            if (dim.width * dim.height > MAX_PIXEL_AREA) {
+
+            // Decode-bomb protections derived from central policy (no magic numbers)
+            if (dim.width > ShotUploadPolicy.MAX_WIDTH || dim.height > ShotUploadPolicy.MAX_HEIGHT) {
                 return NextResponse.json({ error: 'Image dimensions too large' }, { status: 413 });
+            }
+            const pixels = dim.width * dim.height;
+            if (pixels > ShotUploadPolicy.MAX_MEGAPIXELS * 1_000_000) {
+                return NextResponse.json({ error: 'Image pixel count too large' }, { status: 413 });
+            }
+            const estimated = ShotUploadPolicy.estimatedUncompressedBytes(dim.width, dim.height);
+            if (estimated > ShotUploadPolicy.MAX_UNCOMPRESSED_BYTES) {
+                return NextResponse.json(
+                    { error: 'Uncompressed image would exceed memory budget' },
+                    { status: 413 }
+                );
             }
 
             const normalized = ShotUploadPolicy.normalizeImageType(dim.type);
