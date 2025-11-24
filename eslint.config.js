@@ -28,6 +28,7 @@ export default tseslint.config(
                     argsIgnorePattern: '^_',
                 },
             ],
+            'no-useless-catch': 'off',
         },
         extends: [...tseslint.configs.recommended],
     }

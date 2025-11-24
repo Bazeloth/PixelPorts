@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
         const supabase = await createSupabaseClient();
         const { data: authData, error: authError } = await supabase.auth.getUser();
         const userId = authData?.user?.id;
-        if (authError || !userId) throw new AppError(401, 'unauthorized', 'Unauthorized');
+        if (authError || !userId) return respondError(new AppError(401, 'unauthorized', 'Unauthorized'));
 
         const supabaseAdmin = await createSupabaseAdminClient();
 
