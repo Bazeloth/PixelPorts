@@ -1,5 +1,6 @@
 import { AppError } from '@/lib/http/responses';
 import type { SupabaseServerClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/console';
 
 export async function createShot(
     supabaseAdmin: SupabaseServerClient,
@@ -57,7 +58,10 @@ export async function insertBlocks(
         .insert(toInsert)
         .select('id, position');
 
-    if (error || !data) throw new AppError(500, 'insert_blocks_failed', 'Failed to create blocks');
+    if (error || !data) {
+        logger.Error('insert_blocks_failed', error);
+        throw new AppError(500, 'insert_blocks_failed', 'Failed to create blocks');
+    }
 
     const map = new Map<number, string>();
     for (const row of data) map.set(row.position, row.id);
