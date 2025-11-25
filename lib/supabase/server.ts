@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 import { clientEnv } from '@/env/client';
 import { env as serverEnv } from '@/env/server';
+import { logger } from '@/lib/utils/console';
 
 export enum StorageBucket {
     Shots = 'shots',
@@ -68,12 +69,20 @@ function getSupabaseClient({
                 return cookieStore.getAll();
             },
             setAll(cookiesToSet) {
+                const maybeSet = (cookieStore as any)?.set;
+                if (typeof maybeSet !== 'function') {
+                    // In React Server Components, cookies() is read-only; skip writes
+                    logger.Warn(
+                        '[supabase] Skipped cookie write in read-only context (RSC/render)'
+                    );
+                    return;
+                }
                 try {
                     cookiesToSet.forEach(({ name, value, options }) => {
-                        (cookieStore as any).set(name, value, options as any);
+                        maybeSet(name, value, options as any);
                     });
-                } catch (e: any) {
-                    console.error('Failed to set cookies', e);
+                } catch (_e) {
+                    // Swallow errors to avoid noisy logs during RSC rendering
                 }
             },
         },

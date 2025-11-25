@@ -1,10 +1,13 @@
-import { NextResponse } from 'next/server';
-import { createSupabaseClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { createSupabaseClientForRoute } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/console';
 import { revalidatePath } from 'next/cache';
 
-export async function GET(request: Request) {
-    const supabase = await createSupabaseClient();
+export async function GET(request: NextRequest) {
+    const url = new URL('/', request.url);
+    const res = NextResponse.redirect(url);
+
+    const supabase = await createSupabaseClientForRoute(request, res);
     try {
         await supabase.auth.signOut();
     } catch (e: any) {
@@ -15,8 +18,7 @@ export async function GET(request: Request) {
     // Ensure the root layout/homepage reflect the new auth state after sign out
     revalidatePath('/', 'layout');
 
-    const url = new URL('/', request.url);
-    return NextResponse.redirect(url);
+    return res;
 }
 
 export const dynamic = 'force-dynamic';
