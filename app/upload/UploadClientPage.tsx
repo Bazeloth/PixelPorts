@@ -107,17 +107,6 @@ function UploadShotPage() {
                         </div>
 
                         <div className="space-y-8">
-                            {/* Title (preview only) */}
-                            <div>
-                                {uploadActions.title ? (
-                                    <h1 className="text-4xl font-bold text-gray-900">
-                                        {uploadActions.title}
-                                    </h1>
-                                ) : (
-                                    <p className="text-4xl font-bold text-gray-300">Title</p>
-                                )}
-                            </div>
-
                             {/* Thumbnail Image (preview only) */}
                             <div>
                                 {!uploadActions.thumbnailSrc ? (
@@ -138,6 +127,17 @@ function UploadShotPage() {
                                         alt="Shot image"
                                         className="w-full rounded-lg"
                                     />
+                                )}
+                            </div>
+
+                            {/* Title (preview only) */}
+                            <div>
+                                {uploadActions.title ? (
+                                    <h1 className="text-4xl font-bold text-gray-900">
+                                        {uploadActions.title}
+                                    </h1>
+                                ) : (
+                                    <p className="text-4xl font-bold text-gray-300">Title</p>
                                 )}
                             </div>
 
@@ -306,7 +306,8 @@ function UploadShotPage() {
                                     <span id="total-size">
                                         {(uploadActions.totalBytes / (1024 * 1024)).toFixed(1)}
                                     </span>{' '}
-                                    / {Math.floor(ShotUploadPolicy.MAX_TOTAL_BYTES / (1024 * 1024))} MB
+                                    / {Math.floor(ShotUploadPolicy.MAX_TOTAL_BYTES / (1024 * 1024))}{' '}
+                                    MB
                                 </span>
                             </div>
                             <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
