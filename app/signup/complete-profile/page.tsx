@@ -19,7 +19,7 @@ export default async function CompleteProfilePage({
 }) {
     const user = await getUserAndProfile();
     if (!user) {
-        redirect('/signin');
+        redirect('/login');
     } else if (user.profile) {
         const next = searchParams.next || '/';
         redirect(next);
