@@ -171,7 +171,8 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
                         id: b.id,
                         type: b.type,
                         position: idx, // stable order as shown in the editor
-                        content: (b as any)?.data?.content ?? undefined,
+                        content: (b as any)?.data?.text ?? undefined,
+                        align: (b as any)?.data?.align ?? undefined,
                         title: (b as any)?.data?.title ?? undefined,
                         subtitle: (b as any)?.data?.subtitle ?? undefined,
                     })),

@@ -13,6 +13,7 @@ export const MetaSchema = z.object({
                 type: z.string().min(1),
                 position: z.number().int().min(0),
                 content: z.string().optional(),
+                align: z.enum(['left', 'center', 'right']).optional(),
                 title: z.string().optional(),
                 subtitle: z.string().optional(),
             })

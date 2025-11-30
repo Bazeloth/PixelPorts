@@ -15,7 +15,8 @@ export async function POST(req: NextRequest) {
         const supabase = await createSupabaseClient();
         const { data: authData, error: authError } = await supabase.auth.getUser();
         const userId = authData?.user?.id;
-        if (authError || !userId) return respondError(new AppError(401, 'unauthorized', 'Unauthorized'));
+        if (authError || !userId)
+            return respondError(new AppError(401, 'unauthorized', 'Unauthorized'));
 
         const supabaseAdmin = await createSupabaseAdminClient();
 
@@ -85,8 +86,9 @@ export async function POST(req: NextRequest) {
             // advance per-block index
             perBlockNextIndex.set(dbBlockId, position + 1);
 
-            // persist media record
-            await insertMediaSource(supabaseAdmin, out.dbRecord);
+            // persist media record (include per-file caption from meta)
+            const { caption } = meta.files[i];
+            await insertMediaSource(supabaseAdmin, { ...out.dbRecord, caption: caption ?? null });
 
             // collect response per client block id
             (results[clientBlockId] ??= { items: [] }).items.push(out.clientItem as any);

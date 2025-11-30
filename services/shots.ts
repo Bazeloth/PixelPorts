@@ -37,6 +37,7 @@ export async function insertBlocks(
         type: string;
         position: number;
         content?: string;
+        align?: 'left' | 'center' | 'right';
         title?: string;
         subtitle?: string;
     }>
@@ -48,9 +49,9 @@ export async function insertBlocks(
         type: b.type,
         position: b.position,
         content: b.content ?? null,
+        align: b.align ?? null,
         title: b.title ?? null,
         subtitle: b.subtitle ?? null,
-        upload_id: null,
     }));
 
     const { data, error } = await supabaseAdmin
