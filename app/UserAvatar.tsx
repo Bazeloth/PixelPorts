@@ -33,7 +33,7 @@ export type PlaceholderMode = {
 export type AvatarProps = UrlMode | StorageMode | PlaceholderMode;
 
 export default function UserAvatar(props: AvatarProps) {
-    const { size = 32, className = '' } = props as any;
+    const { size = 32, className = '' } = props;
 
     // Case 0: If a direct imageUrl is provided (e.g., Google photo, local preview), render it directly
     if ('imageUrl' in props && props.imageUrl) {
