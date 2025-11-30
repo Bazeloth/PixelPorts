@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { checkUsernameAvailability } from '@/app/actions/user';
 import useDebounce from '@/lib/hooks/useDebounce';
 import { validateUsername } from '@/lib/utils/username';
 
@@ -31,19 +30,39 @@ export function useUsernameField(value: string, serverError?: string[]) {
             return;
         }
 
-        // Then check availability on server
+        // Then check availability on server via API route
         setIsChecking(true);
 
-        checkUsernameAvailability(debouncedUsername).then((r) => {
-            setIsChecking(false);
-            if (!r.ok) {
+        const ac = new AbortController();
+        let cancelled = false;
+
+        (async () => {
+            try {
+                const resp = await fetch(`/api/username/availability?u=${encodeURIComponent(debouncedUsername)}`, { signal: ac.signal });
+                const r: { ok: true; available: boolean } | { ok: false; error: string } = await resp.json();
+                if (cancelled) return;
+                setIsChecking(false);
+                if (!r.ok) {
+                    setAvailable(false);
+                    setClientError(r.error);
+                    return;
+                }
+                setAvailable(r.available);
+                if (!r.available) setClientError('Username is unavailable');
+            } catch (err: any) {
+                if (cancelled || (err?.name === 'AbortError')) {
+                    return;
+                }
+                setIsChecking(false);
                 setAvailable(false);
-                setClientError(r.error);
-                return;
+                setClientError('Unable to check availability. Please try again.');
             }
-            setAvailable(r.available);
-            if (!r.available) setClientError('Username is unavailable');
-        });
+        })();
+
+        return () => {
+            cancelled = true;
+            ac.abort();
+        };
     }, [debouncedUsername]);
 
     const error = clientError || serverError?.[0] || null;

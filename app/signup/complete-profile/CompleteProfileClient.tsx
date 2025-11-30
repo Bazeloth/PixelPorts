@@ -8,15 +8,14 @@ import { useRouter } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/console';
 import UserAvatar from '@/app/UserAvatar';
-import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { createProfileSchema } from '@/lib/schemas/profile';
 import {
     ALLOWED_AVATAR_MIME,
     ALLOWED_AVATAR_EXTENSIONS,
     MAX_AVATAR_FILE_SIZE,
 } from '@/lib/constants/avatar';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const MIME_TO_EXT: Record<string, string> = {
     'image/png': 'png',
@@ -65,8 +64,9 @@ export default function CompleteProfileClient({
             username: defaultUsername,
             avatar_file_ext: '',
         },
-        mode: 'onChange',
-        reValidateMode: 'onChange',
+        mode: 'onBlur',
+        reValidateMode: 'onBlur',
+        delayError: 300,
     });
 
     useEffect(() => {
@@ -78,12 +78,14 @@ export default function CompleteProfileClient({
     // Fetch current user ID for UserAvatar gradient seeding
     useEffect(() => {
         (async () => {
-            const user = await getUserAndProfile();
+            const supabase = await createSupabaseClient();
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
             if (user?.id) {
                 setCurrentUserId(user.id);
                 return;
             }
-
             window.location.href = '/login';
         })();
     }, []);
