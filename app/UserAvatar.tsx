@@ -90,7 +90,12 @@ export default function UserAvatar(props: AvatarProps) {
             return (
                 <div
                     className={`rounded-full flex items-center justify-center font-semibold text-white ${className}`}
-                    style={{ width: size, height: size, background: gradient, fontSize: size * 0.4 }}
+                    style={{
+                        width: size,
+                        height: size,
+                        background: gradient,
+                        fontSize: size * 0.4,
+                    }}
                     aria-label={`${displayName}'s avatar`}
                 >
                     {initials}

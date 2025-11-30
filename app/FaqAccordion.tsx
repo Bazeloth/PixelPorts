@@ -19,7 +19,10 @@ export default function FaqAccordion() {
                 const el = document.getElementById('faq-visibility');
                 if (el) {
                     try {
-                        el.scrollIntoView({ behavior: 'smooth', block: 'start' } as ScrollIntoViewOptions);
+                        el.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                        } as ScrollIntoViewOptions);
                     } catch {
                         el.scrollIntoView();
                     }
@@ -40,11 +43,11 @@ export default function FaqAccordion() {
                     isOpen={openIndex === 0}
                     onToggleAction={() => handleToggle(0)}
                 >
-                Every upload appears in our Discover and New Designers feeds. The algorithm surfaces
-                work based on engagement rate, audience diversity, content quality, and a follower
-                handicap. Designers with fewer followers get amplified more to create a level
-                playing field.
-            </FaqItem>
+                    Every upload appears in our Discover and New Designers feeds. The algorithm
+                    surfaces work based on engagement rate, audience diversity, content quality, and
+                    a follower handicap. Designers with fewer followers get amplified more to create
+                    a level playing field.
+                </FaqItem>
             </div>
 
             <FaqItem

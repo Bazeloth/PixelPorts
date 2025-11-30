@@ -70,7 +70,6 @@ export function formatJoinRelative(input: string | Date | null | undefined): str
     return formatter.format(date);
 }
 
-
 export function pickGradientFromId(id: string | number): string {
     const gradients = [
         'from-purple-500 to-purple-700',
