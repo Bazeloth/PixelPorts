@@ -18,7 +18,7 @@ export const usernameSchema = z
     )
     .max(
         USERNAME_CONSTRAINTS.maxLength,
-        `Username must be less than ${USERNAME_CONSTRAINTS.maxLength} characters`
+        `Username must be at most ${USERNAME_CONSTRAINTS.maxLength} characters`
     )
     .regex(USERNAME_CONSTRAINTS.pattern, 'Only letters, numbers, and underscores allowed')
     .toLowerCase();
