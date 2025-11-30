@@ -1,9 +1,7 @@
-import Link from 'next/link';
 import { Container } from '@/app/Container';
 import { connection } from 'next/server';
 import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
 import HeaderRightSwitch from '@/app/HeaderRightSwitch';
-import { UploadActionsProvider } from '@/app/upload/UploadActionsContext';
 import LogoLink from '@/app/LogoLink';
 
 export const dynamic = 'force-dynamic';

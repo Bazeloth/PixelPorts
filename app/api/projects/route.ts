@@ -11,8 +11,6 @@ export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
         const cursor = searchParams.get('cursor') ?? undefined;
-        // Keeping for future use; currently not filtering by category at the DB level
-        const _category = searchParams.get('category') ?? undefined;
         const limitParam = searchParams.get('limit');
         const limit = Math.min(Math.max(Number(limitParam) || 12, 1), 50);
 

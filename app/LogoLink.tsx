@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
+import type { ReactNode } from 'react';
 
-export default function LogoLink({ children }: { children: React.ReactNode }) {
+export default function LogoLink({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const isCompleteProfile = pathname === '/signup/complete-profile';
 

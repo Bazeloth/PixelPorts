@@ -1,4 +1,3 @@
-import React from 'react';
 import type { LucideIcon } from 'lucide-react';
 
 // Unified Icon wrapper to enforce consistent iconography rules across the app
