@@ -1,5 +1,4 @@
 'use client';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getAvatarUrl } from '@/lib/utils/avatar';
 import { createSupabaseClient } from '@/lib/supabase/client';
@@ -73,7 +72,7 @@ export default function UserAvatar(props: AvatarProps) {
 
         if (resolvedUrl) {
             return (
-                <Image
+                <img
                     src={resolvedUrl}
                     alt={displayName ? `${displayName}'s avatar` : 'User avatar'}
                     height={size}
