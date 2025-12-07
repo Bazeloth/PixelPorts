@@ -29,8 +29,8 @@ jobs:
         run: |
           npx supabase login --token "$SUPABASE_ACCESS_TOKEN"
           npx supabase link --project-ref "$SUPABASE_PROJECT_REF"
-          npx supabase db push --remote          
-
+          npx supabase db push
+          
       - name: Trigger Vercel Deploy
         run: |
           curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
