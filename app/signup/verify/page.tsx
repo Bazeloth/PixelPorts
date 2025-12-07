@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { clientEnv } from '@/env/client';
+import { VerifyFormClient } from './VerifyFormClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,8 +29,6 @@ async function resendVerification(
     }
     return { ok: true, message: 'Verification email sent. Please check your inbox.' };
 }
-
-import { VerifyFormClient } from './VerifyFormClient';
 
 export default async function VerifyPage({ searchParams }: { searchParams: { email?: string } }) {
     const email = searchParams?.email ?? '';

@@ -1,4 +1,4 @@
-import type { NodeOptions, BrowserOptions } from '@sentry/nextjs';
+import type { BrowserOptions, NodeOptions } from '@sentry/nextjs';
 import { clientEnv } from '@/env/client';
 
 function baseOptions() {

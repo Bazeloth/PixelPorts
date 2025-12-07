@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ElementType } from 'react';
+import type { ElementType, HTMLAttributes } from 'react';
 
 type ContainerProps = HTMLAttributes<HTMLDivElement> & {
     as?: ElementType; // optional semantic tag override

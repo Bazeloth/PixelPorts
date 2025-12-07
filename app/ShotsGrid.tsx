@@ -1,9 +1,8 @@
-import {
-    fetchShotCardsPage,
-    findFirstImageSource,
-    getTextSnippetFromBlocks,
-} from '@/lib/utils/shot';
-import { createSupabaseClient } from '@/lib/supabase/server';
+import { fetchShotCardsPage, getTextSnippetFromBlocks } from '@/lib/utils/shot';
+// Lazy import the client component to avoid importing it at the top in a server file
+// This pattern uses the RSC allowance to reference a client component symbol below.
+import LoadMore from './LoadMore';
+import { ShotCardView } from '@/app/ShotCardView';
 
 export default async function ShotsGrid({
     category = 'all',
@@ -14,13 +13,8 @@ export default async function ShotsGrid({
 }) {
     // Fetch initial page of shots
     const { items, nextCursor } = await fetchShotCardsPage({ limit: initialLimit });
-    const supabase = await createSupabaseClient();
 
     const cards = items.map((shot) => {
-        const imageSrc = // todo: should be an explicit image
-            findFirstImageSource(supabase, shot.blocks) ??
-            'https://images.unsplash.com/photo-1586717799252-bd134ad00e26?auto=format&fit=crop&w=1200&q=60';
-
         return {
             key: shot.id,
             title: shot.title,
@@ -32,7 +26,7 @@ export default async function ShotsGrid({
                 avatarFileExt: String(shot.author.avatar_file_ext),
             },
             image: {
-                src: imageSrc,
+                src: shot.thumbnail_src,
                 alt: shot.alt || shot.title || 'Project image',
             },
         };
@@ -64,8 +58,3 @@ export default async function ShotsGrid({
         </section>
     );
 }
-
-// Lazy import the client component to avoid importing it at the top in a server file
-// This pattern uses the RSC allowance to reference a client component symbol below.
-import LoadMore from './LoadMore';
-import { ShotCardView } from '@/app/ShotCardView';

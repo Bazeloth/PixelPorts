@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import type { SignUpResult } from '@/app/login/actions';
 import { signUpWithEmail } from '@/app/login/actions';
-import { track, Events } from '@/lib/analytics';
+import { Events, track } from '@/lib/analytics';
 
 function SubmitButton() {
     const { pending } = useFormStatus();

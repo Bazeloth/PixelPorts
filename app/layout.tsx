@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Header from '@/app/Header';
 import { clientEnv } from '@/env/client';
+import Providers from '@/app/providers';
 
 const siteUrl = clientEnv.NEXT_PUBLIC_SITE_URL;
 
@@ -28,8 +29,6 @@ export const viewport: Viewport = {
     width: 'device-width',
     initialScale: 1,
 };
-
-import Providers from '@/app/providers';
 
 export default async function RootLayout({
     children,

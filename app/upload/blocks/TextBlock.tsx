@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import { BlockToolbar } from '@/app/upload/BlockToolbar';
 import EditableBlock from '@/app/upload/EditableBlock';

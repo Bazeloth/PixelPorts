@@ -1,6 +1,6 @@
 'use client';
 
-import { ShotCardView, type ShotCardProps } from './ShotCardView';
+import { type ShotCardProps, ShotCardView } from './ShotCardView';
 
 export default function ShotCardClient(props: ShotCardProps) {
     return <ShotCardView {...props} />;

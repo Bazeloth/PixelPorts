@@ -1,10 +1,6 @@
 import { NextRequest } from 'next/server';
 import { createSupabaseClient } from '@/lib/supabase/server';
-import {
-    fetchShotCardsPage,
-    findFirstImageSource,
-    getTextSnippetFromBlocks,
-} from '@/lib/utils/shot';
+import { fetchShotCardsPage, getTextSnippetFromBlocks } from '@/lib/utils/shot';
 import { getAvatarUrl } from '@/lib/utils/avatar';
 
 export async function GET(req: NextRequest) {
@@ -18,10 +14,6 @@ export async function GET(req: NextRequest) {
         const supabase = await createSupabaseClient();
 
         const payload = items.map((shot) => {
-            const imageSrc =
-                findFirstImageSource(supabase, shot.blocks) ||
-                'https://images.unsplash.com/photo-1586717799252-bd134ad00e26?auto=format&fit=crop&w=1200&q=60';
-
             return {
                 id: shot.id,
                 title: shot.title,
@@ -36,7 +28,7 @@ export async function GET(req: NextRequest) {
                     }),
                 },
                 image: {
-                    src: imageSrc,
+                    src: shot.thumbnail_src,
                     alt: shot.alt || shot.title || 'Project image',
                 },
             };

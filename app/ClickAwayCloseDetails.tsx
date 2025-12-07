@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import type { PropsWithChildren } from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * Wrap server-rendered <details> and close it when clicking outside, pressing Escape,

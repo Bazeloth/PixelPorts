@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from '@/app/Icon';
 import { Plus } from 'lucide-react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';

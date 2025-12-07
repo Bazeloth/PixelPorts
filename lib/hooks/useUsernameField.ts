@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useDebounce from '@/lib/hooks/useDebounce';
 import { validateUsername } from '@/lib/utils/username';
 
@@ -38,8 +38,12 @@ export function useUsernameField(value: string, serverError?: string[]) {
 
         (async () => {
             try {
-                const resp = await fetch(`/api/username/availability?u=${encodeURIComponent(debouncedUsername)}`, { signal: ac.signal });
-                const r: { ok: true; available: boolean } | { ok: false; error: string } = await resp.json();
+                const resp = await fetch(
+                    `/api/username/availability?u=${encodeURIComponent(debouncedUsername)}`,
+                    { signal: ac.signal }
+                );
+                const r: { ok: true; available: boolean } | { ok: false; error: string } =
+                    await resp.json();
                 if (cancelled) return;
                 setIsChecking(false);
                 if (!r.ok) {
@@ -50,7 +54,7 @@ export function useUsernameField(value: string, serverError?: string[]) {
                 setAvailable(r.available);
                 if (!r.available) setClientError('Username is unavailable');
             } catch (err: any) {
-                if (cancelled || (err?.name === 'AbortError')) {
+                if (cancelled || err?.name === 'AbortError') {
                     return;
                 }
                 setIsChecking(false);

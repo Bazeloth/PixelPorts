@@ -12,19 +12,12 @@ import { useUploadActions } from '@/app/upload/UploadActionsContext';
 
 export const dynamic = 'force-dynamic';
 
-function UploadHeaderActions({ onSave, onPublish }: { onSave: () => void; onPublish: () => void }) {
+function UploadHeaderActions({ onPublish }: { onPublish: () => void }) {
     return (
         <div className="flex items-center gap-4">
             <Link href="/" className="text-gray-700 hover:text-gray-900 font-medium">
                 Cancel
             </Link>
-            <button
-                type="button"
-                onClick={onSave}
-                className="px-6 py-2 border-2 border-gray-300 rounded-lg hover:border-gray-400 font-medium"
-            >
-                Save draft
-            </button>
             <button
                 type="button"
                 onClick={onPublish}
@@ -183,14 +176,14 @@ export default function HeaderRightSwitch({ user }: { user: PixelPortsUser | nul
     const resolvedPage =
         pathname === '/upload' || pathname?.startsWith('/upload/') ? 'upload' : undefined;
 
-    const { saveDraft: onSave, publishShot: onPublish } = useUploadActions();
+    const { publishShot: onPublish } = useUploadActions();
 
     if (isCompleteProfile) {
         return <CompleteProfileHeaderActions />;
     }
 
     if (resolvedPage === 'upload' && user) {
-        return <UploadHeaderActions onSave={onSave} onPublish={onPublish} />;
+        return <UploadHeaderActions onPublish={onPublish} />;
     }
 
     if (user) {

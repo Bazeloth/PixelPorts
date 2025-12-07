@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import Icon from '@/app/Icon';
 import { Plus } from 'lucide-react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';

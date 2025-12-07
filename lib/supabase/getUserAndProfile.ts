@@ -1,7 +1,6 @@
 'use server';
 
 import { createSupabaseClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/console';
 
 export type PixelPortsUser = {
     id: string;

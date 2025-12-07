@@ -1,11 +1,11 @@
 import { NextRequest } from 'next/server';
-import { respondOk, respondError, AppError } from '@/lib/http/responses';
+import { AppError, respondError, respondOk } from '@/lib/http/responses';
 import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
 import { createSupabaseAdminClient, createSupabaseClient } from '@/lib/supabase/server';
 import { parseMeta } from './schemas';
-import { collectInputsFromForm, enforceUploadSizeLimits } from './uploadUtils';
+import { collectInputsFromForm, collectThumbnail, enforceUploadSizeLimits } from './uploadUtils';
 import { createShot, insertBlocks, insertMediaSource } from '@/services/shots';
-import { processOneFile } from './filePipeline';
+import { processOneFile, processThumbnail } from './filePipeline';
 
 export const runtime = 'nodejs';
 
@@ -38,6 +38,31 @@ export async function POST(req: NextRequest) {
             brief: meta.description ?? null,
             userId,
         });
+
+        // Require and process thumbnail upload (separate file field)
+        const thumb = await collectThumbnail(form);
+        if (!thumb) {
+            throw new AppError(400, 'missing_thumbnail', 'Please attach a thumbnail');
+        }
+        const t = await processThumbnail({
+            ab: thumb.ab,
+            size: thumb.size,
+            userId,
+            shotId,
+            supabaseAdmin,
+        });
+        await supabaseAdmin
+            .from('shots')
+            .update({
+                thumbnail_hash: t.hash,
+                thumbnail_ext: t.ext,
+                thumbnail_width: t.width,
+                thumbnail_height: t.height,
+                thumbnail_format: t.format,
+                thumbnail_mime: t.mime,
+                thumbnail_updated_at: new Date().toISOString(),
+            })
+            .eq('id', shotId);
 
         // Insert blocks and build mapping client->db via position
         const byPosition = await insertBlocks(supabaseAdmin, shotId, meta.blocks ?? []);
@@ -93,6 +118,12 @@ export async function POST(req: NextRequest) {
             // collect response per client block id
             (results[clientBlockId] ??= { items: [] }).items.push(out.clientItem as any);
         }
+
+        // Mark as published after successful processing
+        await supabaseAdmin
+            .from('shots')
+            .update({ published_at: new Date().toISOString() })
+            .eq('id', shotId);
 
         return respondOk({ ok: true, shotId, results });
     } catch (e) {

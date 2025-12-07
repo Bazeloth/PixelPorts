@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import Icon from '@/app/Icon';
 import {
-    Image as ImageIcon,
-    Plus,
-    Heading1,
-    Text,
-    LayoutGrid,
     ArrowLeftRight,
-    Quote as QuoteIcon,
+    Heading1,
+    Image as ImageIcon,
     Italic as ItalicIcon,
-    X,
+    LayoutGrid,
     LucideIcon,
+    Plus,
+    Quote as QuoteIcon,
+    Text,
+    X,
 } from 'lucide-react';
 import { MAX_BLOCKS, useUploadActions } from '@/app/upload/UploadActionsContext';
 import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
@@ -33,7 +33,6 @@ import CarouselBlock from '@/app/upload/blocks/CarouselBlock';
 import GridBlock from '@/app/upload/blocks/GridBlock';
 import BeforeAfterBlock from '@/app/upload/blocks/BeforeAfterBlock';
 import { Container } from '@/app/Container';
-import { BlockToolbar } from '@/app/upload/BlockToolbar';
 import { releaseBytesForBlock } from '@/app/upload/blockCleanup';
 
 function UploadShotPage() {

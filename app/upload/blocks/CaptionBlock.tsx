@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { BlockComponentProps } from '@/lib/constants/blockTypes';
 import TextBlock from '@/app/upload/blocks/TextBlock';
 

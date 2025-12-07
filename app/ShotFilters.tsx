@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { track, Events } from '@/lib/analytics';
+import { Events, track } from '@/lib/analytics';
 
 const CATEGORIES = [
     { key: 'all', label: 'All' },

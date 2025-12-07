@@ -37,8 +37,9 @@ export type ShotCard = {
     author: ShotAuthor;
     title: string;
     subtitle?: string;
-    alt?: string;
-    created_at?: string;
-    published_at?: string;
+    alt: string;
+    created_at: string;
+    published_at: string;
+    thumbnail_src: string;
     blocks: ShotBlock[];
 };

@@ -9,11 +9,11 @@ import { createSupabaseClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/console';
 import UserAvatar from '@/app/UserAvatar';
 import { useForm } from 'react-hook-form';
-import { createProfileSchema } from '@/lib/schemas/profile';
 import type { CreateProfileInput } from '@/lib/schemas/profile';
+import { createProfileSchema } from '@/lib/schemas/profile';
 import {
-    ALLOWED_AVATAR_MIME,
     ALLOWED_AVATAR_EXTENSIONS,
+    ALLOWED_AVATAR_MIME,
     MAX_AVATAR_FILE_SIZE,
 } from '@/lib/constants/avatar';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -49,7 +49,8 @@ export default function CompleteProfileClient({
     type AvatarChoice = 'none' | 'google' | 'uploaded';
     const [choice, setChoice] = useState<AvatarChoice>(googlePictureUrl ? 'google' : 'none');
     const [previewUrl, setPreviewUrl] = useState<string>(googlePictureUrl || '');
-    const [uploadedFileExt, setUploadedFileExt] = useState<CreateProfileInput['avatar_file_ext']>('');
+    const [uploadedFileExt, setUploadedFileExt] =
+        useState<CreateProfileInput['avatar_file_ext']>('');
     const [avatarError, setAvatarError] = useState<string>('');
 
     const {
@@ -124,7 +125,9 @@ export default function CompleteProfileClient({
 
         // Prefer extension derived from MIME, fallback to filename ext
         type AllowedExt = (typeof ALLOWED_AVATAR_EXTENSIONS)[number] | '';
-        const chosenExt: AllowedExt = (MIME_TO_EXT[file.type] as AllowedExt) || (extOk ? (nameExt as AllowedExt) : ('jpg' as AllowedExt));
+        const chosenExt: AllowedExt =
+            (MIME_TO_EXT[file.type] as AllowedExt) ||
+            (extOk ? (nameExt as AllowedExt) : ('jpg' as AllowedExt));
 
         const supabase = await createSupabaseClient();
         const {

@@ -1,11 +1,10 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { Block, BlockType } from '@/lib/constants/blockTypes';
 import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
 
 export type UploadActions = {
-    saveDraft: () => void;
     publishShot: () => void;
     title: string;
     setTitle: React.Dispatch<React.SetStateAction<string>>;
@@ -115,12 +114,6 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
         return true;
     }, [title, category, thumbnailSrc]);
 
-    const saveDraft = useCallback(() => {
-        if (!validate()) return;
-        // save logic
-        alert('Draft saved!');
-    }, [validate, title, category, description, blocks, thumbnailSrc]);
-
     const publishShot = useCallback(async () => {
         if (!validate()) return;
 
@@ -129,14 +122,11 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             const files: File[] = [];
             const mapping: { blockId: string; kind: 'image'; caption?: string }[] = [];
 
-            // Include thumbnail first if present
+            // Extract single thumbnail file (required)
             const thumbFiles = filesMap.get('__thumbnail__') || [];
-            for (const f of thumbFiles) {
-                files.push(f);
-                mapping.push({ blockId: '__thumbnail__', kind: 'image' });
-            }
+            const thumbnailFile = thumbFiles[0];
 
-            // Then walk blocks in visible order
+            // Walk blocks in visible order
             for (const b of blocks) {
                 // Collect any originals queued for this block
                 const arr = filesMap.get(b.id) || [];
@@ -158,6 +148,7 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
 
             const form = new FormData();
             for (const f of files) form.append('files', f, f.name);
+            if (thumbnailFile) form.append('thumbnail', thumbnailFile, thumbnailFile.name);
             form.append(
                 'meta',
                 JSON.stringify({
@@ -213,7 +204,6 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
 
     const value = useMemo(
         () => ({
-            saveDraft,
             publishShot,
             title,
             setTitle,
@@ -235,7 +225,6 @@ export function UploadActionsProvider({ children }: { children: React.ReactNode 
             removeFilesForBlock,
         }),
         [
-            saveDraft,
             publishShot,
             title,
             setTitle,

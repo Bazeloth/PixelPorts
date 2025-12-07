@@ -14,6 +14,15 @@ export async function collectInputsFromForm(form: FormData): Promise<InputFile[]
     return arr;
 }
 
+export async function collectThumbnail(form: FormData): Promise<InputFile | null> {
+    const entry = form.get('thumbnail');
+    if (entry instanceof File) {
+        const ab = await entry.arrayBuffer();
+        return { file: entry, ab, size: entry.size };
+    }
+    return null;
+}
+
 export function enforceUploadSizeLimits(
     inputs: Array<{ size: number }>,
     policy: { MAX_TOTAL_BYTES: number; MAX_IMAGE_BYTES: number }

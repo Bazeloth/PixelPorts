@@ -1,8 +1,10 @@
 import crypto from 'node:crypto';
-import { sniffImage, enforceImagePolicy } from './imagePolicy';
-import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
+import { enforceImagePolicy, sniffImage } from './imagePolicy';
 import type { ShotOriginalImageFormat } from '@/app/upload/uploadPolicy';
+import { ShotUploadPolicy } from '@/app/upload/uploadPolicy';
+import type { SupabaseServerClient } from '@/lib/supabase/server';
 import { StorageBucket } from '@/lib/supabase/server';
+import { getShotObjectPath } from '@/lib/storage/objectPath';
 
 function sha256Hex(ab: ArrayBuffer) {
     const h = crypto.createHash('sha256');
@@ -10,9 +12,7 @@ function sha256Hex(ab: ArrayBuffer) {
     return h.digest('hex');
 }
 
-import type { SupabaseServerClient } from '@/lib/supabase/server';
-
-async function uploadOriginal(
+async function uploadObject(
     supabaseAdmin: SupabaseServerClient,
     path: string,
     data: ArrayBuffer,
@@ -52,8 +52,8 @@ export async function processOneFile(args: {
 
     const hash = sha256Hex(ab);
     const ext = ft.ext || ShotUploadPolicy.extFromMime(ft.mime);
-    const objectPath = `${userId}/${shotId}/${hash}-original.${ext}`;
-    const baseUrl = await uploadOriginal(supabaseAdmin, objectPath, ab, ft.mime);
+    const objectPath = getShotObjectPath({ userId, shotId, hash, variant: 'original', ext });
+    const baseUrl = await uploadObject(supabaseAdmin, objectPath, ab, ft.mime);
 
     const dbRecord = {
         user_id: userId,
@@ -80,4 +80,37 @@ export async function processOneFile(args: {
     };
 
     return { dbRecord, clientItem } as const;
+}
+
+export async function processThumbnail(args: {
+    ab: ArrayBuffer;
+    size: number;
+    userId: string;
+    shotId: string;
+    supabaseAdmin: SupabaseServerClient;
+}) {
+    const { ab, userId, shotId, supabaseAdmin } = args;
+    const buf = Buffer.from(ab);
+
+    const { ft, dim } = await sniffImage(buf);
+    enforceImagePolicy({ width: dim.width!, height: dim.height!, type: dim.type! });
+
+    const normalized = ShotUploadPolicy.normalizeImageType(dim.type);
+    if (!normalized) {
+        throw new Error(`Unsupported or unknown image format: ${dim.type}`);
+    }
+
+    const hash = sha256Hex(ab);
+    const ext = ft.ext || ShotUploadPolicy.extFromMime(ft.mime);
+    const objectPath = getShotObjectPath({ userId, shotId, hash, variant: 'thumb', ext });
+    await uploadObject(supabaseAdmin, objectPath, ab, ft.mime);
+
+    return {
+        hash,
+        ext,
+        width: dim.width!,
+        height: dim.height!,
+        format: normalized,
+        mime: ft.mime,
+    } as const;
 }

@@ -1,69 +1,6 @@
 import { ShotBlock, ShotCard } from '@/lib/ui.types';
 import { createSupabaseClient } from '@/lib/supabase/server';
-import { SupabaseClient } from '@supabase/supabase-js';
-
-type SupabaseClientWithStorage = Pick<SupabaseClient<any, any, any, any, any>, 'storage'>;
-
-function getSourceFromShotsStorage(
-    supabase: SupabaseClientWithStorage,
-    uploadId: string,
-    fileExt: string
-): string {
-    const filePath = `${uploadId}.${fileExt}`;
-    return supabase.storage.from('shots').getPublicUrl(filePath, {}).data.publicUrl;
-}
-
-export const findFirstImageSource = (
-    supabase: SupabaseClientWithStorage,
-    shotBlocks: ShotBlock[]
-): string | null => {
-    // If blocks exist, look for image or carousel blocks
-    if (shotBlocks.length > 0) {
-        // First, try to find an image block
-        const firstImageBlock = shotBlocks.find((block) => block.type === 'image');
-        if (firstImageBlock && firstImageBlock.upload) {
-            return getSourceFromShotsStorage(
-                supabase,
-                firstImageBlock.upload.id,
-                firstImageBlock.upload.file_ext
-            );
-        }
-
-        const firstCarouselBlock = shotBlocks.find((block) => {
-            return block.type === 'carousel';
-        });
-
-        if (
-            firstCarouselBlock &&
-            firstCarouselBlock.carousel_uploads &&
-            firstCarouselBlock.carousel_uploads.length > 0
-        ) {
-            // Sort carousel uploads by position and use the first one
-            const sortedUploads = [...firstCarouselBlock.carousel_uploads].sort(
-                (a, b) => a.position - b.position
-            );
-
-            // Find the first upload that has valid upload data
-            for (const sortedUpload of sortedUploads) {
-                if (
-                    sortedUpload &&
-                    sortedUpload.upload &&
-                    sortedUpload.upload.id &&
-                    sortedUpload.upload.file_ext
-                ) {
-                    return getSourceFromShotsStorage(
-                        supabase,
-                        sortedUpload.upload.id,
-                        sortedUpload.upload.file_ext
-                    );
-                }
-            }
-        }
-    }
-
-    // Return null if no image found
-    return null;
-};
+import { getShotObjectPath } from '@/lib/storage/objectPath';
 
 export async function fetchShotCardsPage({ limit, cursor }: { limit: number; cursor?: string }) {
     const supabase = await createSupabaseClient();
@@ -80,6 +17,8 @@ export async function fetchShotCardsPage({ limit, cursor }: { limit: number; cur
       user_id,
       created_at,
       published_at,
+      thumbnail_hash,
+      thumbnail_ext,
       userprofiles (
         username,
         name,
@@ -117,11 +56,12 @@ export async function fetchShotCardsPage({ limit, cursor }: { limit: number; cur
       )
     `
         )
-        .order('created_at', { ascending: false })
+        .not('published_at', 'is', null)
+        .order('published_at', { ascending: false })
         .limit(pageSizePlusOne);
 
     if (cursor) {
-        query = query.lt('created_at', cursor);
+        query = query.lt('published_at', cursor);
     }
 
     const { data, error } = await query;
@@ -168,6 +108,17 @@ export async function fetchShotCardsPage({ limit, cursor }: { limit: number; cur
                     : undefined,
             }));
 
+        const thumbnail_src = supabase.storage.from('shots').getPublicUrl(
+            getShotObjectPath({
+                userId: shot.user_id,
+                shotId: shot.id,
+                hash: shot.thumbnail_hash,
+                variant: 'thumb',
+                ext: shot.thumbnail_ext,
+            }),
+            {}
+        ).data.publicUrl;
+
         return {
             id: shot.id,
             title: shot.title,
@@ -181,13 +132,14 @@ export async function fetchShotCardsPage({ limit, cursor }: { limit: number; cur
             },
             created_at: shot.created_at ?? undefined,
             published_at: shot.published_at ?? undefined,
+            thumbnail_src,
             blocks: shotBlocks,
         };
     });
 
     const hasMore = mapped.length > limit;
     const items = hasMore ? mapped.slice(0, limit) : mapped;
-    const nextCursor = hasMore ? items[items.length - 1].created_at : undefined;
+    const nextCursor = hasMore ? items[items.length - 1].published_at : undefined;
     return { items, nextCursor };
 }
 
