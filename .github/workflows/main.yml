@@ -19,6 +19,12 @@ jobs:
           cache: 'npm'
       - run: npm ci
 
+      - name: Debug env and deps
+        run: |
+          node -v
+          npx tsx --version || true
+          npm ls unicorn-magic npm-run-path execa tsx || true
+
       - name: Sync runtime env vars to Vercel (production) via schema
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
