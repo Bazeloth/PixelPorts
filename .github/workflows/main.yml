@@ -15,7 +15,7 @@ jobs:
       - name: Install deps for tooling (tsx, execa)
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: 'npm'
       - run: npm ci
 
@@ -46,10 +46,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node (match Vercel)
+      - name: Setup Node (Node 20 LTS)
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: 'npm'
 
       - name: Install deps (no package.json script required)
