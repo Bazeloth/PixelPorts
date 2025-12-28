@@ -5,12 +5,11 @@ import { execa } from 'execa';
 const ENV =
     (process.env.SYNC_ENV as 'production' | 'preview' | 'development' | undefined) ?? 'production';
 const TOKEN = process.env.VERCEL_TOKEN;
-const PROJECT_ID = process.env.VERCEL_PROJECT_ID;
 const ORG_ID = process.env.VERCEL_ORG_ID;
 
-if (!TOKEN || !PROJECT_ID || !ORG_ID) {
+if (!TOKEN || !ORG_ID) {
     console.error(
-        'Missing Vercel credentials. Require VERCEL_TOKEN, VERCEL_PROJECT_ID, VERCEL_ORG_ID in environment.'
+        'Missing Vercel credentials. Require VERCEL_TOKEN, VERCEL_ORG_ID in environment.'
     );
     process.exit(1);
 }
@@ -24,19 +23,7 @@ async function upsertVar(name: string, value: string) {
     try {
         await execa(
             'npx',
-            [
-                'vercel@50',
-                'env',
-                'rm',
-                name,
-                ENV,
-                '--token',
-                TOKEN!,
-                '--scope',
-                ORG_ID!,
-                '--project',
-                PROJECT_ID!,
-            ],
+            ['vercel@50', 'env', 'rm', name, ENV, '--token', TOKEN!, '--scope', ORG_ID!],
             { stdio: 'inherit' }
         );
     } catch {
@@ -45,19 +32,7 @@ async function upsertVar(name: string, value: string) {
     // Add new value non-interactively using stdin with execa
     await execa(
         'npx',
-        [
-            'vercel@50',
-            'env',
-            'add',
-            name,
-            ENV,
-            '--token',
-            TOKEN!,
-            '--scope',
-            ORG_ID!,
-            '--project',
-            PROJECT_ID!,
-        ],
+        ['vercel@50', 'env', 'add', name, ENV, '--token', TOKEN!, '--scope', ORG_ID!],
         {
             stdio: ['pipe', 'inherit', 'inherit'],
             input: value + '\n',
