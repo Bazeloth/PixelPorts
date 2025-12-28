@@ -34,17 +34,32 @@ async function upsertVar(name: string, value: string) {
                 TOKEN!,
                 '--scope',
                 ORG_ID!,
-                '--project',
-                PROJECT_ID!,
             ],
             { stdio: 'inherit' }
         );
     } catch {
         // ignore
     }
-    // Add new value non-interactively by piping
-    const addCmd = `printf %s ${JSON.stringify(value)} | npx vercel@34 env add ${name} ${ENV} --token ${TOKEN} --scope ${ORG_ID} --project ${PROJECT_ID}`;
-    await execa('bash', ['-lc', addCmd], { stdio: 'inherit' });
+    // Add new value non-interactively using stdin with execa
+    await execa(
+        'npx',
+        [
+            'vercel@34',
+            'env',
+            'add',
+            name,
+            ENV,
+            '--yes',
+            '--token',
+            TOKEN!,
+            '--scope',
+            ORG_ID!,
+        ],
+        {
+            stdio: ['pipe', 'inherit', 'inherit'],
+            input: value + '\n',
+        }
+    );
 }
 
 async function main() {

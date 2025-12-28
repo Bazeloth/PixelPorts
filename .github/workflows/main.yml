@@ -20,6 +20,17 @@ jobs:
           npx tsx --version || true
           npm ls unicorn-magic npm-run-path execa tsx || true
 
+      - name: Link Vercel project (non-interactive)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          npx vercel@34 link --yes \
+            --token "$VERCEL_TOKEN" \
+            --org "$VERCEL_ORG_ID" \
+            --project "$VERCEL_PROJECT_ID"
+
       - name: Sync runtime env vars to Vercel (production) via schema
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
