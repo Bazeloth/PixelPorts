@@ -73,14 +73,20 @@ jobs:
           name: deps
           path: .
 
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
       - name: Run Supabase migrations
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
-          npx supabase login --token "$SUPABASE_ACCESS_TOKEN"
-          npx supabase link --project-ref "$SUPABASE_PROJECT_REF"
-          npx supabase db push
+          supabase --version
+          supabase login --token "$SUPABASE_ACCESS_TOKEN"
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+          supabase db push
           
       - name: Trigger Vercel Deploy
         run: |
