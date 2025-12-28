@@ -25,7 +25,7 @@ async function upsertVar(name: string, value: string) {
         await execa(
             'npx',
             [
-                'vercel@34',
+                'vercel@50',
                 'env',
                 'rm',
                 name,
@@ -44,7 +44,7 @@ async function upsertVar(name: string, value: string) {
     await execa(
         'npx',
         [
-            'vercel@34',
+            'vercel@50',
             'env',
             'add',
             name,
