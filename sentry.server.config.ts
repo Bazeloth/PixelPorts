@@ -5,4 +5,10 @@
 import * as Sentry from '@sentry/nextjs';
 import { getServerSentryOptions } from './lib/sentry.config';
 
-Sentry.init(getServerSentryOptions());
+const options = getServerSentryOptions();
+
+Sentry.init(options);
+
+if (options.enabled) {
+    console.log('Sentry initialized.');
+}

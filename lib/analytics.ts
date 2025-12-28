@@ -59,7 +59,7 @@ async function loadMixpanel() {
             debug: isDev,
         });
 
-        if (isDev) console.log('✅ Mixpanel initialized');
+        console.log('Mixpanel initialized.');
 
         return mixpanel;
     } catch (error) {

@@ -6,4 +6,10 @@
 import * as Sentry from '@sentry/nextjs';
 import { getEdgeSentryOptions } from './lib/sentry.config';
 
-Sentry.init(getEdgeSentryOptions());
+const options = getEdgeSentryOptions();
+
+Sentry.init(options);
+
+if (options.enabled) {
+    console.log('Sentry initialized.');
+}
