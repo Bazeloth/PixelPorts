@@ -23,7 +23,7 @@ async function upsertVar(name: string, value: string) {
     try {
         await execa(
             'npx',
-            ['vercel@50', 'env', 'rm', name, ENV, '--token', TOKEN!, '--scope', ORG_ID!],
+            ['vercel@50', 'env', 'rm', name, ENV, '--yes', '--token', TOKEN!, '--scope', ORG_ID!],
             { stdio: 'inherit' }
         );
     } catch {
