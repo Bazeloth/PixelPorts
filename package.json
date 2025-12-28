@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "npm run check-env && next dev --turbopack -p 3000",
+        "dev": "npm run check-env && next dev -p 3000",
         "check-env": "tsx scripts/check-env.ts",
         "build": "npm run check-env && next build --turbopack",
         "start": "next start -p 3001",
@@ -22,7 +22,7 @@
     },
     "dependencies": {
         "@hookform/resolvers": "^5.2.2",
-        "@sentry/nextjs": "^10.26.0",
+        "@sentry/nextjs": "^10.32.1",
         "@supabase/ssr": "^0.8.0",
         "@supabase/supabase-js": "^2.86.0",
         "@tanstack/react-query": "^5.90.11",
