@@ -29,11 +29,13 @@ async function upsertVar(name: string, value: string) {
                 'env',
                 'rm',
                 name,
-                '--yes',
+                ENV,
                 '--token',
                 TOKEN!,
                 '--scope',
                 ORG_ID!,
+                '--project',
+                PROJECT_ID!,
             ],
             { stdio: 'inherit' }
         );
@@ -49,11 +51,12 @@ async function upsertVar(name: string, value: string) {
             'add',
             name,
             ENV,
-            '--yes',
             '--token',
             TOKEN!,
             '--scope',
             ORG_ID!,
+            '--project',
+            PROJECT_ID!,
         ],
         {
             stdio: ['pipe', 'inherit', 'inherit'],
