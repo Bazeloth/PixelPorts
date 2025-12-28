@@ -6,7 +6,7 @@ function baseOptions() {
     const isProd = env === 'production';
 
     return {
-        dsn: clientEnv.NEXT_PUBLIC_SENTRY_DSN as any, // ensure this key is defined in schema when you add it
+        dsn: clientEnv.NEXT_PUBLIC_SENTRY_DSN,
         environment: env,
         enabled: isProd,
         sampleRate: isProd ? 1.0 : 0.0,
