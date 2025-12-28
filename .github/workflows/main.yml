@@ -28,7 +28,7 @@ jobs:
         run: |
           npx vercel@34 link --yes \
             --token "$VERCEL_TOKEN" \
-            --org "$VERCEL_ORG_ID" \
+            --scope "$VERCEL_ORG_ID" \
             --project "$VERCEL_PROJECT_ID"
 
       - name: Sync runtime env vars to Vercel (production) via schema
