@@ -48,7 +48,7 @@ export default withSentryConfig(nextConfig, {
 
     org: 'pixelports',
 
-    project: 'javascript-nextjs',
+    project: 'pixelports',
 
     // Only print logs for uploading source maps in CI
     silent: !process.env.CI,

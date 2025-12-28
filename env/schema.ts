@@ -28,7 +28,7 @@ export const ClientEnvSchema = z.object({
         .string()
         .url('NEXT_PUBLIC_MIXPANEL_API_HOST must be a valid URL'),
 
-    // Observability (optional)
+    // Observability
     NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
 });
 
