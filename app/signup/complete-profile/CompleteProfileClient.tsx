@@ -59,6 +59,7 @@ export default function CompleteProfileClient({
         formState: { errors: formErrors },
         watch,
         setValue,
+        trigger,
     } = useForm<CreateProfileInput>({
         resolver: zodResolver(createProfileSchema),
         defaultValues: {
@@ -70,6 +71,12 @@ export default function CompleteProfileClient({
         reValidateMode: 'onBlur',
         delayError: 300,
     });
+
+    useEffect(() => {
+        if (defaultFullName || defaultUsername) {
+            void trigger();
+        }
+    }, [trigger, defaultFullName, defaultUsername]);
 
     useEffect(() => {
         if (state && 'success' in state && state.success) {
@@ -311,7 +318,7 @@ export default function CompleteProfileClient({
                     {message && (
                         <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
                             <svg
-                                className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+                                className="w-5 h-5 text-red-600 shrink-0 mt-0.5"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                             >

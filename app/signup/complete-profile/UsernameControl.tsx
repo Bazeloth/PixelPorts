@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useUsernameField } from '@/lib/hooks/useUsernameField';
 import { USERNAME_CONSTRAINTS } from '@/lib/constants/username';
 import { UseFormRegisterReturn } from 'react-hook-form';
@@ -15,8 +15,13 @@ export function UsernameControl({
     serverError?: string[];
 }) {
     const username = useUsernameField(value, serverError);
+    const isFirstRender = useRef(true);
 
     useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
         // Clear client error when value changes via external means
         username.clearClientError();
         // eslint-disable-next-line react-hooks/exhaustive-deps
