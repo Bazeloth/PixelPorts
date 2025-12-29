@@ -23,6 +23,13 @@ export const metadata: Metadata = {
         description: 'Showcase your design journey on PixelPorts.',
     },
     robots: { index: true, follow: true },
+    icons: {
+        icon: [
+            { url: '/icon.png', sizes: '32x32' },
+            { url: '/icon-192.png', sizes: '192x192' },
+        ],
+        apple: '/icon-180.png',
+    },
 };
 
 export const viewport: Viewport = {
