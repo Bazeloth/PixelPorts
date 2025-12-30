@@ -16,7 +16,10 @@ export async function signupForMarketing(email: string) {
                 };
             }
             logger.Error('Error signing up for marketing', error);
-            return { success: false, message: 'Could not complete signup. Please try again later.' };
+            return {
+                success: false,
+                message: 'Could not complete signup. Please try again later.',
+            };
         }
 
         return {
