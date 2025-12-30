@@ -4,10 +4,15 @@ import OAuthButtons from '@/app/login/OAuthButtons';
 import LoginForm from '@/app/login/LoginForm';
 import SignUpForm from '@/app/signup/SignUpForm';
 import Link from 'next/link';
+import { clientEnv } from '@/env/client';
 
 export type AuthMode = 'signin' | 'signup';
 
 export default function AuthPage({ mode }: { mode: AuthMode }) {
+    if (!clientEnv.NEXT_PUBLIC_ENABLE_FULL_SITE) {
+        return null;
+    }
+
     const isSignIn = mode === 'signin';
 
     const header = isSignIn

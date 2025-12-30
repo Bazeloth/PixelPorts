@@ -8,6 +8,7 @@ const parsed = ClientEnvSchema.safeParse({
     NEXT_PUBLIC_MIXPANEL_TOKEN: process.env.NEXT_PUBLIC_MIXPANEL_TOKEN,
     NEXT_PUBLIC_MIXPANEL_API_HOST: process.env.NEXT_PUBLIC_MIXPANEL_API_HOST,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    NEXT_PUBLIC_ENABLE_FULL_SITE: process.env.NEXT_PUBLIC_ENABLE_FULL_SITE,
 });
 
 if (!parsed.success) {

@@ -2,7 +2,8 @@ import { Container } from '@/app/Container';
 import Box from '@/app/Box';
 import CompleteProfileClient from './CompleteProfileClient';
 import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import { clientEnv } from '@/env/client';
 
 function suggestUsernameFrom(seed: string) {
     const base = (seed.split('@')[0] || seed)
@@ -17,6 +18,10 @@ export default async function CompleteProfilePage({
 }: {
     searchParams: { next?: string };
 }) {
+    if (!clientEnv.NEXT_PUBLIC_ENABLE_FULL_SITE) {
+        notFound();
+    }
+
     const user = await getUserAndProfile();
     if (!user) {
         redirect('/login');

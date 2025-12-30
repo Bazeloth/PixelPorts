@@ -5,8 +5,14 @@ import { ArrowRightIcon } from 'lucide-react';
 import Icon from '@/app/Icon';
 import FaqAccordion from '@/app/FaqAccordion';
 import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
+import { clientEnv } from '@/env/client';
+import { redirect } from 'next/navigation';
 
 export default async function Home() {
+    if (!clientEnv.NEXT_PUBLIC_ENABLE_FULL_SITE) {
+        redirect('/landing');
+    }
+
     const user = await getUserAndProfile();
 
     return (

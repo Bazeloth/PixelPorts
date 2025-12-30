@@ -3,10 +3,15 @@ import { connection } from 'next/server';
 import { getUserAndProfile } from '@/lib/supabase/getUserAndProfile';
 import HeaderRightSwitch from '@/app/HeaderRightSwitch';
 import LogoLink from '@/app/LogoLink';
+import { clientEnv } from '@/env/client';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Header() {
+    if (!clientEnv.NEXT_PUBLIC_ENABLE_FULL_SITE) {
+        return null;
+    }
+
     await connection();
     const user = await getUserAndProfile();
 

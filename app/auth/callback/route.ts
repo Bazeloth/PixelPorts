@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/utils/console';
 import { createSupabaseClientForRoute } from '@/lib/supabase/server';
+import { clientEnv } from '@/env/client';
 
 export async function GET(request: NextRequest) {
+    if (!clientEnv.NEXT_PUBLIC_ENABLE_FULL_SITE) {
+        return new NextResponse('Not Found', { status: 404 });
+    }
+
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
     const next = searchParams.get('next') || '/';

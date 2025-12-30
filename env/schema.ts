@@ -30,6 +30,12 @@ export const ClientEnvSchema = z.object({
 
     // Observability
     NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
+
+    // Feature Flags
+    NEXT_PUBLIC_ENABLE_FULL_SITE: z
+        .boolean()
+        .transform((val) => val === true)
+        .default(false),
 });
 
 export type ServerEnv = z.infer<typeof ServerEnvSchema>;

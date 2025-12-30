@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { clientEnv } from '@/env/client';
 import { VerifyFormClient } from './VerifyFormClient';
+import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +11,10 @@ async function resendVerification(
     formData: FormData
 ) {
     'use server';
+    if (!clientEnv.NEXT_PUBLIC_ENABLE_FULL_SITE) {
+        throw new Error('Not allowed');
+    }
+
     const email = String(formData.get('email') ?? '').trim();
     if (!email) {
         return { ok: false, message: 'Missing email' };
@@ -31,6 +36,10 @@ async function resendVerification(
 }
 
 export default async function VerifyPage({ searchParams }: { searchParams: { email?: string } }) {
+    if (!clientEnv.NEXT_PUBLIC_ENABLE_FULL_SITE) {
+        notFound();
+    }
+
     const email = searchParams?.email ?? '';
 
     return (
