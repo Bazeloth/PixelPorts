@@ -24,7 +24,10 @@ async function upsertVar(name: string, value: string) {
         await execa(
             'npx',
             ['vercel@50', 'env', 'rm', name, ENV, '--yes', '--token', TOKEN!, '--scope', ORG_ID!],
-            { stdio: 'inherit' }
+            {
+                stdio: 'inherit',
+                env: { ...process.env, VERCEL_CWD: process.env.VERCEL_CWD || process.cwd() },
+            }
         );
     } catch {
         // ignore
@@ -36,6 +39,7 @@ async function upsertVar(name: string, value: string) {
         {
             stdio: ['pipe', 'inherit', 'inherit'],
             input: value + '\n',
+            env: { ...process.env, VERCEL_CWD: process.env.VERCEL_CWD || process.cwd() },
         }
     );
 }

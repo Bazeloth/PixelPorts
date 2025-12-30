@@ -7,6 +7,8 @@ on:
 jobs:
   sync-vercel-env:
     runs-on: ubuntu-latest
+    env:
+      VERCEL_CWD: .
     steps:
       - name: Checkout
         uses: actions/checkout@v4
