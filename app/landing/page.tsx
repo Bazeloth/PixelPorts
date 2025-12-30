@@ -20,11 +20,11 @@ export default function LandingPage() {
             const result = await signupForMarketing(email);
             if (result.success) {
                 setStatus('success');
-                setMessage("Thanks for signing up! We'll keep you posted.");
+                setMessage(result.message);
                 setEmail('');
             } else {
                 setStatus('error');
-                setMessage(result.error || 'Something went wrong. Please try again.');
+                setMessage(result.message);
             }
         } catch (err) {
             setStatus('error');
