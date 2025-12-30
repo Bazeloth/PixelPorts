@@ -15,7 +15,7 @@ export default async function Header() {
             <Container as={'nav'}>
                 <div className="py-3 flex items-center justify-between">
                     <div className="flex items-center">
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                             <LogoLink>
                                 <svg
                                     className="h-14 w-auto md:h-16"
